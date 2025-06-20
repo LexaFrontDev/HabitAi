@@ -1,0 +1,126 @@
+
+
+// === Цветовая палитра ===
+
+
+
+
+
+html, body {
+  background: linear-gradient(135deg, $bg-start, $bg-end);
+  font-family: 'Segoe UI', sans-serif;
+  color: $text-dark;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+}
+
+.navbar {
+  background-color: $navbar-bg;
+  border-bottom: 1px solid lighten($navbar-bg, 10%);
+
+  .navbar-brand {
+    color: $primary;
+    font-weight: bold;
+  }
+
+  .btn {
+    background-color: $btn-bg;
+    color: $text-dark;
+    border-color: $btn-accent;
+
+    &:hover {
+      background-color: $btn-accent;
+      color: $text-dark;
+    }
+  }
+
+  .btn-primary {
+    background-color: $btn-accent;
+    color: $text-dark;
+    border: none;
+
+    &:hover {
+      background-color: $btn-hover;
+      color: $text-dark;
+    }
+  }
+}
+
+.hero {
+  background: linear-gradient(120deg, $bg-start, $bg-end);
+  padding: 6rem 1rem;
+  position: relative;
+
+  .hero-image {
+    max-width: 100%;
+    border-radius: 1.5rem;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    transition: transform 0.4s ease;
+
+    img {
+      width: 100%;
+      height: auto;
+      object-fit: cover;
+      border-radius: 1.5rem;
+      transform: scale(1.02);
+    }
+
+    &:hover {
+      transform: scale(1.01);
+    }
+  }
+}
+
+
+
+.card {
+  background-color: $card-bg;
+  color: $text-dark;
+  border: none;
+  box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);
+  border-radius: 1rem;
+  transition: transform 0.3s ease;
+  cursor: pointer;
+
+  &:hover {
+    transform: translateY(-6px);
+  }
+}
+
+.fade-in {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.appear {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
+footer {
+  background-color: $footer-bg;
+  padding: 1.5rem 0;
+  text-align: center;
+  font-size: 0.9rem;
+  color: $muted-text;
+  border-top: 1px solid lighten($footer-bg, 10%);
+}
+
+.text-muted {
+  color: $muted-text !important;
+}
+.slide-in-right {
+  opacity: 0;
+  transform: translateX(30px) translateY(30px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+
+  &.appear {
+    opacity: 1 !important;
+    transform: translate(0, 0) !important;
+  }
+}
+

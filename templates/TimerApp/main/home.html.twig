@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Главный экран{% endblock %}
+
+
+{% block body %}
+
+    {% include 'TimerApp/Chunk/sidebar.html.twig' %}
+
+    <div class="container-home">
+        <header>
+            <h1>Главная страница<span class="info-icon" >💭</span></h1>
+        </header>
+    </div>
+
+
+
+    <script type="text/babel" src="{{ asset('react/App.js') }}"></script>
+{% endblock %}

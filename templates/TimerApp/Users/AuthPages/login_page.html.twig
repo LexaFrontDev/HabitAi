@@ -1,0 +1,211 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Вход в аккаунт{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        html, body {
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            color: white;
+        }
+
+        .login-container {
+            display: flex;
+            min-height: 100vh;
+            background-color: #f8f9fa;
+            overflow: hidden;
+        }
+
+        .login-image {
+            flex: 0.8;
+            width: 600px;
+            background: #a4ac86 url('{{ asset('StorageImages/Icons/focused.svg') }}') no-repeat center center;
+            background-size: cover;
+        }
+
+        .login-form-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #a4ac86;
+        }
+
+        .login-form {
+            width: 100%;
+            max-width: 520px;
+            background: #7a5254;
+            border-radius: 0.75rem;
+            padding: 3rem;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .login-form h2,
+        .login-form p {
+            width: 100%;
+            text-align: center;
+        }
+
+        .form-label {
+            font-weight: 500;
+            display: block;
+            text-align: left;
+            margin-bottom: 0.5rem;
+            width: 100%;
+        }
+
+        .form-control {
+            width: 94%;
+            max-width: 145%;
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            font-size: 1.05rem;
+            margin-right: 173px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3a86ff, #4361ee);
+            border: none;
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            font-size: 1.05rem;
+            width: 80%;
+            margin: 1rem auto 0 auto;
+            cursor: pointer;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #4361ee, #3a86ff);
+        }
+
+        .btn-google {
+            background-color: white;
+            border: 1px solid #ddd;
+            padding: 0.6rem;
+            font-size: 0.95rem;
+            border-radius: 0.5rem;
+            width: 80%;
+            margin: 1rem auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: background 0.3s ease;
+            cursor: pointer;
+        }
+
+        .btn-google:hover {
+            background: #f1f1f1;
+        }
+
+        .error-message {
+            color: #ffbaba;
+            background-color: #5c1f1f;
+            padding: 0.8rem 1rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            font-weight: bold;
+            width: 100%;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        @media (max-width: 992px) {
+            .login-image {
+                display: none;
+            }
+
+            .login-form {
+                padding: 2rem;
+                max-width: 90%;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="login-container">
+        <div class="login-image d-none d-lg-block"></div>
+
+        <div class="login-form-wrapper">
+            <form id="loginForm" class="login-form">
+                <h2 class="mb-4 text-center fw-bold">С возвращением 👋</h2>
+                <p class="text-muted text-center mb-4">Войдите, чтобы продолжить</p>
+
+                <div class="mb-3">
+                    <label for="email" class="form-label text-start d-block">Email</label>
+                    <input type="email" class="form-control" id="email" name="email" required />
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label text-start d-block">Пароль</label>
+                    <input type="password" class="form-control" id="password" name="password" required />
+                </div>
+
+                <div id="error-message" class="error-message">Ошибка авторизации</div>
+
+                <button type="submit" class="btn btn-primary">Войти</button>
+                <button type="button" class="btn-google">
+                    <img src="https://www.svgrepo.com/show/355037/google.svg" alt="Google" style="width: 20px; height: 20px;" />
+                    Войти через Google
+                </button>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const errorBox = document.getElementById('error-message');
+            errorBox.style.display = 'none';
+            errorBox.innerText = '';
+
+            const data = {
+                email: document.getElementById('email').value.trim(),
+                password: document.getElementById('password').value,
+            };
+
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data),
+                });
+
+                const resultText = await response.text();
+                let result;
+
+                // Парсим JSON, если возможно
+                try {
+                    result = JSON.parse(resultText);
+                } catch (e) {
+                    result = { message: resultText };
+                }
+
+                if (response.ok) {
+                    window.location.href = '/';
+                } else if (response.status === 401 || response.status === 403) {
+                    errorBox.style.display = 'block';
+                    errorBox.innerText = 'Неверный email или пароль.';
+                } else {
+                    errorBox.style.display = 'block';
+                    errorBox.innerText = result.message || 'Произошла неизвестная ошибка';
+                }
+            } catch (error) {
+                errorBox.style.display = 'block';
+                errorBox.innerText = 'Ошибка соединения с сервером';
+                console.error(error);
+            }
+        });
+    </script>
+{% endblock %}
+

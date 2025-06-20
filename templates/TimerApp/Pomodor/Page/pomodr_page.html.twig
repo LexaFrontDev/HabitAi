@@ -1,0 +1,118 @@
+{% extends 'base.html.twig' %}
+{% block title %}Помидор таймер{% endblock %}
+
+{% block body %}
+    {% include 'TimerApp/Chunk/sidebar.html.twig' %}
+    {% include 'TimerApp/Chunk/PomodorChunk/pomodor_history_aside.html.twig' %}
+
+    <section class="container mt-4 text-center pomodoro-section">
+        <h2 class="mb-3">Pomodoro Таймер</h2>
+
+        <div class="pomodoro-wrapper">
+            <svg viewBox="0 0 36 36" class="circular-chart">
+                <path class="bg-circle"
+                      stroke-width="2"
+                      fill="none"
+                      d="M18 2 a 16 16 0 1 1 0 32 a 16 16 0 1 1 0 -32" />
+                <path class="progress-circle"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      fill="none"
+                      transform="rotate(-90 18 18)"
+                      d="M18 2 a 16 16 0 1 1 0 32 a 16 16 0 1 1 0 -32" />
+                <text x="50%" y="50%" text-anchor="middle" dy=".3em" id="timer-text">00:00</text>
+            </svg>
+        </div>
+
+        <div class="mt-3 btn-group">
+            <button id="start-btn" class="btn btn-primary">Старт</button>
+            <button id="chooseTime-btn" class="btn btn-secondary">Выбрать время</button>
+        </div>
+        <div id="timeModal" class="modal-overlay" style="display:none;">
+            <div class="modal-content">
+                <h3>Выберите время (минуты)</h3>
+                <input id="modal-minutes-input" type="number" min="1" placeholder="Минуты" class="time-input" />
+                <button id="modal-save-btn" class="btn btn-success">Сохранить</button>
+                <button id="modal-close-btn" class="btn btn-outline-danger mt-2">Закрыть</button>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        const timerText = document.getElementById('timer-text');
+        const progressPath = document.querySelector('.progress-circle');
+        const btn = document.getElementById('start-btn');
+        const chooseTimeBtn = document.getElementById('chooseTime-btn');
+
+        const modal = document.getElementById('timeModal');
+        const modalInput = document.getElementById('modal-minutes-input');
+        const modalSave = document.getElementById('modal-save-btn');
+        const modalClose = document.getElementById('modal-close-btn');
+
+        let totalTime = localStorage.getItem('pomodoroTotalTime') ? parseInt(localStorage.getItem('pomodoroTotalTime')) : 0;
+        let timeLeft = localStorage.getItem('pomodoroTimeLeft') ? parseInt(localStorage.getItem('pomodoroTimeLeft')) : 0;
+        let timerInterval;
+        let isRunning = false;
+
+        function updateDisplay() {
+            let mins = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+            let secs = (timeLeft % 60).toString().padStart(2, '0');
+            timerText.textContent = `${mins}:${secs}`;
+            let percent = totalTime ? ((totalTime - timeLeft) / totalTime) * 100 : 0;
+            progressPath.setAttribute('stroke-dasharray', `${percent},100`);
+        }
+
+        function saveToLocal() {
+            localStorage.setItem('pomodoroTotalTime', totalTime);
+            localStorage.setItem('pomodoroTimeLeft', timeLeft);
+        }
+
+        function tick() {
+            if (timeLeft > 0) {
+                timeLeft--;
+                saveToLocal();
+                updateDisplay();
+            } else {
+                clearInterval(timerInterval);
+                btn.textContent = 'Старт';
+                isRunning = false;
+                localStorage.removeItem('pomodoroTotalTime');
+                localStorage.removeItem('pomodoroTimeLeft');
+                progressPath.setAttribute('stroke-dasharray', `0,100`);
+                alert('Время вышло! 🕰️');
+            }
+        }
+
+        btn.addEventListener('click', () => {
+            if (!isRunning) {
+                timerInterval = setInterval(tick, 1000);
+                btn.textContent = 'Пауза';
+                isRunning = true;
+            } else {
+                clearInterval(timerInterval);
+                btn.textContent = 'Старт';
+                isRunning = false;
+            }
+        });
+
+        chooseTimeBtn.addEventListener('click', () => {
+            modal.style.display = 'flex';
+        });
+
+        modalSave.addEventListener('click', () => {
+            totalTime = parseInt(modalInput.value) * 60;
+            timeLeft = totalTime;
+            saveToLocal();
+            updateDisplay();
+            modal.style.display = 'none';
+        });
+
+        modalClose.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        if (timeLeft > 0 && totalTime > 0) {
+            updateDisplay();
+        }
+    </script>
+{% endblock %}

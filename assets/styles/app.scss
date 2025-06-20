@@ -1,0 +1,31 @@
+$primary: #e3d5ca;
+$text-dark: #ffffff;
+$muted-text: lighten($primary, 10%);
+
+$bg-start: #588157;
+$bg-end: #588157;
+$hero-bg: $bg-end;
+
+$navbar-bg: #344e41;
+$footer-bg: #344e41;
+
+$card-bg: #344e41;
+
+$btn-bg: transparent;
+$btn-accent: #003566;
+$btn-hover: darken($btn-accent, 10%);
+$sideBgColor :  #386641;
+
+@import 'main/main';
+@import 'main/sidebar';
+@import 'main/home';
+@import 'pomodor/pomodor';
+
+
+
+
+
+
+
+
+

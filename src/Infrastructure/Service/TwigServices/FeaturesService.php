@@ -1,0 +1,48 @@
+<?php
+
+namespace App\Infrastructure\Service\TwigServices;
+
+use App\Aplication\Dto\Main\FeatureDTO;
+use App\Domain\Service\TwigServices\FeaturesServiceInterface;
+
+class FeaturesService implements FeaturesServiceInterface
+{
+    /**
+     * @return FeatureDTO[]
+     */
+    public function getFeatures(): array
+    {
+        return [
+            new FeatureDTO(
+                title: 'Таймер помодор',
+                desc: 'Фокусируйся эффективно.',
+                icon: 'Icons/PomodorIcons.svg',
+                url: '/pomodoro',
+            ),
+            new FeatureDTO(
+                title: 'Список Привычек',
+                desc: 'Формируй полезные действия.',
+                icon: 'Icons/HabitsIcon.svg',
+                url: '/habits',
+            ),
+            new FeatureDTO(
+                title: 'Матрица Эйзенхауэра',
+                desc: 'Сортируй задачи умно.',
+                icon: 'eisenhower.svg',
+                url: '/eisenhower',
+            ),
+            new FeatureDTO(
+                title: 'Планировщик',
+                desc: 'Синхронизируй календарь.',
+                icon: 'calendar.svg',
+                url: '/planner',
+            ),
+            new FeatureDTO(
+                title: 'Список Задач',
+                desc: 'Управляй своим списком дел.',
+                icon: 'tasks.svg',
+                url: '/tasks',
+            ),
+        ];
+    }
+}

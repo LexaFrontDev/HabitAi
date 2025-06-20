@@ -1,0 +1,92 @@
+body {
+  background: linear-gradient(135deg, #457b9d, #457b9d);
+  font-family: "Segoe UI", sans-serif;
+  color: #ffffff;
+  margin: 0;
+  padding: 0;
+  scroll-behavior: smooth;
+}
+
+.navbar {
+  background-color: #1d3557;
+  border-bottom: 1px solid rgb(41.75, 76.3017241379, 125.25);
+}
+.navbar .navbar-brand {
+  color: #e3d5ca;
+  font-weight: bold;
+}
+.navbar .btn {
+  background-color: transparent;
+  color: #ffffff;
+  border-color: #003566;
+}
+.navbar .btn:hover {
+  background-color: #003566;
+  color: #1d3557;
+}
+.navbar .btn-primary {
+  background-color: #003566;
+  color: #ffffff;
+  border: none;
+}
+.navbar .btn-primary:hover {
+  background-color: rgb(0, 26.5, 51);
+}
+
+.hero {
+  background: #457b9d;
+  padding: 6rem 1rem 4rem;
+  text-align: center;
+}
+.hero h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  color: #e3d5ca;
+}
+.hero p {
+  font-size: 1.2rem;
+  color: rgb(244.6296296296, 239.4444444444, 235.3703703704);
+}
+.hero .btn {
+  font-weight: 600;
+  border-radius: 0.5rem;
+}
+
+.card {
+  background-color: #1d3557;
+  color: #ffffff;
+  border: none;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  border-radius: 1rem;
+  transition: transform 0.3s ease;
+  cursor: pointer;
+}
+.card:hover {
+  transform: translateY(-6px);
+}
+
+.fade-in {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.appear {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
+footer {
+  background-color: #1d3557;
+  padding: 1.5rem 0;
+  text-align: center;
+  font-size: 0.9rem;
+  color: rgb(244.6296296296, 239.4444444444, 235.3703703704);
+  border-top: 1px solid rgb(41.75, 76.3017241379, 125.25);
+}
+
+.text-muted {
+  color: rgb(244.6296296296, 239.4444444444, 235.3703703704) !important;
+}
+
+/*# sourceMappingURL=main.css.map */
