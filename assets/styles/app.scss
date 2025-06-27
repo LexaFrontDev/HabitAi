@@ -1,12 +1,23 @@
+$navbar-height: 40px;
+$sidebar-width: 70px;
+
+$app-nav-bg: #588157;
+
+
+$app-content-padding: 2rem;
+
 $primary: #e3d5ca;
 $text-dark: #ffffff;
 $muted-text: lighten($primary, 10%);
+
+$text-white: #000000;
+
 
 $bg-start: #588157;
 $bg-end: #588157;
 $hero-bg: $bg-end;
 
-$navbar-bg: #344e41;
+$navbar-bg: #588157;
 $footer-bg: #344e41;
 
 $card-bg: #344e41;
@@ -15,17 +26,53 @@ $btn-bg: transparent;
 $btn-accent: #003566;
 $btn-hover: darken($btn-accent, 10%);
 $sideBgColor :  #386641;
+$start-pomodor-line: #555;
+$proges-pomodor-line: rgba(85, 85, 85, 0.58);
+$app-sidebar-bg: $sideBgColor;
 
 @import 'main/main';
 @import 'main/sidebar';
+@import 'ChunkStyles/NavBar';
 @import 'main/home';
 @import 'pomodor/pomodor';
+@import 'pomodor/aside_pomodor';
+@import 'Habits/Habits';
 
 
+.header{
+  margin: 30px 30px;
+  font-weight: bold;
+}
 
 
+#content {
+  margin-left: $sidebar-width;
+  padding: $app-content-padding;
+  padding-top: calc(#{$app-content-padding} + #{$navbar-height});
+}
 
 
+@media (max-width: 768px) {
+  #sidebar {
+    flex-direction: row;
 
+    position: fixed;
+    top: $navbar-height;
 
+    height: auto;
+    width: 100%;
 
+    justify-content: space-around;
+  }
+
+  #content {
+    margin-left: 0;
+
+    /* Отступ вниз под navbar и sidebar в мобильной версии */
+    padding-top: calc(#{$app-content-padding} + #{$navbar-height} + 60px);
+  }
+
+  .sidebar-item::after {
+    display: none;
+  }
+}

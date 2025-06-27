@@ -1,0 +1,50 @@
+.app-nav {
+  position: fixed;
+  top: 0;
+  left: 70px;
+  height: $navbar-height;
+
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 1rem;
+
+  background: $app-nav-bg;
+  z-index: 1000;
+
+  .nav-left-side {
+    flex: 1;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding-left: 2rem;
+
+    > * {
+      margin-right: 1rem;
+    }
+  }
+
+  .nav-center-side {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    > * {
+      text-align: center;
+    }
+  }
+
+  .nav-right-side {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+
+    > * {
+      margin-left: 1rem;
+    }
+  }
+}

@@ -1,0 +1,135 @@
+// Цвет для карточек статистики
+$stat-card-bg: #2f3e46;
+// Цвет линий — в отдельную переменную для удобства
+$line-color: #66666e;
+
+.pomodoro-aside {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 500px;
+  height: 100vh;
+  font-family: 'Inter', Arial, sans-serif;
+  background-color: $sideBgColor;
+  color: $text-dark;
+  display: flex;
+  flex-direction: column;
+
+  .stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding: 15px;
+    background-color: $card-bg;
+
+    .stat-box {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 12px;
+      height: 90px;
+      background-color: $stat-card-bg;
+      border-radius: 8px;
+      text-align: center;
+      transition: transform 0.2s, box-shadow 0.2s;
+      cursor: pointer;
+
+      h3 {
+        font-size: 14px;
+        color: $text-dark;
+        margin: 0 0 4px 0;
+      }
+
+      span {
+        font-size: 18px;
+        font-weight: bold;
+        color: $text-dark;
+      }
+
+      &:hover {
+        transform: translateY(-3px);
+        box-shadow: 0px 4px 12px rgba(0,0,0,.25);
+      }
+    }
+  }
+
+  .tabs {
+    display: flex;
+    justify-content: space-around;
+    padding: 8px 5px;
+    border-top: 1px solid $line-color;
+    border-bottom: 1px solid $line-color;
+
+    a {
+      position: relative;
+      text-decoration: none;
+      font-weight: bold;
+      color: $text-dark;
+      padding: 6px 12px;
+      border-radius: 4px;
+      transition: background-color 0.2s, color 0.2s;
+
+      &:hover {
+        background-color: rgba($text-dark, 0.1);
+        color: $btn-accent;
+      }
+    }
+  }
+
+  .content {
+    flex: 1;
+    overflow-y: auto;
+
+    section#pomodoro {
+      .pomodoro-cards {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        cursor: pointer;
+
+        .pomodoro-card {
+          background-color: $stat-card-bg;
+          padding: 12px;
+          border-radius: 8px;
+          text-align: center;
+          transition: transform 0.2s, box-shadow 0.2s;
+
+          h3 {
+            font-size: 14px;
+            color: $text-dark;
+            margin: 0 0 4px 0;
+          }
+
+          span {
+            font-size: 16px;
+            font-weight: bold;
+            color: $text-dark;
+          }
+
+          .period-label {
+            font-size: 12px;
+            color: $text-dark;
+          }
+
+          &:hover {
+            transform: translateY(-3px);
+            box-shadow: 0px 4px 12px rgba(0,0,0,.25);
+          }
+        }
+      }
+    }
+
+  }
+}
+
+
+
+
+.active{
+  display: block;
+}
+
+.no-active{
+  display: none;
+}

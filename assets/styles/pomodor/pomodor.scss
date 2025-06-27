@@ -1,9 +1,21 @@
+
+
+
 .pomodoro-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 85vh;
+
   .pomodoro-wrapper {
-    width: 200px;
-    height: 200px;
-    margin: 0 auto;
+    width: 500px;
+    height: 500px;
     position: relative;
+    --bg-color: #184e77;
+    --progress-color: #333;
+    --line-width: 0.5;
+
 
     .circular-chart {
       width: 100%;
@@ -12,18 +24,34 @@
 
     .bg-circle {
       stroke: #ccc;
+      stroke: var(--bg-color);
+      stroke-width: var(--line-width, 4);
     }
 
     .progress-circle {
-      stroke: #ff6347;
+      stroke: var(--progress-color);
+      stroke-width: var(--line-width, 4);
+      stroke-dasharray: 100 100;
+      stroke-dashoffset: 25;
       transition: stroke-dasharray 0.5s ease;
     }
 
+
     #timer-text {
       font-size: 5.5px;
-      fill: #333;
+      fill: $text-dark;
+      cursor: pointer;
     }
   }
+
+
+  .pomodoro-wrapper .bg-circle {
+    stroke: var(--bg-color);
+  }
+  .pomodoro-wrapper .progress-circle {
+    stroke: var(--progress-color);
+  }
+
 
   .modal-overlay {
     position: fixed;

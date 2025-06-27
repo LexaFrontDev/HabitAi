@@ -3,9 +3,19 @@
 namespace App\Domain\Service\Tokens;
 
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 
 interface AuthTokenServiceInterface
 {
+    /**
+     *
+     * @param Request $request
+     * @return array ['accessToken' => string|null, 'refreshToken' => string|null]
+     */
+    public function getTokens(Request $request): array;
+
+
+
     /**
      * @param string $accessToken
      * @param string $refreshToken

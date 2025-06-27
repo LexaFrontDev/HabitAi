@@ -9,6 +9,9 @@ use App\Domain\Entity\Users;
 interface UsersRepositoryInterface
 {
 
+    /**
+     * @return Users|bool
+     */
     public function findByEmail(string $email): Users|bool;
     public function findById(int $id): Users|bool;
     public function updateUsersInfoByEmail(string $email, UsersForUpdate $userInfo): bool;

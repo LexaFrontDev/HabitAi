@@ -1,0 +1,114 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Привычки{% endblock %}
+
+{% block body %}
+    {% include 'TimerApp/Chunk/sidebar.html.twig' %}
+
+    <div class="app-nav">
+        <div class="nav-left-side">
+            <h3 class="header">Привычки</h3>
+        </div>
+        <div class="nav-center-side">
+            <div class="add-habit">
+                <a href="" id="addHabitButton" title="Добавить привычку">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                         viewBox="0 0 24 24"
+                         width="48"
+                         height="48"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="2"
+                         stroke-linecap="round"
+                         stroke-linejoin="round"
+                         class="plus-icon">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div id="content">
+        <div class="habits-container">
+            <div class="week-dates">
+                <div class="day">Пн</div>
+                <div class="day">Вт</div>
+                <div class="day">Ср</div>
+                <div class="day">Чт</div>
+                <div class="day">Пт</div>
+                <div class="day">Сб</div>
+                <div class="day">Вс</div>
+            </div>
+
+            <div id="habit-modal"></div>
+
+            {% set morning_habits = habits|filter(h => h.period == 'morning') %}
+            {% set night_habits = habits|filter(h => h.period == 'night') %}
+            {% set another_habits = habits|filter(h => (h.period != 'morning' and h.period != 'night')) %}
+
+            {% set total_count = morning_habits|length + night_habits|length + another_habits|length %}
+
+            <div class="habits-list">
+                {% macro habits_block(title, habits, block_name) %}
+                    {% if habits|length > 0 %}
+                        <div class="habits-group card">
+                            <h3 class="toggle-header" data-target="{{ block_name }}">
+                                {{ title }}
+                                <span class="toggle-icon">▶</span>
+                            </h3>
+                            <ul id="{{ block_name }}" class="habits-items" style="display: none;">
+                                {% for habit in habits %}
+                                    <li>
+                                        <img src="{{ habit.icon_url ? asset(habit.icon_url) : asset('images/default-icon.png') }}"
+                                             alt="{{ habit.title }}"
+                                             class="habit-icon" />
+                                        <div class="habit-text">
+                                            <strong>{{ habit.title }}</strong><br/>
+                                            <small>{{ habit.notification_date }}</small>
+                                            <small>{{ habit.type }}</small>
+                                            <small>{{ habit.count }}</small>
+
+                                        </div>
+                                        <input type="checkbox" class="habit-checkbox" />
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
+                {% endmacro %}
+
+                {{ _self.habits_block('Утро', morning_habits, 'morning') }}
+                {{ _self.habits_block('Вечер', night_habits, 'night') }}
+                {{ _self.habits_block('Другое', another_habits, 'other') }}
+
+                {% if total_count == 0 %}
+                    <p class="no-habits">Нет привычек.</p>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.querySelectorAll('.toggle-header').forEach(header => {
+            header.addEventListener('click', (e) => {
+                const targetId = header.getAttribute('data-target');
+                const list = document.getElementById(targetId);
+                const icon = header.querySelector('.toggle-icon');
+
+                if (list.style.display === 'none') {
+                    list.style.display = 'block';
+                    icon.textContent = '▼';
+                } else {
+                    list.style.display = 'none';
+                    icon.textContent = '▶';
+                }
+            });
+        });
+    </script>
+
+    <script type="module" src="{{ asset('react/Component/HabitsPage/Pages/habits-modal.js') }}"></script>
+    <script type="module" src="{{ asset('react/Component/HabitsPage/Pages/HabitsPage.js') }}"></script>
+{% endblock %}

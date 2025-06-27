@@ -5,13 +5,21 @@ namespace App\Aplication\Dto\UsersDto;
 class UsersInfoForToken
 {
     public function __construct(
-        private readonly int $userId,
+        private readonly int    $userId,
         private readonly string $name,
         private readonly string $email,
         private readonly string $role = 'user',
         private readonly string $accToken = '',
         private readonly string $refToken = '',
-    ){}
+    )
+    {
+    }
+
+
+    public function getUserId(): int
+    {
+        return $this->userId;
+    }
 
     public function getEmail(): string
     {

@@ -19,8 +19,10 @@ interface JwtServicesInterface
 
 
     /**
-     * @return JwtTokenDto|array
+     * @return JwtTokenDto|bool
      * @throws AuthenticationException
      */
-    public function validateToken(JwtCheckDto $tokens): JwtTokenDto|array;
+    public function validateToken(JwtCheckDto $tokens): JwtTokenDto|bool;
+
+    public function getUserInfoFromToken(string $token): UsersInfoForToken;
 }

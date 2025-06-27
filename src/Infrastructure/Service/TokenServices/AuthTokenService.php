@@ -6,9 +6,12 @@ use App\Aplication\Dto\JwtDto\JwtCheckDto;
 use App\Aplication\Dto\JwtDto\JwtTokenDto;
 use App\Aplication\UseCase\Service\JwtTokens\JwtUseCase;
 use App\Domain\Service\Tokens\AuthTokenServiceInterface;
+use MongoDB\Driver\Exception\AuthenticationException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
+
 
 class AuthTokenService implements AuthTokenServiceInterface
 {
@@ -88,6 +91,33 @@ class AuthTokenService implements AuthTokenServiceInterface
         $response->headers->setCookie($accessCookie);
         $response->headers->setCookie($refreshCookie);
     }
+
+    /**
+     * @param Request $request
+     * @return array{accessToken: string, refreshToken: string}
+     * @throws \RuntimeException
+     */
+    public function getTokens(Request $request): array
+    {
+        $accessToken = $request->cookies->get('accessToken')
+            ?? $request->headers->get('access-token');
+
+        $refreshToken = $request->cookies->get('refreshToken')
+            ?? $request->headers->get('refresh-token');
+
+        if (empty($accessToken) || empty($refreshToken)) {
+            throw new \RuntimeException('Missing access or refresh token');
+        }
+
+        return [
+            'accessToken' => $accessToken,
+            'refreshToken' => $refreshToken,
+        ];
+    }
+
+
+
+
 }
 
 

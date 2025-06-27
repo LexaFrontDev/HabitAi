@@ -6,6 +6,7 @@ use App\Aplication\Dto\JwtDto\JwtCheckDto;
 use App\Aplication\Dto\UsersDto\UsersInfoForToken;
 use App\Aplication\Dto\JwtDto\JwtTokenDto;
 use App\Domain\Entity\Users;
+use App\Domain\Repository\Users\UsersRepositoryInterface;
 use App\Domain\Service\JwtServicesInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
@@ -19,6 +20,7 @@ class JwtServices implements JwtServicesInterface
         private JWTTokenManagerInterface $jwtManager,
         private JWTEncoderInterface $jwtEncoder,
         private UserProviderInterface $userProvider,
+        private UsersRepositoryInterface $user,
         private string $refreshTokenTtl = '+7 days',
     ) {}
 
@@ -83,22 +85,18 @@ class JwtServices implements JwtServicesInterface
      * @return JwtTokenDto|array
      * @throws AuthenticationException
      */
-    public function validateToken(JwtCheckDto $tokens): JwtTokenDto|array
+    public function validateToken(JwtCheckDto $tokens): JwtTokenDto|bool
     {
         try {
-            // Проверка access токена
             $accessPayload = $this->jwtManager->parse($tokens->getAccessToken());
-
             if (!isset($accessPayload['exp']) || $accessPayload['exp'] < time()) {
                 throw new \Exception('Access token expired');
             }
-
-            return $accessPayload; // всё ок, токен действителен
+            return true;
         } catch (\Throwable $e) {
+            // Если access expired, пробуем обновить через refresh
             try {
-                // Проверка refresh токена
                 $refreshPayload = $this->jwtManager->parse($tokens->getRefreshToken());
-
                 if (
                     !isset($refreshPayload['exp'], $refreshPayload['email']) ||
                     $refreshPayload['exp'] < time() ||
@@ -106,14 +104,13 @@ class JwtServices implements JwtServicesInterface
                 ) {
                     throw new AuthenticationException('Refresh token invalid');
                 }
-
                 $user = $this->userProvider->loadUserByIdentifier($refreshPayload['email']);
-
                 return new JwtTokenDto(
                     $this->jwtManager->create($user),
                     $this->generateRefreshToken(new UsersInfoForToken(
+                        $user->getUserId(),
+                        $user->getName(),
                         $user->getEmail(),
-                        $user->getUserIdentifier(),
                         $user->getRoles()[0] ?? 'user',
                     ))
                 );
@@ -124,7 +121,22 @@ class JwtServices implements JwtServicesInterface
     }
 
 
+    public function getUserInfoFromToken(string $token): UsersInfoForToken
+    {
+        $payload = $this->jwtManager->parse($token);
 
+        if(!isset($payload['username'])){
+            throw new AuthenticationException('Invalid acces token.');
+        }
+        $result = $this->user->findByEmail($payload['username']);
+        $role =  $result->getRoles();
 
+        return new UsersInfoForToken(
+            $result->getId(),
+            $result->getName(),
+            $result->getEmail(),
+            $role[0] ?? 'user',
+        );
+    }
 
 }

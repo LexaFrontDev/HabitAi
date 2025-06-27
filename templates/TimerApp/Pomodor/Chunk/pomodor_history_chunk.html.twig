@@ -1,0 +1,95 @@
+{% extends 'base.html.twig' %}
+{% block title %}Помидор таймер{% endblock %}
+
+{% block body %}
+    <aside class="pomodoro-aside">
+        <div class="stats">
+            <div class="stat-box">
+                <h3>Помидоров сегодня</h3>
+                <span>{{ todayPomos }}</span>
+            </div>
+            <div class="stat-box">
+                <h3>Общее время фокуса сегодня</h3>
+                <span>{{ todayFocusTime }}</span>
+            </div>
+            <div class="stat-box">
+                <h3>Всего помидоров</h3>
+                <span>{{ totalPomodorCount }}</span>
+            </div>
+        </div>
+        <nav class="tabs">
+            <a  href="#habits">Привычки</a>
+            <a href="#tasks">Задачи</a>
+            <a href="#pomodoro">История</a>
+        </nav>
+        <div class="content">
+            <section class="no-active" id="habits">
+                <h2>Привычки</h2>
+                {% if habitsList is defined and habitsList|length > 0 %}
+                    <ul>
+                        {% for habit in habitsList %}
+                            <span>Название привычки</span>
+                            <li>{{ habit.title }}</li>
+                            <span>Количество</span>
+                            <li>{{ habit.goal_in_days }}</li>
+                            <span>Время напоминание</span>
+                            <li>{{ habit.notification_date }}</li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>Нет привычек</p>
+                {% endif %}
+            </section>
+            <section class="no-active" id="tasks">
+                <h2>Задачи</h2>
+                {% if tasksList is defined and tasksList|length > 0 %}
+                    <ul>
+                        {% for task in tasksList %}
+                            <li>{{ task.name }}</li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>Нет задач</p>
+                {% endif %}
+            </section>
+            <section class="active" id="pomodoro">
+                <h2>История Pomodoro</h2>
+                {% if pomodorHistory is defined and pomodorHistory|length > 0 %}
+                    <div class="pomodoro-cards">
+                        {% for record in pomodorHistory %}
+                            <div class="pomodoro-card">
+                                <h3>{{ record.title ?? 'Фокус' }}</h3>
+                                <span>{{ record.startTime }}–{{ record.endTime }}</span>
+                                <div class="period-label">{{ record.periodLabel }}</div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p>Пока нет истории Pomodoro</p>
+                {% endif %}
+            </section>
+        </div>
+    </aside>
+
+
+    <script>
+
+
+        document.querySelectorAll('.tabs a').forEach(tab => {
+            tab.addEventListener("click", (e) => {
+                e.preventDefault();
+                const target = tab.getAttribute("href");
+                document.querySelectorAll('.content section').forEach(section => {
+                    section.classList.add("no-active");
+                    section.classList.remove("active");
+                });
+                const targetSection = document.querySelector(target);
+                if (targetSection) {
+                    targetSection.classList.remove("no-active");
+                    targetSection.classList.add("active");
+                }
+            });
+        });
+
+    </script>
+{% endblock %}

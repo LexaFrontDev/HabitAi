@@ -26,6 +26,18 @@
             background-size: cover;
         }
 
+        a {
+            font-style: normal;
+            text-decoration: none;
+            color: inherit;
+            transition: color 0.3s ease;
+        }
+
+        a:hover {
+            color: #007BFF;
+        }
+
+
         .login-form-wrapper {
             flex: 1;
             display: flex;
@@ -127,6 +139,20 @@
                 max-width: 90%;
             }
         }
+
+        .loading {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            margin: 1rem auto 0 auto;
+        }
+
+        .loading img {
+            width: 64px;
+            height: 64px;
+        }
+
+
     </style>
 {% endblock %}
 
@@ -155,6 +181,11 @@
                     <img src="https://www.svgrepo.com/show/355037/google.svg" alt="Google" style="width: 20px; height: 20px;" />
                     Войти через Google
                 </button>
+                <div id="loading" class="loading">
+                    <img src="{{ asset('StorageImages/Animations/Load.gif') }}" alt="Загрузка...">
+                </div>
+
+                <a href="/users/register">У вас нету аккаунта? Зарегестрироватся</a>
             </form>
         </div>
     </div>
@@ -162,18 +193,22 @@
 
 {% block javascripts %}
     <script>
-        document.getElementById('loginForm').addEventListener('submit', async function (e) {
+        const form = document.getElementById('loginForm');
+        const errorBox = document.getElementById('error-message');
+        const loader = document.getElementById('loading');
+
+        form.addEventListener('submit', async function (e) {
             e.preventDefault();
 
-            const errorBox = document.getElementById('error-message');
             errorBox.style.display = 'none';
             errorBox.innerText = '';
+            loader.style.display = 'flex';
+
 
             const data = {
                 email: document.getElementById('email').value.trim(),
                 password: document.getElementById('password').value,
             };
-
             try {
                 const response = await fetch('/api/auth/login', {
                     method: 'POST',
@@ -184,12 +219,13 @@
                 const resultText = await response.text();
                 let result;
 
-                // Парсим JSON, если возможно
                 try {
                     result = JSON.parse(resultText);
                 } catch (e) {
                     result = { message: resultText };
                 }
+
+                loader.style.display = 'none';
 
                 if (response.ok) {
                     window.location.href = '/';
@@ -201,6 +237,7 @@
                     errorBox.innerText = result.message || 'Произошла неизвестная ошибка';
                 }
             } catch (error) {
+                loader.style.display = 'none';
                 errorBox.style.display = 'block';
                 errorBox.innerText = 'Ошибка соединения с сервером';
                 console.error(error);
@@ -208,4 +245,3 @@
         });
     </script>
 {% endblock %}
-

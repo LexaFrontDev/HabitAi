@@ -22,7 +22,7 @@ class SidebarService implements SidebarServiceInterface
             ),
             new SidebarItemDTO(
                 label: 'Привычки',
-                url: '/habits/list',
+                url: '/habits',
                 icon: 'StorageImages/Icons/HabitsIcon.svg',
             ),
             new SidebarItemDTO(
