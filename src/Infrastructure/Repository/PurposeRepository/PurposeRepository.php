@@ -36,4 +36,14 @@ class PurposeRepository extends ServiceEntityRepository implements PurposeReposi
 
 
 
+    public function getPurposeCountByHabitId(int $habitId): int
+    {
+        return (int) $this->createQueryBuilder('h')
+            ->select('h.count')
+            ->where('h.habitsId = :habitId')
+            ->setParameter('habitId', $habitId)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
 }

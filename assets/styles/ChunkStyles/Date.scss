@@ -1,0 +1,169 @@
+$withModal: 278px;
+$heightModal: 500px;
+
+.date-chunk-modal {
+  background: $card-bg;
+  color: $text-dark;
+  padding: $app-content-padding;
+  border-radius: 35px;
+  width: $withModal;
+  height: $heightModal;
+
+  .tabs {
+    display: flex;
+    justify-content: space-around;
+    background: $navbar-bg;
+    span {
+      cursor: pointer;
+      padding: 0.5rem 1rem;
+      &.active {
+        background: $sideBgColor;
+      }
+    }
+  }
+
+  .calendar-header, .calendar-days {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+  }
+
+  .calendar-days {
+    font-weight: bold;
+    border-bottom: 1px solid $btn-accent;
+  }
+
+  .calendar-body {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .calendar-row {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .cell {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 2px;
+    border-radius: 50%;
+    cursor: pointer;
+
+    &.other-month {
+      opacity: 0.5;
+    }
+
+    &.selected {
+      background: $btn-accent;
+      color: $text-white;
+    }
+
+    &:hover:not(.selected) {
+      background: $btn-hover;
+    }
+  }
+
+
+
+  .time-select{
+
+
+
+  .time-input-wrapper{
+    display: flex;
+
+
+
+    .input-times {
+      background: none;
+      border-radius: 7px;
+      border-color: #fff;
+      width: 205px;
+      color: #ffffff;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      align-items: center;
+      font-family: ui-sans-serif;
+      text-align: center;
+
+      &::-webkit-calendar-picker-indicator {
+        display: none;
+        -webkit-appearance: none;
+      }
+    }
+
+    .close-button{
+      background: none;
+      border: none;
+
+
+
+
+      img{
+        color: whitesmoke;
+        border: white;
+      }
+
+    }
+  }
+
+
+    .times-blocks {
+      display: flex;
+      flex-direction: column;
+      max-height: 200px;
+      overflow-y: auto;
+      border: none;
+      border-radius: 8px;
+      padding: 8px;
+      background: $card-bg;
+    }
+
+    .time-item {
+      padding: 6px 12px;
+      cursor: pointer;
+      border-radius: 6px;
+    }
+
+    .time-item:hover {
+      background: #f0f0f0;
+    }
+
+    .time-item.selected {
+      background: #4CAF50;
+      color: white;
+    }
+
+
+    span {
+      margin: 0.2rem;
+      padding: 0.5rem;
+      cursor: pointer;
+      text-align: center;
+      align-items: center;
+
+
+      &:hover {
+        align-items: center;
+        width: 150px;
+        border-radius: 10px;
+      }
+    }
+  }
+
+
+  .repeat-select{
+
+
+
+
+  }
+
+
+
+}

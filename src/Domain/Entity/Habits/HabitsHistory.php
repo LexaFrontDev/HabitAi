@@ -5,7 +5,7 @@ namespace App\Domain\Entity\Habits;
 use App\Domain\Repository\Habits\HabitsHistoryRepositoryInterface;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: HabitsHistoryRepositoryInterface::class)]
+#[ORM\Entity]
 #[ORM\HasLifecycleCallbacks]
 #[ORM\Index(columns: ['user_id'], name: 'idx_user')]
 #[ORM\Index(columns: ['recorded_at'], name: 'idx_recorded_at')]
