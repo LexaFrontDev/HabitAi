@@ -3,6 +3,7 @@
 namespace App\Infrastructure\Controller\ApiControllers\UsersControllers;
 
 use App\Aplication\UseCase\UsersUseCase\UsersQueryUseCase;
+use App\Infrastructure\Attribute\RequiresJwt;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,6 +15,7 @@ class UsersController extends AbstractController
     public function __construct(private UsersQueryUseCase $usersQueryUseCase) {}
 
     #[Route('/api/web/user/id', name: 'get_users_id', methods: ['GET'])]
+    #[RequiresJwt]
     public function getUserId(Request $request): JsonResponse
     {
         try {
@@ -26,6 +28,9 @@ class UsersController extends AbstractController
             return new JsonResponse(['error' => 'Вы не авторизованы'], 401);
         }
     }
+
+
+
 
 
 }

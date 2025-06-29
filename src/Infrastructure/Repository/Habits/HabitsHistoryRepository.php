@@ -23,29 +23,38 @@ class HabitsHistoryRepository extends ServiceEntityRepository implements HabitsH
      * Сохраняеть прогресс привычек или обновляеть в зависимости от id в @SaveHabitsProgress
      * @return int|bool
      */
-    public function saveProgress(SaveHabitsProgress $saveHabitsProgress): int|false
+    public function saveProgress(SaveHabitsProgress $saveHabitsProgress, int $countPurposes): int|false
     {
-        if (!empty($saveHabitsProgress->getId())) {
-            $entity = $this->getEntityManager()->getRepository(HabitsHistory::class)->find($saveHabitsProgress->getId());
+        $em = $this->getEntityManager();
+        $repo = $em->getRepository(HabitsHistory::class);
 
-            if (!$entity) {
-                return false;
-            }
-        } else {
+        $todayStart = (new \DateTimeImmutable('today'))->setTime(0, 0);
+        $todayEnd = $todayStart->setTime(23, 59, 59);
+        $entity = $repo->createQueryBuilder('h')
+            ->where('h.habits_id = :habitId')
+            ->andWhere('h.userId = :userId')
+            ->andWhere('h.recordedAt BETWEEN :start AND :end')
+            ->setParameter('habitId', $saveHabitsProgress->getHabitsId())
+            ->setParameter('userId', $saveHabitsProgress->getUserId())
+            ->setParameter('start', $todayStart)
+            ->setParameter('end', $todayEnd)
+            ->getQuery()
+            ->getOneOrNullResult();
+
+        if (!$entity) {
             $entity = new HabitsHistory();
+            $entity->setHabitsId($saveHabitsProgress->getHabitsId());
             $entity->setUserId($saveHabitsProgress->getUserId());
             $entity->setRecordedAt(new \DateTimeImmutable());
         }
-
-        $entity->setCount($saveHabitsProgress->getCount());
+        $entity->setCount($countPurposes);
         $entity->setCountEnd($saveHabitsProgress->getCountEnd());
-        $entity->setIsDone($saveHabitsProgress->getCount() === $saveHabitsProgress->getCountEnd());
-
-        $this->getEntityManager()->persist($entity);
-        $this->getEntityManager()->flush();
-
+        $entity->setIsDone($countPurposes === $saveHabitsProgress->getCountEnd());
+        $em->persist($entity);
+        $em->flush();
         return $entity->getId();
     }
+
 
 
 

@@ -15,7 +15,6 @@ interface AuthTokenServiceInterface
     public function getTokens(Request $request): array;
 
 
-
     /**
      * @param string $accessToken
      * @param string $refreshToken

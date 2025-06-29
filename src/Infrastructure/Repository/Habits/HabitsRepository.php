@@ -55,9 +55,11 @@ class HabitsRepository extends ServiceEntityRepository implements HabitsReposito
 
         $sql = "
                     SELECT 
+                        h.id AS habit_id,
                         h.*, 
                         p.*,
                         p.count AS count_purposes, 
+                        hh.id AS habit_history_id,
                         hh.*, 
                         hdj.data_type,
                         dd.*, dw.*, dr.*

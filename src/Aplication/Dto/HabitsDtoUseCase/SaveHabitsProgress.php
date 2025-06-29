@@ -6,11 +6,10 @@ class SaveHabitsProgress
 {
 
     public function __construct(
-        private ?int $id = null,
-        private ?int $count = null,
-        private ?int $habits_id = null,
-        private ?int $count_end = null,
-        private ?int $userId = null,
+        public ?int $id = null,
+        public ?int $habits_id,
+        public ?int $count_end = null,
+        public ?int $userId = null,
     ){}
 
 

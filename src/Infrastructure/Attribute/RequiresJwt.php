@@ -2,10 +2,9 @@
 
 namespace App\Infrastructure\Attribute;
 
-#[\Attribute(\Attribute::TARGET_METHOD | \Attribute::TARGET_CLASS)]
+#[\Attribute(\Attribute::TARGET_METHOD)]
 class RequiresJwt
 {
-    public function __construct(
-        public bool $useHeader = false
-    ) {}
+    public function __construct(public bool $useHeader = false) {}
 }
+

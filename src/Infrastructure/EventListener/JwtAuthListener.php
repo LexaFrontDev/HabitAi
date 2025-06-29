@@ -13,6 +13,8 @@ use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
+use Symfony\Component\HttpFoundation\Request;
+
 
 #[AsEventListener(event: KernelEvents::CONTROLLER)]
 class JwtAuthListener
@@ -55,14 +57,20 @@ class JwtAuthListener
         return $attributes ? $attributes[0]->newInstance() : null;
     }
 
-    private function checkTokens(\Symfony\Component\HttpFoundation\Request $request, bool $useHeader): void
+    private function checkTokens(Request $request, bool $useHeader): void
     {
-        $access = $useHeader ? $request->headers->get('access-token', '') : $request->cookies->get('accessToken', '');
-        $refresh = $useHeader ? $request->headers->get('refresh-token', '') : $request->cookies->get('refreshToken', '');
-        $dto = new JwtCheckDto($access, $refresh);
+        $access = $request->cookies->get('accessToken');
+        $refresh = $request->cookies->get('refreshToken');
+        if (!$access && !$refresh) {
+            $access = $request->headers->get('access-token', '');
+            $refresh = $request->headers->get('refresh-token', '');
+        }
+
+        $dto = new JwtCheckDto($access ?? '', $refresh ?? '');
 
         try {
             $result = $this->jwtService->validateToken($dto);
+
             if ($result instanceof JwtTokenDto) {
                 $request->attributes->set('newTokens', $result);
                 $this->newTokens = $result;
@@ -78,6 +86,11 @@ class JwtAuthListener
     {
         if ($this->isApiRequest($request)) {
             throw new UnauthorizedHttpException('Bearer', 'JWT is invalid or expired');
+        }
+
+        $currentPath = $request->getPathInfo();
+        if ($currentPath === '/users/login') {
+            return;
         }
 
         $response = new RedirectResponse('/users/login');
