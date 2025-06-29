@@ -41,7 +41,7 @@
             sun: false
         },
         beginDate: Math.floor(Date.now() / 1000),
-        notificationDate: '08:30',
+        notificationDate: '',
         purposeType: 'count',
         purposeCount: 1,
         checkManually: false,

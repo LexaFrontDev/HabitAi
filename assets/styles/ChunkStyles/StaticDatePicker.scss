@@ -1,0 +1,221 @@
+$withModal: 278px;
+$heightModal: 350px;
+$app-content-padding: 1rem;
+
+.static-date-container {
+  position: relative;
+  display: inline-block;
+
+  .dropdown-trigger {
+    padding: 0.5rem 1rem;
+    border: 1px solid rgba($btn-accent, 0.2);
+    border-radius: 20px;
+    cursor: pointer;
+    background-color: $card-bg;
+    color: $text-dark;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+
+    &:hover {
+      border-color: rgba($btn-accent, 0.4);
+    }
+  }
+}
+
+.modal-container {
+  position: absolute;
+  z-index: 1000;
+  width: $withModal;
+  height: $heightModal;
+  user-select: none;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.date-picker-modal {
+  background: $card-bg;
+  color: $text-dark;
+  padding: $app-content-padding;
+  border-radius: 35px;
+  width: 135%;
+  height: 150%;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+
+  .modal-header {
+    padding: 0.5rem 0;
+    margin-bottom: 0.5rem;
+    border-bottom: 1px solid rgba($btn-accent, 0.2);
+
+    &.draggable {
+      cursor: move;
+    }
+
+    h3 {
+      margin: 0;
+      text-align: center;
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+  }
+
+  .date-picker-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .calendar-header, .calendar-days {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    align-items: center;
+  }
+
+  .calendar-header {
+    button {
+      background: $navbar-bg;
+      border: none;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: $text-dark;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: $btn-hover;
+      }
+    }
+
+    span {
+      font-weight: 500;
+    }
+  }
+
+  .calendar-days {
+    font-weight: bold;
+    border-bottom: 1px solid rgba($btn-accent, 0.2);
+    margin-bottom: 0.5rem;
+  }
+
+  .calendar-body {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+
+  .calendar-row {
+    display: flex;
+    justify-content: space-between;
+    margin: 0.15rem 0;
+  }
+
+  .cell {
+    position: relative;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 2px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.9rem;
+
+    &.other-month {
+      opacity: 0.5;
+    }
+
+    &.selected {
+      background: rgba($btn-accent, 0.2);
+      color: $text-dark;
+      font-weight: bold;
+    }
+
+    &:hover:not(.selected) {
+      background: $btn-hover;
+      color: $text-dark;
+    }
+
+    &.has-task {
+      background: rgba($btn-accent, 0.05);
+    }
+
+    .day-number {
+      font-weight: 500;
+      margin-bottom: 2px;
+    }
+
+    .task-progress {
+      position: absolute;
+      bottom: -8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      svg {
+        width: 16px;
+        height: 16px;
+      }
+
+      .progress-text {
+        font-size: 8px;
+        font-weight: bold;
+        color: $btn-accent;
+        margin-top: 1px;
+      }
+    }
+  }
+
+  .modal-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba($btn-accent, 0.2);
+
+    button {
+      padding: 0.5rem 1.5rem;
+      border-radius: 20px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-weight: 500;
+      background: rgba($btn-accent, 0.1);
+      color: $text-dark;
+
+      &:hover {
+        background: rgba($btn-accent, 0.3);
+      }
+    }
+  }
+}
+
+.calendar-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px 0;
+}
+
+.habit-navigation, .month-navigation {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+}
+
+.habit-title {
+  font-weight: bold;
+  min-width: 150px;
+  text-align: center;
+}

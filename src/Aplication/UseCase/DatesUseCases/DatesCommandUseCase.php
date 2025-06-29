@@ -4,14 +4,15 @@ namespace App\Aplication\UseCase\DatesUseCases;
 
 use App\Aplication\Dto\DatesDto\DatesDailyForSaveDto;
 use App\Aplication\Dto\DatesDto\ReqDataJunction;
-use App\Domain\Repository\DatesRepository\DataJunctionRepositoryInterface;
-use App\Domain\Repository\DatesRepository\DatesDailyRepositoryInterface;
+use App\Domain\Repository\Dates\DataJunctionRepositoryInterface;
+use App\Domain\Repository\Dates\DatesDailyRepositoryInterface;
 use App\Domain\Repository\DatesWeekly\DatesWeeklyRepositoryInterface;
-use App\Domain\Repository\DayesRepeatRepository\DatesRepeatRepositoryInterface;
+use App\Domain\Repository\DayesRepeat\DatesRepeatRepositoryInterface;
 use App\Domain\Repository\Habits\HabitsRepositoryInterface;
-use App\Domain\Repository\PurposeRepository\PurposeRepositoryInterface;
+use App\Domain\Repository\Purpose\PurposeRepositoryInterface;
 use App\Domain\Service\JwtServicesInterface;
-use App\Domain\Service\Tokens\AuthTokenServiceInterface;
+use Exception;
+
 
 class DatesCommandUseCase
 {
@@ -21,7 +22,6 @@ class DatesCommandUseCase
         private DatesDailyRepositoryInterface $datesDailyRepository,
         private DatesRepeatRepositoryInterface $datesRepeatRepository,
         private DataJunctionRepositoryInterface $dataJunctionRepository,
-        private AuthTokenServiceInterface $authTokenService,
         private JwtServicesInterface $jwtServices,
     ){}
 
@@ -61,6 +61,66 @@ class DatesCommandUseCase
         $datesJunction = new ReqDataJunction($habitsId, $isSucces, $datesType);
         return $this->dataJunctionRepository->saveDateJunction($datesJunction);
     }
+
+
+    /**
+     * @throws Exception
+     */
+    public function saveOrUpdateDatesByHabitsId(int $habitsId, array $dates, string $types): bool
+    {
+        $dto = $this->getDatesDto($types, $dates);
+        $junction = $this->dataJunctionRepository->getDateJunctionByHabitsId($habitsId);
+
+        if ($junction) {
+            $oldType = $junction->getDataType();
+            $oldDataId = $junction->getDataId();
+
+            if ($oldType !== $types) {
+                match ($oldType) {
+                    'daily' => $this->datesDailyRepository->deleteDatesDaily($oldDataId),
+                    'weekly' => $this->datesWeeklyRepository->deleteDatesWeekly($oldDataId),
+                    'repeat' => $this->datesRepeatRepository->deleteDatesRepeat($oldDataId),
+                    default => null,
+                };
+
+                $newDataId = match (true) {
+                    $dto instanceof DatesDailyForSaveDto => $this->datesDailyRepository->saveDates($dto),
+                    isset($dto['count']) => $this->datesWeeklyRepository->saveDatesWeekly($dto['count']),
+                    isset($dto['day']) => $this->datesRepeatRepository->saveDatesRepeat($dto['day']),
+                    default => null,
+                };
+
+
+
+                $this->dataJunctionRepository->updateDataTypeAndId($junction->getId(), $habitsId, $types, $newDataId);
+
+                return true;
+            }
+
+            return match (true) {
+                $dto instanceof DatesDailyForSaveDto => $this->datesDailyRepository->updateDates($oldDataId, $dto),
+                isset($dto['count']) => $this->datesWeeklyRepository->updateDatesWeekly($oldDataId, $dto['count']),
+                isset($dto['day']) => $this->datesRepeatRepository->updateDatesRepeat($oldDataId, $dto['day']),
+                default => false,
+            };
+        }
+
+        $newDataId = match (true) {
+            $dto instanceof DatesDailyForSaveDto => $this->datesDailyRepository->saveDates($dto),
+            isset($dto['count']) => $this->datesWeeklyRepository->saveDatesWeekly($dto['count']),
+            isset($dto['day']) => $this->datesRepeatRepository->saveDatesRepeat($dto['day']),
+            default => null,
+        };
+
+        if (!$newDataId) return false;
+
+        $this->dataJunctionRepository->createJunction($habitsId, $types, $newDataId);
+
+        return true;
+    }
+
+
+
 
 
 

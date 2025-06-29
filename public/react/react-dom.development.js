@@ -2469,7 +2469,7 @@
     node.textContent = text;
   };
 
-  // List derived from Gecko source code:
+  // ListType derived from Gecko source code:
   // https://github.com/mozilla/gecko-dev/blob/4e638efc71/layout/style/test/property_database.js
   var shorthandToLonghand = {
     animation: ['animationDelay', 'animationDirection', 'animationDuration', 'animationFillMode', 'animationIterationCount', 'animationName', 'animationPlayState', 'animationTimingFunction'],
@@ -9036,7 +9036,7 @@
       extractEvents$3(dispatchQueue, domEventName, targetInst, nativeEvent, nativeEventTarget);
       extractEvents(dispatchQueue, domEventName, targetInst, nativeEvent, nativeEventTarget);
     }
-  } // List of events that need to be individually attached to media elements.
+  } // ListType of events that need to be individually attached to media elements.
 
 
   var mediaEventTypes = ['abort', 'canplay', 'canplaythrough', 'durationchange', 'emptied', 'encrypted', 'ended', 'error', 'loadeddata', 'loadedmetadata', 'loadstart', 'pause', 'play', 'playing', 'progress', 'ratechange', 'resize', 'seeked', 'seeking', 'stalled', 'suspend', 'timeupdate', 'volumechange', 'waiting']; // We should not delegate these events to the container, but rather

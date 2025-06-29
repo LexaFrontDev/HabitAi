@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import Sidebar from '../../Chunk/Sidebar';
-import Loading from "../../Chunk/LoadingChunk/Loading";
-import HabitModal from "../../Chunk/Habits/HabitsModal";
-
+import Sidebar from '../chunk/SideBar';
+import Loading from "../chunk/LoadingChunk/Loading";
+import HabitModal from "../chunk/Habits/HabitsModal";
 
 const HabitsPage = () => {
     const [habits, setHabits] = useState([]);
@@ -10,21 +9,43 @@ const HabitsPage = () => {
     const [manualInputValue, setManualInputValue] = useState('');
     const [currentHabitId, setCurrentHabitId] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
-
+    const [currentPeriod, setCurrentPeriod] = useState('');
+    const [editingHabit, setEditingHabit] = useState(null);
+    const [status, setStatus] = useState(null);
 
 
     useEffect(() => {
-        fetch('/api/get/habits/today', { method: 'POST' })
-            .then(res => res.json())
-            .then(data => {
-                console.log('Ответ от API', data);
-                setHabits(data?.data || []);
-            });
+        fetchHabits();
     }, []);
 
+    const fetchHabits = () => {
+        const hours = new Date().getHours();
+        let period = 'other';
+        if (hours >= 5 && hours < 12) period = 'morning';
+        else if (hours >= 18 || hours < 5) period = 'night';
 
-    if (!habits || habits.length === 0) return <Loading />
+        setCurrentPeriod(period);
 
+        fetch('/api/get/habits/today', { method: 'GET' })
+            .then(async res => {
+                setStatus(res.status);
+                const data = await res.json();
+                if (res.ok) {
+                    setHabits(data?.data || []);
+                } else {
+                    console.error('Ошибка при получении привычек:', data);
+                    setHabits([]);
+                }
+            })
+            .catch(err => {
+                setStatus(400);
+                console.error('Ошибка сети:', err);
+                setHabits([]);
+            });
+    };
+
+
+    if (!habits || habits.length === 0 && status === 200) return <Loading />
 
     const handleProgressClick = async (habit) => {
         if (habit.is_done) return;
@@ -40,25 +61,61 @@ const HabitsPage = () => {
         }
     };
 
-
     const handleSave = async (habitData) => {
-        console.log('Saving habit:', habitData);
         try {
-            const response = await fetch('/api/habits/save', {
-                method: 'POST',
+            const url = editingHabit
+                ? `/api/habits/update/${editingHabit.habit_id}`
+                : '/api/habits/save';
+
+            const method = editingHabit ? 'PUT' : 'POST';
+
+            const response = await fetch(url, {
+                method: method,
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(habitData),
             });
+
+            console.log(habitData);
+
             const result = await response.json();
+
             if (result.success) {
-                alert('Привычка сохранена!');
+                alert(editingHabit ? 'Привычка обновлена!' : 'Привычка сохранена!');
                 setIsModalOpen(false);
+                setEditingHabit(null);
+                fetchHabits();
             } else {
                 alert(result.message || 'Ошибка сохранения данных!');
             }
         } catch (error) {
-            console.error(error);
             alert('Произошла ошибка! Попробуйте позже.');
+        }
+    };
+
+    const handleEdit = (habit) => {
+        console.log(habits)
+        setEditingHabit(habit);
+        setIsModalOpen(true);
+    };
+
+    const handleDelete = async (habitId) => {
+        if (window.confirm('Вы уверены, что хотите удалить эту привычку?')) {
+            try {
+                const response = await fetch(`/api/habits/delete/${habitId}`, {
+                    method: 'DELETE',
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('Привычка удалена!');
+                    fetchHabits();
+                } else {
+                    alert(result.message || 'Ошибка удаления привычки!');
+                }
+            } catch (error) {
+                alert('Произошла ошибка! Попробуйте позже.');
+            }
         }
     };
 
@@ -127,28 +184,33 @@ const HabitsPage = () => {
     const renderHabitsBlock = (title, filteredHabits, blockName) => {
         if (!filteredHabits.length) return null;
 
+        const shouldDisplay = blockName === currentPeriod ? 'block' : 'none';
+
         return (
-            <div className="habits-group card">
+            <div className="habits-group">
                 <h3 className="toggle-header" onClick={() => toggleBlock(blockName)}>
-                    {title} <span className="toggle-icon" id={`icon-${blockName}`}>▶</span>
+                    <span className="toggle-icon" id={`icon-${blockName}`}>▶</span> {title}
                 </h3>
-                <ul id={blockName} className="habits-items" style={{ display: 'none' }}>
+                <ul id={blockName} className="habits-items" style={{display: shouldDisplay}}>
                     {filteredHabits.map(habit => (
                         <li
                             key={habit.habit_id}
                             data-habit-id={habit.habit_id}
                             data-is-done={habit.is_done || false}
                         >
-                            <img src={habit.icon_url || '/images/default-icon.png'} alt={habit.title} className="habit-icon" />
                             <div className="habit-text">
-                                <strong>{habit.title}</strong><br />
+                                <strong>{habit.title}</strong><br/>
                                 <small>{habit.notification_date}</small>
                                 <small>{habit.type}</small>
-                                <small>{habit.count}</small>
+                                <div className="habit-actions">
+                                    <button onClick={() => handleEdit(habit)} className="edit-button">✏️</button>
+                                    <button onClick={() => handleDelete(habit.habit_id)} className="delete-button">🗑️</button>
+                                </div>
                             </div>
                             <div className="habit-progress" onClick={() => handleProgressClick(habit)}>
                                 <svg className="progress-circle" width="40" height="40" viewBox="0 0 40 40">
-                                    <circle className="progress-circle-background" cx="20" cy="20" r="18" strokeWidth="4" fill="none" />
+                                    <circle className="progress-circle-background" cx="20" cy="20" r="18"
+                                            strokeWidth="4" fill="none"/>
                                     <circle
                                         className={`progress-circle-fill ${habit.is_done ? 'completed' : ''}`}
                                         cx="20"
@@ -169,8 +231,6 @@ const HabitsPage = () => {
         );
     };
 
-
-
     const morningHabits = habits.filter(h => h.period === 'morning');
     const nightHabits = habits.filter(h => h.period === 'night');
     const otherHabits = habits.filter(h => h.period !== 'morning' && h.period !== 'night');
@@ -184,8 +244,10 @@ const HabitsPage = () => {
                 </div>
                 <div className="nav-center-side">
                     <div className="add-habit">
-
-                        <button onClick={() => setIsModalOpen(true)} id="addHabitButton" className="add-habit-button" title="Добавить привычку">
+                        <button onClick={() => {
+                            setEditingHabit(null);
+                            setIsModalOpen(true);
+                        }} id="addHabitButton" className="add-habit-button" title="Добавить привычку">
                             <svg xmlns="http://www.w3.org/2000/svg"
                                  viewBox="0 0 24 24"
                                  width="48"
@@ -202,8 +264,13 @@ const HabitsPage = () => {
                         </button>
                         {isModalOpen && (
                             <HabitModal
-                                onClose={() => setIsModalOpen(false)}
+                                onClose={() => {
+                                    setIsModalOpen(false);
+                                    setEditingHabit(null);
+                                }}
                                 onSave={handleSave}
+                                edit={true}
+                                editData={editingHabit}
                             />
                         )}
                     </div>

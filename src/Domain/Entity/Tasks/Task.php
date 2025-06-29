@@ -13,27 +13,49 @@ class Task
     #[ORM\Column(type: "integer")]
     private ?int $id = null;
 
-
-    #[ORM\Column(type: "integer", nullable: true)]
-    private ?int $purposeId = null;
-
-    #[ORM\Column(type: "string")]
-    private string $taskType;
-
     #[ORM\Column(type: "string")]
     private string $titleTask;
 
     #[ORM\Column(type: "integer", nullable: true)]
-    private ?int $notificationId = null;
+    private ?int $purposeId = null;
+
+    #[ORM\Column(type: "integer", nullable: false)]
+    private int $userId;
+
+
+    #[ORM\Column(type: "text", nullable: true)]
+    private ?string $description = null;
+
+
+    #[ORM\Column(type: "string", nullable: true)]
+    private ?string $time = null;
+
+    #[ORM\Column(type: "string", nullable: true)]
+    private ?string $startDate = null;
+
+    #[ORM\Column(type: "string", nullable: true)]
+    private ?string $startTime = null;
+
+    #[ORM\Column(type: "string", nullable: true)]
+    private ?string $endDate = null;
+
+    #[ORM\Column(type: "string", nullable: true)]
+    private ?string $endTime = null;
+
+    #[ORM\Column(type: "string", nullable: true)]
+    private ?string $repeatMode  = null;
 
     #[ORM\Column(type: "datetime", nullable: true)]
     private ?\DateTimeInterface $beginDate = null;
 
-    #[ORM\Column(type: "datetime", nullable: true)]
-    private ?\DateTimeInterface $dueDate = null;
+#[ORM\Column(type: 'datetime', nullable: true)]
+private ?\DateTimeInterface $created_at = null;
 
+   #[ORM\Column(type: 'datetime', nullable: true)]
+private ?\DateTimeInterface $updated_at = null;
 
-
+    #[ORM\Column(type: 'boolean')]
+    private bool $is_delete = false;
 
     // ======= Getters & Setters =======
 
@@ -48,16 +70,89 @@ class Task
         return $this;
     }
 
-
-    public function getTaskType(): string
+    public function getPurposeId(): ?int
     {
-        return $this->taskType;
+        return $this->purposeId;
     }
 
-    public function setTaskType(string $taskType): self
+    public function setPurposeId(?int $purposeId): self
     {
-        $this->taskType = $taskType;
+        $this->purposeId = $purposeId;
         return $this;
+    }
+
+
+
+    public function getTime(): ?string
+    {
+        return $this->time;
+    }
+
+    public function setTime(?string $time): self
+    {
+        $this->time = $time;
+        return $this;
+    }
+
+    public function getStartDate(): ?string
+    {
+        return $this->startDate;
+    }
+
+    public function setStartDate(?string $startDate): self
+    {
+        $this->startDate = $startDate;
+        return $this;
+    }
+
+    public function getStartTime(): ?string
+    {
+        return $this->startTime;
+    }
+
+    public function setStartTime(?string $startTime): self
+    {
+        $this->startTime = $startTime;
+        return $this;
+    }
+
+    public function getEndDate(): ?string
+    {
+        return $this->endDate;
+    }
+
+    public function setEndDate(?string $endDate): self
+    {
+        $this->endDate = $endDate;
+        return $this;
+    }
+
+    public function getEndTime(): ?string
+    {
+        return $this->endTime;
+    }
+
+    public function setEndTime(?string $endTime): self
+    {
+        $this->endTime = $endTime;
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getRepeatMode(): ?string
+    {
+        return $this->repeatMode;
+    }
+
+
+    /**
+     * @param string|null $repeatMode
+     */
+    public function setRepeatMode(?string $repeatMode): void
+    {
+        $this->repeatMode = $repeatMode;
     }
 
     public function getTitleTask(): string
@@ -73,19 +168,6 @@ class Task
 
 
 
-
-
-    public function getNotificationId(): ?int
-    {
-        return $this->notificationId;
-    }
-
-    public function setNotificationId(?int $notificationId): self
-    {
-        $this->notificationId = $notificationId;
-        return $this;
-    }
-
     public function getBeginDate(): ?\DateTimeInterface
     {
         return $this->beginDate;
@@ -97,26 +179,70 @@ class Task
         return $this;
     }
 
-    public function getDueDate(): ?\DateTimeInterface
+    /**
+     * @param int $userId
+     */
+    public function setUserId(int $userId): void
     {
-        return $this->dueDate;
+        $this->userId = $userId;
     }
 
-    public function setDueDate(?\DateTimeInterface $dueDate): self
+
+    /**
+     * @return int
+     */
+    public function getUserId(): int
     {
-        $this->dueDate = $dueDate;
+        return $this->userId;
+    }
+
+    /**
+     * @param string|null $description
+     */
+    public function setDescription(?string $description): void
+    {
+        $this->description = $description;
+    }
+
+
+    /**
+     * @return string|null
+     */
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->created_at;
+    }
+
+    public function setCreatedAt(?\DateTimeInterface $created_at): self
+    {
+        $this->created_at = $created_at;
         return $this;
     }
 
-
-    public function getPurposeId(): ?int
+    public function getUpdatedAt(): ?\DateTimeInterface
     {
-        return $this->purposeId;
+        return $this->updated_at;
     }
 
-    public function setPurposeId(?int $purposeId): self
+    public function setUpdatedAt(?\DateTimeInterface $updated_at): self
     {
-        $this->purposeId = $purposeId;
+        $this->updated_at = $updated_at;
+        return $this;
+    }
+
+    public function getis_delete(): bool
+    {
+        return $this->is_delete;
+    }
+
+    public function setis_delete(bool $is_delete): self
+    {
+        $this->is_delete = $is_delete;
         return $this;
     }
 }

@@ -35,7 +35,7 @@ class PomodorHistoryRepository extends ServiceEntityRepository implements Pomodo
         $history->setFocusStart($focusStart);
         $history->setFocusEnd($focusEnd);
         $history->setCreateDate($createDate);
-        $history->setIsDelete(0);
+        $history->setis_delete(0);
         $em = $this->getEntityManager();
         $em->persist($history);
         $em->flush();
@@ -51,7 +51,7 @@ class PomodorHistoryRepository extends ServiceEntityRepository implements Pomodo
         if (!$entity) {
             return false;
         }
-        $entity->setIsDelete(1);
+        $entity->setis_delete(1);
         $this->getEntityManager()->flush();
         return true;
     }

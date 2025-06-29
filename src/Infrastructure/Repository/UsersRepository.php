@@ -22,13 +22,23 @@ class UsersRepository extends ServiceEntityRepository implements UsersRepository
 
     public function findByEmail(string $email): Users|bool
     {
-        $user = $this->findOneBy(['email' => $email]);
+        $user = $this->createQueryBuilder('u')
+            ->where('u.email = :email')
+            ->andWhere('u.is_delete = 0')
+            ->setParameter('email', $email)
+            ->getQuery()
+            ->getOneOrNullResult();
         return $user ?? false;
     }
 
     public function findById(int $id): Users|bool
     {
-        $user = $this->find($id);
+        $user = $this->createQueryBuilder('u')
+            ->where('u.id = :id')
+            ->andWhere('u.is_delete = 0')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult();
         return $user ?? false;
     }
 

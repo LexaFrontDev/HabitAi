@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Aplication\Dto\TasksDto;
+
+class TasksForSaveDto
+{
+    public function __construct(
+        public readonly string $title,
+        public readonly ?string $description = null,
+        public readonly TasksDateDto $timeData,
+    ) {}
+
+
+}

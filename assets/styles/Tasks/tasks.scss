@@ -1,0 +1,278 @@
+.resizable-container {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 100%;
+  display: flex;
+  background: $card-bg;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: none;
+  z-index: 9999;
+}
+
+
+
+.resize-handle {
+  width: 10px;
+  height: 100%;
+  cursor: col-resize;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 10;
+  background-color: rgba(0, 0, 0, 0.1);
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.2);
+  }
+
+  &.left {
+    left: 0;
+  }
+
+  &.right {
+    right: 0;
+  }
+}
+
+
+
+
+
+
+
+
+.block-add-tasks {
+  min-width: 400px;
+  max-width: 1200px;
+  border-radius: 15px;
+  background: $card-bg;
+  padding: 10px 16px;
+  transition: width 0.2s ease;
+
+  .input-tasks {
+    position: relative;
+    border-radius: 4px;
+    padding: 0;
+    border: 2px solid transparent;
+    transition: border 0.2s ease;
+
+    &:focus-within {
+      border-color: #ccc;
+    }
+
+    .input-tasks-title {
+      width: 100%;
+      border: none;
+      outline: none;
+      background: none;
+      padding: 8px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      padding: 8px;
+    }
+  }
+
+  .tasks-list {
+    margin-top: 20px;
+
+    .task-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px;
+      margin-bottom: 10px;
+      background: lighten($card-bg, 5%);
+      border-radius: 8px;
+      position: relative;
+
+      .task-content {
+        flex: 1;
+
+        .task-title {
+          margin: 0 0 5px 0;
+          font-size: 16px;
+        }
+
+        .task-description {
+          margin: 0;
+          font-size: 14px;
+          color: #999;
+        }
+      }
+
+      .task-time {
+        margin: 0 15px;
+        color: #666;
+      }
+
+      .task-actions {
+        position: relative;
+
+        .dots-menu {
+          cursor: pointer;
+
+          .dots {
+            font-size: 20px;
+            padding: 5px;
+          }
+
+          .dropdown-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            z-index: 10;
+
+            button {
+              display: block;
+              width: 100%;
+              padding: 8px 16px;
+              text-align: left;
+              background: none;
+              border: none;
+              cursor: pointer;
+
+              &:hover {
+                background: #f5f5f5;
+              }
+            }
+          }
+
+          &:hover .dropdown-menu {
+            display: block;
+          }
+        }
+      }
+    }
+  }
+}
+
+.edit-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+
+  .modal-content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    width: 400px;
+
+    h3 {
+      margin-top: 0;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+
+    textarea {
+      min-height: 100px;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+
+      button {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+
+        &:last-child {
+          background: #4CAF50;
+          color: white;
+        }
+      }
+    }
+  }
+}
+
+/* Styling for tasks marked as "Won't do" */
+.task-item.wont-do .task-title,
+.task-item.wont-do .task-description {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+/* Checkbox styling */
+.wont-do-checkbox {
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+/* Task header layout */
+.task-header {
+  display: flex;
+  align-items: flex-start;
+}
+
+/* Date section styling in edit modal */
+.date-section {
+  margin: 10px 0;
+  cursor: pointer;
+  color: #007bff;
+}
+
+.date-section:hover {
+  text-decoration: underline;
+}
+
+
+.header-container{
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: nowrap;
+
+
+  .header-title{
+    font-family: "Lucida Grande", "Lucida Sans Unicode", Verdana, Arial, Helvetica, sans-serif;
+    font-weight: bold;
+
+  }
+
+  .header-button{
+    background: none;
+    color: #ffffff;
+    border: none;
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    img {
+      width: 24px;
+      height: 24px;
+      filter: brightness(0) invert(1);
+      cursor: pointer;
+    }
+  }
+}

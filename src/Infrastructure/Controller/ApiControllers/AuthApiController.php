@@ -9,6 +9,7 @@ use App\Aplication\UseCase\AuthUseCase\UsersAuth;
 use App\Aplication\UseCase\Service\JwtTokens\JwtUseCase;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -51,6 +52,19 @@ class AuthApiController extends AbstractController
 
         return new JsonResponse(['message' => 'not authenticated'], 401);
     }
+
+
+    #[Route('/api/logout', name: 'api_logout', methods: ['GET'])]
+    public function logout(): RedirectResponse
+    {
+        $response = $this->redirect('/');
+
+        $response->headers->clearCookie('accessToken', '/');
+        $response->headers->clearCookie('refreshToken', '/');
+
+        return $response;
+    }
+
 
     #[Route('/api/auth/login', name: 'api_login', methods: ['POST'])]
     public function login(

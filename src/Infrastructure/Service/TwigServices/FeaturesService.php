@@ -16,19 +16,19 @@ class FeaturesService implements FeaturesServiceInterface
             new FeatureDTO(
                 title: 'Таймер помодор',
                 desc: 'Фокусируйся эффективно.',
-                icon: 'Icons/PomodorIcons.svg',
+                icon: 'Upload/Images/Pomodor/clock.svg',
                 url: '/pomodoro',
             ),
             new FeatureDTO(
                 title: 'Список Привычек',
                 desc: 'Формируй полезные действия.',
-                icon: 'Icons/HabitsIcon.svg',
+                icon: 'Upload/Images/Habits/bar-chart-2.svg',
                 url: '/habits',
             ),
             new FeatureDTO(
                 title: 'Матрица Эйзенхауэра',
                 desc: 'Сортируй задачи умно.',
-                icon: 'eisenhower.svg',
+                icon: 'Upload/Images/AppIcons/hexagon.svg',
                 url: '/eisenhower',
             ),
             new FeatureDTO(

@@ -6,7 +6,7 @@ use App\Domain\Entity\Habits\Habit;
 use App\Domain\Entity\Purpose\Purpose;
 use App\Domain\Repository\Habits\HabitsRepositoryInterface;
 use App\Domain\Service\JwtServicesInterface;
-use App\Domain\Service\Tokens\AuthTokenServiceInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 class QueryHabbitsUseCase
@@ -16,8 +16,8 @@ class QueryHabbitsUseCase
 
     public function __construct(
         private HabitsRepositoryInterface $habitsRepository,
-        private AuthTokenServiceInterface $authTokenService,
         private JwtServicesInterface $jwtServices,
+        private LoggerInterface $logger
     ){}
 
 
@@ -25,7 +25,7 @@ class QueryHabbitsUseCase
 
     public function getHabitsForDate(Request $request): array
     {
-        $token = $this->authTokenService->getTokens($request);
+        $token = $this->jwtServices->getTokens($request);
         $userId = $this->jwtServices->getUserInfoFromToken($token['accessToken'])->getUserId();
         $dateString = $request->query->get('date');
         if (!$dateString) {
@@ -52,32 +52,69 @@ class QueryHabbitsUseCase
 
     public function getHabitsForToday(Request $request): array
     {
-        $token = $this->authTokenService->getTokens($request);
+        try {
+            $token = $this->jwtServices->getTokens($request);
+            $userId = $this->jwtServices->getUserInfoFromToken($token['accessToken'])->getUserId();
+
+            $dayOfWeekNumber = date('N');
+            $dayOfMonth = date('d');
+            $month = date('m');
+
+            $results = $this->habitsRepository->getHabitsForToday($dayOfMonth, $dayOfWeekNumber, $month, $userId);
+
+            if (empty($results)) {
+                return [];
+            }
+
+            $data = [];
+            foreach ($results as $row) {
+                $getTestMorgning = $this->determineTimePeriod($row['notification_date']);
+                $row['period'] = $getTestMorgning;
+
+                $row['date'] = [
+                    'mon' => (bool)$row['mon'],
+                    'tue' => (bool)$row['tue'],
+                    'wed' => (bool)$row['wed'],
+                    'thu' => (bool)$row['thu'],
+                    'fri' => (bool)$row['fri'],
+                    'sat' => (bool)$row['sat'],
+                    'sun' => (bool)$row['sun'],
+                ];
+
+                $data[] = $row;
+            }
+
+            return $data;
+        } catch (\Exception $e) {
+            $this->logger->error('Error in getHabitsForToday: ' . $e->getMessage(), [
+                'exception' => $e,
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return [];
+        }
+    }
+
+
+
+
+
+    public function getCountHabitsToDay(Request $request): int
+    {
+        $token = $this->jwtServices->getTokens($request);
         $userId = $this->jwtServices->getUserInfoFromToken($token['accessToken'])->getUserId();
 
         $dayOfWeekNumber = date('N');
         $dayOfMonth = date('d');
         $month = date('m');
 
-        $results = $this->habitsRepository->getHabitsForToday($dayOfMonth, $dayOfWeekNumber, $month, $userId);
-
-        if (empty($results)) {
-            return [];
+        $result = $this->habitsRepository->getCountHabitsToday($dayOfMonth, $dayOfWeekNumber, $month, $userId);
+        if (empty($result)) {
+            return 0;
         }
 
-        $data = [];
-        foreach ($results as $row) {
-           $getTestMorgning  =  $this->determineTimePeriod($row['notification_date']);
-           $row['period'] = $getTestMorgning;
-           $data[] = $row;
-        }
-
-
-        return $data;
+        return $result;
     }
-
-
-
 
 
 

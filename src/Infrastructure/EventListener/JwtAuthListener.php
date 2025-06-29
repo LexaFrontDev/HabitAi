@@ -59,12 +59,8 @@ class JwtAuthListener
 
     private function checkTokens(Request $request, bool $useHeader): void
     {
-        $access = $request->cookies->get('accessToken');
-        $refresh = $request->cookies->get('refreshToken');
-        if (!$access && !$refresh) {
-            $access = $request->headers->get('access-token', '');
-            $refresh = $request->headers->get('refresh-token', '');
-        }
+        $access = $request->cookies->get('accessToken') ?? $request->headers->get('access-token');
+        $refresh = $request->cookies->get('refreshToken') ?? $request->headers->get('refresh-token');
 
         $dto = new JwtCheckDto($access ?? '', $refresh ?? '');
 
@@ -73,7 +69,6 @@ class JwtAuthListener
 
             if ($result instanceof JwtTokenDto) {
                 $request->attributes->set('newTokens', $result);
-                $this->newTokens = $result;
             } elseif ($result === true) {
                 $request->attributes->set('jwtValid', true);
             }
@@ -81,6 +76,7 @@ class JwtAuthListener
             $this->handleAuthError($request);
         }
     }
+
 
     private function handleAuthError(\Symfony\Component\HttpFoundation\Request $request): void
     {

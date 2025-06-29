@@ -1,0 +1,148 @@
+$withModal: 278px;
+$heightModal: 350px;
+
+.modal-container {
+  position: absolute;
+  z-index: 1000;
+  width: $withModal;
+  height: $heightModal;
+  user-select: none;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.date-picker-modal {
+  background: $card-bg;
+  color: $text-dark;
+  padding: $app-content-padding;
+  border-radius: 35px;
+  width: 135%;
+  height: 150%;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+
+  .modal-header {
+    padding: 0.5rem 0;
+    margin-bottom: 0.5rem;
+    border-bottom: 1px solid rgba($btn-accent, 0.2);
+
+    &.draggable {
+      cursor: move;
+    }
+
+    h3 {
+      margin: 0;
+      text-align: center;
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+  }
+
+  .date-picker-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .calendar-header, .calendar-days {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    align-items: center;
+  }
+
+  .calendar-header {
+    button {
+      background: $navbar-bg;
+      border: none;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: $text-dark;
+
+      &:hover {
+        background: $btn-hover;
+      }
+    }
+
+    span {
+      font-weight: 500;
+    }
+  }
+
+  .calendar-days {
+    font-weight: bold;
+    border-bottom: 1px solid $btn-accent;
+    margin-bottom: 0.5rem;
+  }
+
+  .calendar-body {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+
+  .calendar-row {
+    display: flex;
+    justify-content: space-between;
+    margin: 0.15rem 0;
+  }
+
+  .cell {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 2px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.9rem;
+
+    &.other-month {
+      opacity: 0.5;
+    }
+
+    &.selected {
+      background: $btn-accent;
+      color: $text-dark;
+      font-weight: bold;
+    }
+
+    &:hover:not(.selected) {
+      background: $btn-hover;
+      color: $text-dark;
+    }
+  }
+
+  .modal-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba($btn-accent, 0.2);
+
+    button {
+      padding: 0.5rem 1.5rem;
+      border-radius: 20px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-weight: 500;
+      background: rgba($btn-accent, 0.1);
+      color: $text-dark;
+
+      &:hover {
+        background: rgba($btn-accent, 0.3);
+      }
+    }
+  }
+}

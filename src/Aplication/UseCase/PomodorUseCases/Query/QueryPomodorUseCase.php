@@ -5,7 +5,6 @@ use App\Aplication\Dto\PomodorDto\RepPomodoroHistory;
 use App\Aplication\Dto\PomodorDto\ResPomdorCountStatistic;
 use App\Domain\Repository\Pomodor\PomodorHistoryRepositoryInterface;
 use App\Domain\Service\JwtServicesInterface;
-use App\Domain\Service\Tokens\AuthTokenServiceInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 class QueryPomodorUseCase
@@ -13,14 +12,13 @@ class QueryPomodorUseCase
     private int $userId;
 
     public function __construct(
-        private AuthTokenServiceInterface $authTokenService,
         private JwtServicesInterface $jwtServices,
         private PomodorHistoryRepositoryInterface $pomodorHistoryRepository,
     ){}
 
     private function initUserFromRequest(Request $request): void
     {
-        $token = $this->authTokenService->getTokens($request);
+        $token = $this->jwtServices->getTokens($request);
         $user = $this->jwtServices->getUserInfoFromToken($token['accessToken']);
         $this->userId = $user->getUserId();
     }

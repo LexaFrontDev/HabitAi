@@ -34,13 +34,33 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(name: 'users_settings', type: 'json', nullable: true)]
     private ?array $settings = null;
 
+    #[ORM\Column(type: 'boolean')]
+    private bool $is_new = true;
+
+    #[ORM\Column(type: 'integer')]
+    private int $email_check = 0;
+
+    #[ORM\Column(type: 'string', length: 100, nullable: true)]
+    private ?string $user_country = null;
+
+    #[ORM\Column(type: 'integer')]
+    private int $is_lang = 0;
+
+#[ORM\Column(type: 'datetime', nullable: true)]
+private ?\DateTimeInterface $created_at = null;
+
+   #[ORM\Column(type: 'datetime', nullable: true)]
+private ?\DateTimeInterface $updated_at = null;
+
+    #[ORM\Column(type: 'boolean')]
+    private bool $is_delete = false;
+
     // ======= Getters & Setters =======
 
     public function setId(int $id): void
     {
         $this->id = $id;
     }
-
 
     public function getId(): ?int
     {
@@ -113,19 +133,93 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function isNew(): bool
+    {
+        return $this->is_new;
+    }
+
+    public function setIsNew(bool $is_new): self
+    {
+        $this->is_new = $is_new;
+        return $this;
+    }
+
+    public function getEmailCheck(): int
+    {
+        return $this->email_check;
+    }
+
+    public function setEmailCheck(int $email_check): self
+    {
+        $this->email_check = $email_check;
+        return $this;
+    }
+
+    public function getUserCountry(): ?string
+    {
+        return $this->user_country;
+    }
+
+    public function setUserCountry(?string $user_country): self
+    {
+        $this->user_country = $user_country;
+        return $this;
+    }
+
+    public function getIsLang(): int
+    {
+        return $this->is_lang;
+    }
+
+    public function setIsLang(int $is_lang): self
+    {
+        $this->is_lang = $is_lang;
+        return $this;
+    }
+
     public function getRoles(): array
     {
         return array_unique([$this->role, 'ROLE_USER']);
     }
 
-
-    public function eraseCredentials()
-    {
-        // TODO: Implement eraseCredentials() method.
-    }
+    public function eraseCredentials() {}
 
     public function getUserIdentifier(): string
     {
         return $this->getEmail();
     }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->created_at;
+    }
+
+    public function setCreatedAt(?\DateTimeInterface $created_at): self
+    {
+        $this->created_at = $created_at;
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeInterface
+    {
+        return $this->updated_at;
+    }
+
+    public function setUpdatedAt(?\DateTimeInterface $updated_at): self
+    {
+        $this->updated_at = $updated_at;
+        return $this;
+    }
+
+    public function getis_delete(): bool
+    {
+        return $this->is_delete;
+    }
+
+    public function setis_delete(bool $is_delete): self
+    {
+        $this->is_delete = $is_delete;
+        return $this;
+    }
 }
+

@@ -120,12 +120,12 @@ class PomodorHistory
         return $this;
     }
 
-    public function getIsDelete(): ?int
+    public function getis_delete(): ?int
     {
         return $this->is_delete;
     }
 
-    public function setIsDelete(int $is_delete): static
+    public function setis_delete(int $is_delete): static
     {
         $this->is_delete = $is_delete;
         return $this;

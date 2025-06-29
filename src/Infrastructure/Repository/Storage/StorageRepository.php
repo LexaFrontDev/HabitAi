@@ -35,6 +35,7 @@ class StorageRepository extends ServiceEntityRepository implements StorageInterf
             ->where('h.fullPath = :fullPath')
             ->andWhere('h.type = :type')
             ->andWhere('h.fileType = :fileType')
+            ->andWhere('h.is_delete = 0')
             ->setParameter('fullPath', $dto->fullPath)
             ->setParameter('type', $dto->type)
             ->setParameter('fileType', $dto->fileType)

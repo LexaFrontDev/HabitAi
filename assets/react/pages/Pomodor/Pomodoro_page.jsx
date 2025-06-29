@@ -1,23 +1,31 @@
 import React, { useState, useEffect, useRef } from 'react';
-import Sidebar from '../../Chunk/Sidebar';
-import PomodorAsideChunk from "../../Chunk/PomodorChunk/PomodorAsideChunk";
+import Sidebar from '../chunk/SideBar';
+import PomodorAsideChunk from "../chunk/PomodorChunk/PomodorAsideChunk";
+import { Messages, ErrorAlert, SuccessAlert, IsDoneAlert } from '../chunk/MessageAlertChunk';
+
 
 const Pomodoro = () => {
     const [userId, setUserId] = useState(null);
-    const [totalTime, setTotalTime] = useState(() => parseInt(localStorage.getItem('pomodoroTotalTime')) || 0);
-    const [timeLeft, setTimeLeft] = useState(() => parseInt(localStorage.getItem('pomodoroTimeLeft')) || 0);
+    const [totalTime, setTotalTime] = useState(() => parseInt(localStorage.getItem('pomodoroTotalTime')) || 1500);
+    const [timeLeft, setTimeLeft] = useState(() => parseInt(localStorage.getItem('pomodoroTimeLeft')) || 1500);
     const [isRunning, setIsRunning] = useState(false);
+    const [isPaused, setIsPaused] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [showTasksModal, setTasksModal] = useState(false);
+    const [completedTime, setCompletedTime] = useState(0);
+    const [showCompleteButton, setShowCompleteButton] = useState(false);
+    const [sessionActive, setSessionActive] = useState(false);
 
-    const [focusMinutes, setFocusMinutes] = useState('');
+    const [focusMinutes, setFocusMinutes] = useState('25');
     const [TasksTitle, setTasksTitle] = useState('');
-    const [breakMinutes, setBreakMinutes] = useState('');
+    const [breakMinutes, setBreakMinutes] = useState('5');
     const [isBreak, setIsBreak] = useState(false);
     const startTimeRef = useRef(localStorage.getItem('pomodoroStartTime') || null);
     const intervalRef = useRef(null);
-    const circumference = 2 * Math.PI * 16;
     const [data, setDataTasks] = useState(null);
+
+    const radius = 196;
+    const circumference = 2 * Math.PI * radius;
 
     useEffect(() => {
         fetch('/api/web/user/id')
@@ -42,17 +50,31 @@ const Pomodoro = () => {
         return `${mins}:${secs}`;
     };
 
-    const updateProgress = () => {
-        const offset = totalTime > 0 ? ((totalTime - timeLeft) / totalTime) * circumference : 0;
-        return `${offset} ${circumference}`;
+    const calculateProgress = () => {
+        if (totalTime <= 0) return circumference;
+        return ((totalTime - timeLeft) / totalTime) * circumference;
+    };
+
+    const resetProgress = () => {
+        setTimeLeft(totalTime);
+        setIsRunning(false);
+        setIsPaused(false);
+        setShowCompleteButton(false);
+        setSessionActive(false);
+        clearInterval(intervalRef.current);
     };
 
     const handleStartPause = () => {
         if (!isRunning) {
-            if (!startTimeRef.current) {
-                startTimeRef.current = new Date();
-                localStorage.setItem('pomodoroStartTime', startTimeRef.current);
+            if (timeLeft <= 0) {
+                resetProgress();
+                return;
             }
+
+            startTimeRef.current = new Date();
+            localStorage.setItem('pomodoroStartTime', startTimeRef.current);
+            setSessionActive(true);
+
             intervalRef.current = setInterval(() => {
                 setTimeLeft(prev => {
                     if (prev > 0) {
@@ -64,42 +86,91 @@ const Pomodoro = () => {
                     }
                 });
             }, 1000);
+            setIsRunning(true);
+            setIsPaused(false);
+            setShowCompleteButton(true);
         } else {
             clearInterval(intervalRef.current);
+            setIsRunning(false);
+            setIsPaused(true);
         }
-        setIsRunning(!isRunning);
+    };
+
+    const handleCompleteSession = async () => {
+        clearInterval(intervalRef.current);
+        const timeCompleted = totalTime - timeLeft;
+        setCompletedTime(timeCompleted);
+
+
+        if (timeCompleted < 60) {
+            Messages("Помидор не должен быть меньше 1 минуты!")
+            resetProgress();
+            return;
+        }
+
+        if (userId && timeCompleted > 0) {
+            await fetch("/api/pomodor/create", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    userId,
+                    timeFocus: timeCompleted,
+                    timeStart: Math.floor(new Date(startTimeRef.current).getTime() / 1000),
+                    timeEnd: Math.floor(new Date().getTime() / 1000),
+                    createdDate: Math.floor(new Date().getTime() / 1000),
+                }),
+            });
+        }
+
+        resetProgress();
     };
 
     const handleEndCycle = async (finishTime) => {
+        const timeCompleted = totalTime;
+        setCompletedTime(timeCompleted);
+
+        if (!isBreak && timeCompleted < 60) {
+            Messages("Помидор не должен быть меньше 1 минуты!")
+            resetProgress();
+            return;
+        }
+
+        if (!isBreak && userId) {
+            await fetch("/api/pomodor/create", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    userId,
+                    timeFocus: timeCompleted,
+                    timeStart: Math.floor(new Date(startTimeRef.current).getTime() / 1000),
+                    timeEnd: Math.floor(finishTime.getTime() / 1000),
+                    createdDate: Math.floor(new Date().getTime() / 1000),
+                }),
+            });
+        }
+
         if (!isBreak) {
-            alert('Фокус завершён! Время отдыха.');
-            if (userId) {
-                await fetch("/api/pomodor/create", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        userId,
-                        timeFocus: totalTime,
-                        timeStart: Math.floor(new Date(startTimeRef.current).getTime() / 1000),
-                        timeEnd: Math.floor(finishTime.getTime() / 1000),
-                        createdDate: Math.floor(new Date().getTime() / 1000),
-                    }),
-                });
-            }
+            IsDoneAlert("Фокус завершён! Время отдыха.");
             startTimeRef.current = new Date();
-            setTotalTime(parseInt(breakMinutes) * 60);
-            setTimeLeft(parseInt(breakMinutes) * 60);
+            const breakTime = parseInt(breakMinutes) * 60 || 300;
+            setTotalTime(breakTime);
+            setTimeLeft(breakTime);
             setIsBreak(true);
             setIsRunning(true);
+            setIsPaused(false);
+            setShowCompleteButton(true);
             intervalRef.current = setInterval(() => {
                 setTimeLeft(prev => {
                     if (prev > 0) {
                         return prev - 1;
                     } else {
                         clearInterval(intervalRef.current);
-                        alert('Отдых завершён!');
+                        IsDoneAlert("Отдых завершён!");
                         setIsBreak(false);
                         setIsRunning(false);
+                        setIsPaused(false);
+                        setShowCompleteButton(false);
+                        setSessionActive(false);
                         return 0;
                     }
                 });
@@ -108,13 +179,27 @@ const Pomodoro = () => {
     };
 
     const handleSetTime = () => {
-        const focus = parseInt(focusMinutes);
-        const rest = parseInt(breakMinutes);
-        if (!focus || !rest) return;
+        if (sessionActive) {
+            Messages("Завершите текущую сессию перед изменением времени");
+            return;
+        }
+
+        const focus = parseInt(focusMinutes) || 25;
+        const rest = parseInt(breakMinutes) || 5;
         setTotalTime(focus * 60);
         setTimeLeft(focus * 60);
         setShowModal(false);
         setIsBreak(false);
+    };
+
+    const openSettings = () => {
+        if (sessionActive) {
+
+            Messages("Завершите текущую сессию перед изменением времени");
+
+            return;
+        }
+        setShowModal(true);
     };
 
     return (
@@ -128,55 +213,120 @@ const Pomodoro = () => {
             </div>
             <div id="content">
                 <section className="container mt-4 text-center pomodoro-section">
-                    <div className="header">
-                        <h4 onClick={() => setTasksModal(true)}>{TasksTitle || 'Фокус'}</h4>
-                    </div>
-                    <div className="pomodoro-wrapper" onClick={() => setShowModal(true)}>
-                        <svg viewBox="0 0 36 36">
-                            <path className="bg-circle" fill="none" stroke="#eee" strokeWidth="2" d="M18 2 a 16 16 0 1 1 0 32 a 16 16 0 1 1 0 -32" />
-                            <path className="progress-circle" fill="none" stroke="#000" strokeWidth="2" strokeLinecap="round" transform="rotate(-90 18 18)" strokeDasharray={updateProgress()} d="M18 2 a 16 16 0 1 1 0 32 a 16 16 0 1 1 0 -32" />
-                            <text id="timer-text" x="50%" y="50%" textAnchor="middle" dy=".3em">{formatTime(timeLeft)}</text>
+                    <div className="pomodoro-wrapper">
+                        <div className="header">
+                            <h4 onClick={() => setTasksModal(true)}>{TasksTitle || 'Фокус'}</h4>
+                        </div>
+                        <svg width="360" height="360" viewBox="0 0 400 400">
+                            <circle
+                                stroke="rgba(255, 255, 255, 0.1)"
+                                cx="200"
+                                cy="200"
+                                r={radius}
+                                strokeWidth="8"
+                                fill="none"
+                            />
+                            <circle
+                                stroke={isBreak ? "#4CAF50" : "#4772fa"}
+                                transform="rotate(-90 200 200)"
+                                cx="200"
+                                cy="200"
+                                r={radius}
+                                strokeDasharray={circumference}
+                                strokeWidth="8"
+                                strokeDashoffset={circumference - calculateProgress()}
+                                strokeLinecap="round"
+                                fill="none"
+                            />
+                            <text
+                                x="200"
+                                y="210"
+                                textAnchor="middle"
+                                dominantBaseline="middle"
+                                fontSize="48"
+                                fill="#fff"
+                                fontFamily="Arial"
+                                onClick={openSettings}
+                                style={{cursor: sessionActive ? 'default' : 'pointer'}}
+                            >
+                                {formatTime(timeLeft)}
+                            </text>
                         </svg>
-                    </div>
-                    <div className="mt-3 btn-group">
-                        <button className="btn btn-primary" onClick={handleStartPause}>{isRunning ? 'Пауза' : 'Старт'}</button>
+                        <div className="mt-3 btn-group">
+                            <button
+                                className="btn btn-primary"
+                                onClick={handleStartPause}
+                                disabled={timeLeft === 0 && !isRunning}
+                            >
+                                {isRunning ? 'Пауза' : timeLeft === 0 ? 'Начать заново' : 'Старт'}
+                            </button>
+                            {(isPaused || (isRunning && showCompleteButton)) && (
+                                <button
+                                    className="btn btn-danger"
+                                    onClick={handleCompleteSession}
+                                >
+                                    Завершить
+                                </button>
+                            )}
+                        </div>
                     </div>
                 </section>
             </div>
+
             {showModal && (
                 <div className="modal-overlay">
                     <div className="modal-content">
-                        <h3>Настройки</h3>
-                        <input type="number" min="1" placeholder="Время фокуса (мин)" className="time-input" value={focusMinutes} onChange={e => setFocusMinutes(e.target.value)} />
-                        <input type="number" min="1" placeholder="Время отдыха (мин)" className="time-input" value={breakMinutes} onChange={e => setBreakMinutes(e.target.value)} />
-                        <button className="btn btn-success" onClick={handleSetTime}>Сохранить</button>
-                        <button className="btn btn-outline-danger mt-2" onClick={() => setShowModal(false)}>Закрыть</button>
+                        <h3>Настройки таймера</h3>
+                        <input
+                            type="number"
+                            min="1"
+                            placeholder="Время фокуса (мин)"
+                            className="time-input"
+                            value={focusMinutes}
+                            onChange={e => setFocusMinutes(e.target.value)}
+                        />
+                        <input
+                            type="number"
+                            min="1"
+                            placeholder="Время отдыха (мин)"
+                            className="time-input"
+                            value={breakMinutes}
+                            onChange={e => setBreakMinutes(e.target.value)}
+                        />
+                        <button className="btn btn-success" onClick={handleSetTime}>
+                            Сохранить
+                        </button>
+                        <button className="btn btn-outline-danger mt-2" onClick={() => setShowModal(false)}>
+                            Закрыть
+                        </button>
                     </div>
                 </div>
             )}
+
             {showTasksModal && (
                 <div className="modal-tasks-list">
                     <div className="modal-contents">
                         <h3>Задачи которых можно выполнить</h3>
-
                         {data && data.map((item) => (
-                            <div key={item.habit_id} onClick={() => {
-                                setTasksTitle(item.title);
-                                setTasksModal(false);
-                            }}>
+                            <div
+                                key={item.habit_id}
+                                onClick={() => {
+                                    setTasksTitle(item.title);
+                                    setTasksModal(false);
+                                }}
+                            >
                                 {item.title}
                             </div>
                         ))}
-
-
                         <div className="close-button">
-                            <button className="close-button"
-                                    onClick={() => setTasksModal(false)}><img src="/Upload/Images/AppIcons/x-circle.svg" alt="Закрыть"/>
+                            <button
+                                className="close-button"
+                                onClick={() => setTasksModal(false)}
+                            >
+                                <img src="/Upload/Images/AppIcons/x-circle.svg" alt="Закрыть"/>
                             </button>
                         </div>
-
                     </div>
-
                 </div>
             )}
         </div>

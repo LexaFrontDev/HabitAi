@@ -3,7 +3,6 @@
 namespace App\Infrastructure\Controller\ApiControllers\MainController;
 
 use App\Aplication\UseCase\PomodorUseCases\Query\QueryPomodorUseCase;
-use App\Domain\Service\Tokens\AuthTokenServiceInterface;
 use App\Domain\Service\TwigServices\FeaturesServiceInterface;
 use App\Domain\Service\TwigServices\ReviewsServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

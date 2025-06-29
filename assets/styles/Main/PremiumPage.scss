@@ -1,0 +1,255 @@
+.premium-page {
+  font-family: "Lucida Grande", "Lucida Sans Unicode", Verdana, Arial, Helvetica, sans-serif;
+  min-height: 100vh;
+  background-image: linear-gradient(to bottom, #000000, #2b1016, #4f141f, #741822, #991f1f);
+  color: #ffffff;
+}
+
+.premium-header {
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+}
+
+
+
+.navbar-premium {
+  display: flex;
+  justify-content: center;
+  padding: 1rem 0;
+
+  .navbar-container {
+    width: 100%;
+    max-width: 1200px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .navbar-logo {
+    font-weight: bold;
+    color: #4f8df3;
+    font-size: 1.25rem;
+    text-decoration: none;
+  }
+
+  .navbar-links {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .navbar-link {
+    color: #ccc;
+    text-decoration: none;
+
+
+    &:hover{
+      color: #4f8df3;
+      font-weight: bold;
+    }
+
+    &.active {
+      color: #4f8df3;
+      font-weight: bold;
+    }
+  }
+
+  .btn-login,
+  .btn-register {
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+
+  .btn-login {
+    border: 1px solid #4f8df3;
+    color: #4f8df3;
+
+    &:hover {
+      background-color: #4f8df3;
+      color: #fff;
+    }
+  }
+
+  .btn-register {
+    background-color: #4f8df3;
+    color: #fff;
+
+    &:hover {
+      background-color: #3975cb;
+    }
+  }
+}
+
+
+.btn-subscribe {
+  padding: 0.75rem 1.5rem;
+  width: 200px;
+  background: #ff0000;
+  background: -webkit-linear-gradient(180deg, rgba(255, 0, 0, 1) 50%, rgba(255, 149, 0, 1) 100%);
+  background: -moz-linear-gradient(180deg, rgba(255, 0, 0, 1) 50%, rgba(255, 149, 0, 1) 100%);
+  background: linear-gradient(180deg, rgba(255, 0, 0, 1) 50%, rgba(255, 149, 0, 1) 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#FF0000", endColorstr="#FF9500", GradientType=0);
+  color: #fff;
+  border: none;
+  font-weight: bold;
+  font-size: 1.1rem;
+  border-radius: 6px;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+
+  &:hover {
+    color: $text-dark;
+    background: #e38686;
+    background: -webkit-linear-gradient(180deg, rgba(227, 134, 134, 1) 50%, rgba(255, 130, 130, 1) 100%);
+    background: -moz-linear-gradient(180deg, rgba(227, 134, 134, 1) 50%, rgba(255, 130, 130, 1) 100%);
+    background: linear-gradient(180deg, rgba(227, 134, 134, 1) 50%, rgba(255, 130, 130, 1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#E38686", endColorstr="#FF8282", GradientType=0);
+  }
+}
+
+
+
+.tariff-highlight {
+  border-radius: 0;
+  background: linear-gradient(135deg, #2c2c2e 0%, #3d3d40 100%);
+  border-left: 4px solid #ffbb33;
+  box-shadow: inset 0 0 0 1px #444;
+  color: #fff;
+  transition: all 0.3s ease;
+
+  .card-title {
+    color: #ffbb33;
+  }
+
+  .btn {
+    background-color: #ffbb33;
+    color: #000;
+    border: none;
+
+    &:hover {
+      background-color: #ffc94c;
+    }
+  }
+}
+
+
+.premium-plans {
+  .card {
+    transition: transform 0.2s ease-in-out;
+
+    &:hover {
+      transform: scale(1.02);
+    }
+  }
+}
+
+.premium-benefits {
+  background-color: rgba(0, 0, 0, 0.75);
+}
+
+.premium-footer {
+  font-size: 0.875rem;
+}
+.benefits-wrapper {
+  margin: 5px;
+  /* background-color: rgba(20, 20, 20, 0.85); */
+  /* border: 1px solid #ffc107; */
+  border-radius: 10px;
+  padding: 2rem;
+
+  .benefit-card {
+    background-color: #1e1e1e;
+    border-left: 3px solid #ffc107;
+    padding: 1.5rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    transition: transform 0.2s ease;
+    cursor: pointer;
+    
+    
+    
+    &:hover {
+      transform: translateY(-4px);
+    }
+
+    .benefit-icon {
+      width: 40px;
+      height: 40px;
+      margin-bottom: 1rem;
+    }
+
+    .benefit-title {
+      font-weight: 600;
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .benefit-desc {
+      color: #bbb;
+      font-size: 0.95rem;
+      margin-bottom: 0;
+    }
+  }
+}
+
+
+
+.premium-faq {
+  background-color: #111;
+  color: #fff;
+  margin: 5px;
+  border-radius: 10px;
+
+  .faq-list {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .faq-item {
+    background-color: #1e1e1e;
+    border-left: 4px solid #ffc107;
+    padding: 1rem 1.5rem;
+    margin-bottom: 1rem;
+    border-radius: 0;
+    cursor: pointer;
+
+    summary {
+      font-weight: 600;
+      font-size: 1.1rem;
+      list-style: none;
+      outline: none;
+    }
+
+    summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .faq-answer {
+      margin-top: 0.5rem;
+      color: #ccc;
+      font-size: 0.95rem;
+    }
+  }
+}
+
+.premium-begin-section {
+  background-color: #111;
+  color: #fff;
+  margin: 5px;
+  border-radius: 10px;
+  h2 {
+    color: #fff;
+  }
+  .btn {
+    padding: 0.75rem 2rem;
+    font-size: 1.2rem;
+  }
+}
+
+
+

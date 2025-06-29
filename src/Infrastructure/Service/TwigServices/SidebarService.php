@@ -22,14 +22,9 @@ class SidebarService implements SidebarServiceInterface
                 'group-item' =>
                 [
                     new SidebarItemDTO(
-                        label: 'Настройки профиля',
-                        url: '/profile/settings',
-                        icon: 'Upload/Images/UsersIcon/user.svg',
-                    ),
-                    new SidebarItemDTO(
                         label: 'Статистика',
                         url: '/profile/statistics',
-                        icon: 'Upload/Images/UsersIcon/user.svg',
+                        icon: 'Upload/Images/AppIcons/pie-chart.svg',
                     ),
                     new SidebarItemDTO(
                         label: 'Настройки',
@@ -37,19 +32,19 @@ class SidebarService implements SidebarServiceInterface
                         icon: 'Upload/Images/Setings/settings.svg',
                     ),
                     new SidebarItemDTO(
+                        label: 'Премиюм',
+                        url: '/premium',
+                        icon: 'Upload/Images/AppIcons/premium-badge-svgrepo-com.svg',
+                    ),
+                    new SidebarItemDTO(
                         label: 'Выйти из аккаунта',
                         url: '/api/logout',
-                        icon: 'Upload/Images/Setings/log-out.svg',
+                        icon: 'Upload/Images/AppIcons/log-out.svg',
                     ),
                 ]
 
             ],
            'item' => [
-               new SidebarItemDTO(
-                   label: 'Главная',
-                   url: '/',
-                   icon: 'Upload/Images/HomeIcon/home.svg',
-               ),
                new SidebarItemDTO(
                    label: 'Задачи',
                    url: '/tasks',
@@ -65,7 +60,11 @@ class SidebarService implements SidebarServiceInterface
                    url: '/habits',
                    icon: 'Upload/Images/Habits/bar-chart-2.svg',
                ),
-
+               new SidebarItemDTO(
+                   label: 'Матрица Эйзенхауэра',
+                   url: '/matric',
+                   icon: 'Upload/Images/AppIcons/hexagon.svg',
+               ),
            ]
         ];
     }

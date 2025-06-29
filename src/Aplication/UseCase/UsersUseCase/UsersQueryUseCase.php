@@ -4,14 +4,12 @@ namespace App\Aplication\UseCase\UsersUseCase;
 
 use App\Aplication\Dto\UsersDto\UsersInfoForToken;
 use App\Domain\Service\JwtServicesInterface;
-use App\Domain\Service\Tokens\AuthTokenServiceInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
 class UsersQueryUseCase
 {
     public function __construct(
-        private AuthTokenServiceInterface $authTokenService,
         private JwtServicesInterface $jwtServices
     ) {}
 
@@ -24,7 +22,7 @@ class UsersQueryUseCase
      */
     public function getUsersInfoByToken(Request $request): UsersInfoForToken
     {
-        $tokens = $this->authTokenService->getTokens($request);
+        $tokens = $this->jwtServices->getTokens($request);
 
         if (empty($tokens['accessToken'])) {
             throw new AuthenticationException('Access token is missing or invalid.');

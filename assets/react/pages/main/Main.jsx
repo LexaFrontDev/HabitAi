@@ -1,16 +1,60 @@
 import React, { useEffect, useState } from 'react';
-import Loading from '../../Chunk/LoadingChunk/Loading';
+import { useTranslation } from 'react-i18next';
+import Loading from '../chunk/LoadingChunk/Loading';
+import { loadPageTranslation } from '../../utils/loadPageTranslation';
+import { LangStorageUseCase } from "../../Aplication/UseCases/language/LangStorageUseCase";
+import {LangStorage} from "../../Infrastructure/languageStorage/LangStorage";
+import { Link } from 'react-router-dom';
+import {Button} from "../../ui/atoms/button/Button";
+import {AppLink} from "../../ui/atoms/link/AppLink";
+import {ImageWrapper} from "../../ui/atoms/Image/ImageWrapper";
+import {TextBlock} from "../../ui/atoms/TextBlock/TextBlock";
+import FeatureList from "../../ui/organism/cards/FeatureList";
+import DynamicGridList from "../../ui/organism/cards/DynamicGridList";
+import FeatureCard from "../../ui/molecule/Cards/FeatureCard";
+import ReviewCard from "../../ui/molecule/Cards/ReviewCard";
+import Copyright from "../../ui/atoms/TextBlock/Copyright";
+import Navbar from "../../ui/organism/navbar/Navbar";
+import LanguageSelect from "../../ui/atoms/select/LanguageSelect";
+
+const languages = {
+    kz: 'Қазақша',
+    ru: 'Русский',
+    en: 'English',
+};
+
+const currentPage = 'landing';
+const langStorage = new LangStorage();
+const langUseCase = new LangStorageUseCase(langStorage);
+
+
 
 const Lending = () => {
     const [data, setData] = useState(null);
+    const [langCode, setLangCode] = useState('en');
+    const { t, i18n } = useTranslation(currentPage);
+
+    useEffect(() => {
+        const detectLang = async () => {
+            const lang = await langUseCase.getLang();
+            if (lang) {
+                setLangCode(lang);
+                await loadPageTranslation(currentPage, lang);
+            }
+        };
+
+        detectLang();
+    }, []);
 
     useEffect(() => {
         fetch('/api/landing/data')
             .then(res => res.json())
-            .then(data => setData(data));
+            .then(setData);
     }, []);
 
     useEffect(() => {
+        if (!data) return;
+
         const observer = new IntersectionObserver(entries => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -20,79 +64,90 @@ const Lending = () => {
             });
         }, { threshold: 0.1 });
 
-        const elements = document.querySelectorAll('.fade-in');
-        elements.forEach(el => observer.observe(el));
+        const timer = setTimeout(() => {
+            const elements = document.querySelectorAll('.fade-in');
+            elements.forEach(el => observer.observe(el));
+        }, 100);
 
-        return () => observer.disconnect();
+        return () => {
+            clearTimeout(timer);
+            observer.disconnect();
+        };
     }, [data]);
 
-    if (!data) return <Loading />;
+    if (!data || !i18n.hasResourceBundle(langCode, currentPage)) return <Loading />;
 
     return (
         <div id="lending">
-            <nav className="navbar shadow-sm border-bottom">
-                <div className="container d-flex justify-content-between align-items-center py-2">
-                    <span className="navbar-brand text-primary fw-bold">TaskFlow</span>
-                    <div>
-                        <a href="/users/login" className="btn btn-outline-secondary me-2">Войти</a>
-                        <a href="/users/register" className="btn btn-secondary">Регистрация</a>
-                    </div>
-                </div>
-            </nav>
+            <Navbar
+                right={
+                    <>
+                        <LanguageSelect
+                            langCode={langCode}
+                            setLangCode={setLangCode}
+                            loadPageTranslation={loadPageTranslation}
+                            currentPage={currentPage}
+                        />
+                        <AppLink to="/download" variant="nav">Скачать</AppLink>
+                        <AppLink to="/premium" variant="nav">Премиум</AppLink>
+                        <Button as="link" to="/users/login" variant="login">{t('loginButtonText')}</Button>
+                        <Button as="link" to="/users/register" variant="register">{t('registerButtonText')}</Button>
+                    </>
+                }
+            />
 
-            <section className="hero d-flex align-items-center position-relative overflow-hidden">
+
+             <section className="hero position-relative overflow-hidden py-5">
                 <div className="container">
-                    <div className="row align-items-center">
-                        <div className="col-lg-6 d-none d-lg-block">
-                            <div className="hero-image rounded shadow-lg overflow-hidden">
-                                <img src="/StorageImages/Icons/FonLogos.png" alt="TaskFlow Illustration" className="img-fluid" />
-                            </div>
-                        </div>
-                        <div className="col-lg-6 text-center text-lg-start slide-in-right appear z-2 mt-4 mt-lg-0">
-                            <h1 className="display-4 fw-bold mb-3">Развивайся на 1% каждый день</h1>
-                            <p className="lead text-muted mb-4">Таймер помодор, Список Привычек, и Матрица Эйзенхауэра — всё в одном месте</p>
-                            <a href="/users/register" className="btn btn-lg btn-primary">Начать сейчас</a>
+                    <div className="row d-flex flex-column text-center align-items-center">
+                        <div className="col-12 col-lg-8 mb-4">
+                            <TextBlock variant="h1" align="center" weight="bold" size="display-4" className="mb-3">
+                                {t('logoHeadText') || 'TaskFlow — порядок в делах'}
+                            </TextBlock>
+
+                            <TextBlock variant="p" align="center" color="text-muted" size="lead" className="mb-4">
+                                {t('logoDescText') || 'Легкий и мощный инструмент для задач и привычек'}
+                            </TextBlock>
+                            <Button as="link" href="/users/register" variant="big">
+                                Начать
+                            </Button>
                         </div>
                     </div>
+                    <ImageWrapper
+                        src="/StorageImages/Icons/FonLogos.png"
+                        size="big"
+                        position="center"
+                    />
                 </div>
             </section>
+
 
             <section className="features container py-5">
-                <div className="row g-4 justify-content-center">
-                    {data.features?.map((feature, index) => (
-                        <div key={index} className="col-sm-6 col-md-4 col-lg-3 fade-in">
-                            <a href={feature.url} className="text-decoration-none text-reset">
-                                <div className="card text-center p-4 h-100">
-                                    <img src={`/StorageImages/${feature.icon}`} alt={feature.title} height="64" className="mb-3" />
-                                    <h5 className="fw-semibold">{feature.title}</h5>
-                                    <p className="text-muted small">{feature.desc}</p>
-                                </div>
-                            </a>
-                        </div>
-                    ))}
-                </div>
+                <TextBlock variant="h3" align="center" weight="bold" size="display-4" className="mb-3">
+                    {t('featuresText')}
+                </TextBlock>
+                <DynamicGridList
+                    items={data.features}
+                    renderItem={(feature) => <FeatureCard {...feature} />}
+                    layout="4-cols"
+                />
             </section>
+
 
             <section className="testimonials container py-5">
-                <h3 className="text-center mb-4">Отзывы наших пользователей</h3>
-                <div className="row g-4 justify-content-center">
-                    {data.reviews?.map((review, index) => (
-                        <div key={index} className="col-md-4 fade-in">
-                            <div className="card p-3">
-                                <blockquote className="blockquote mb-0">
-                                    <p className="mb-2">"{review.comment}"</p>
-                                    <div className="blockquote-footer text-muted">{review.name}</div>
-                                </blockquote>
-                            </div>
-                        </div>
-                    ))}
-                </div>
+                <TextBlock variant="h3" align="center" weight="bold" size="display-4" className="mb-3">
+                    {t('feedbackText')}
+                </TextBlock>
+                <DynamicGridList
+                    items={data.reviews}
+                    renderItem={(review) => <ReviewCard {...review} />}
+                    layout="3-cols"
+                />
             </section>
 
-            <footer className="text-center py-4 border-top fade-in">
-                <small className="text-muted">
-                    © {new Date().getFullYear()} TaskFlow — <a href="/privacy" className="text-decoration-none text-primary">Политика конфиденциальности</a>
-                </small>
+
+            <footer className="text-center py-3">
+                <Copyright/>
             </footer>
         </div>
     );

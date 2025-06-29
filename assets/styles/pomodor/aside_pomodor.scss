@@ -2,10 +2,10 @@
 $stat-card-bg: #2f3e46;
 // Цвет линий — в отдельную переменную для удобства
 $line-color: #66666e;
-#pomodor-page{
+#pomodor-page {
   .pomodoro-aside {
     position: fixed;
-    top: 0px;
+    top: 0;
     right: 0;
     width: 500px;
     height: 100vh;
@@ -14,7 +14,7 @@ $line-color: #66666e;
     color: $text-dark;
     display: flex;
     flex-direction: column;
-    z-index: 99999;
+    z-index: 9999;
 
     .stats {
       display: grid;
@@ -50,7 +50,7 @@ $line-color: #66666e;
 
         &:hover {
           transform: translateY(-3px);
-          box-shadow: 0px 4px 12px rgba(0,0,0,.25);
+          box-shadow: 0px 4px 12px rgba(0, 0, 0, .25);
         }
       }
     }
@@ -79,6 +79,9 @@ $line-color: #66666e;
       }
     }
 
+
+
+
     .content {
       flex: 1;
       overflow-y: auto;
@@ -86,16 +89,22 @@ $line-color: #66666e;
       section#pomodoro {
         .pomodoro-cards {
           display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 12px;
+          grid-template-columns: 1fr;
+          gap: 11px;
           cursor: pointer;
+          margin: 15px 22px;
+
 
           .pomodoro-card {
-            background-color: $stat-card-bg;
+            display: grid;
+            background-color: #2f3e46;
             padding: 12px;
             border-radius: 8px;
-            text-align: center;
+            grid-template-columns: 1fr 7fr;
+            /* text-align: center; */
             transition: transform 0.2s, box-shadow 0.2s;
+            gap: 1px;
+
 
             h3 {
               font-size: 14px;
@@ -116,12 +125,46 @@ $line-color: #66666e;
 
             &:hover {
               transform: translateY(-3px);
-              box-shadow: 0px 4px 12px rgba(0,0,0,.25);
+              box-shadow: 0px 4px 12px rgba(0, 0, 0, .25);
             }
           }
         }
       }
+    }
 
+    @media (max-width: 1200px) {
+      width: 400px;
+    }
+
+    @media (max-width: 990px) {
+      display: none;
     }
   }
 }
+
+
+.habits-ul{
+  margin-left: -4%;
+
+
+
+  .habits-li{
+    margin-top: 10px;
+    list-style: none;
+    background: $card-bg;
+    padding: 7px 15px;
+    border-radius: 12px;
+    width: 99%;
+    cursor: pointer;
+
+
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: 0px 4px 12px rgba(0, 0, 0, .25);
+    }
+
+  }
+}
+
+
+

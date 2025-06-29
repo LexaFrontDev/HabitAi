@@ -1,0 +1,91 @@
+// Общая стилизация
+%base-alert {
+  padding: 1rem 1.5rem;
+  border-radius: 0.75rem;
+  margin: 1rem 0;
+  font-family: sans-serif;
+  animation: fadeIn 0.3s ease-in-out;
+  color: #f5f5f5;
+}
+
+// Анимация появления
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.message__alert {
+  @extend %base-alert;
+  background: #2c2c2c;
+  border-left: 4px solid #3498db;
+
+  &__header {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+
+    &__desc {
+      font-size: 0.95rem;
+      color: #cccccc;
+      margin-top: 0.2rem;
+    }
+  }
+}
+
+.error__message__alert {
+  @extend %base-alert;
+  background: #3a1f1f;
+  border-left: 4px solid #e74c3c;
+
+  &__header {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #f5b7b1;
+  }
+}
+
+.success__message__alert {
+  @extend %base-alert;
+  background: #1e3527;
+  border-left: 4px solid #2ecc71;
+
+  &__header {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #b2f2bb;
+  }
+}
+
+.isdone__message__alert {
+  @extend %base-alert;
+  background: #22334a;
+  border-left: 4px solid #00bcd4;
+
+  &__header {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #d0efff;
+    margin-bottom: 0.3rem;
+  }
+
+  &__desc {
+    font-size: 1rem;
+    color: #a4cbe0;
+  }
+}
+#alert-root {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  max-width: 90%;
+  width: 400px;
+  box-sizing: border-box;
+}

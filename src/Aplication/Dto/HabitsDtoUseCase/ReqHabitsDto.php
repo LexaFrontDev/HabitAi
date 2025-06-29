@@ -19,7 +19,6 @@ class  ReqHabitsDto
         private int $autoCount = 0,
         private bool $checkAuto = false,
         private bool $checkClose = false,
-        private string $iconBase64 = '',
     ){}
 
 
@@ -31,10 +30,7 @@ class  ReqHabitsDto
         return $this->titleHabit;
     }
 
-    public function getIconBase64(): string
-    {
-        return $this->iconBase64;
-    }
+
 
     public function getQuote(): string
     {

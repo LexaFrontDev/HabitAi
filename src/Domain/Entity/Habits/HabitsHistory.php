@@ -107,12 +107,12 @@ class HabitsHistory
         return $this->updated_at;
     }
 
-    public function isDeleted(): bool
+    public function is_deleted(): bool
     {
         return $this->is_deleted;
     }
 
-    public function setIsDeleted(bool $is_deleted): static
+    public function setis_deleted(bool $is_deleted): static
     {
         $this->is_deleted = $is_deleted;
 

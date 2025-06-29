@@ -1,3 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
+
+
 $navbar-height: 40px;
 $sidebar-width: 50px;
 
@@ -34,7 +42,7 @@ $app-sidebar-bg: $sideBgColor;
 
 
 .loading{
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
@@ -43,7 +51,7 @@ $app-sidebar-bg: $sideBgColor;
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: 99999;
 }
 
 
@@ -71,6 +79,22 @@ $app-sidebar-bg: $sideBgColor;
 @import 'Auth/login';
 @import 'Auth/register';
 @import 'ChunkStyles/Date';
+@import 'Tasks/tasks';
+@import 'ChunkStyles/DatePicker';
+@import "ChunkStyles/StaticDatePicker";
+@import "Matric/matric";
+@import "ChunkStyles/alert";
+@import "Main/PremiumPage";
+@import "ChunkStyles/tasksAside";
+
+
+
+.navbar-logo img {
+  width: 240px;
+  height: 50px;
+  display: block;
+  background: transparent;
+}
 
 
 
@@ -114,6 +138,8 @@ $app-sidebar-bg: $sideBgColor;
     display: none;
   }
 }
+
+
 
 
 

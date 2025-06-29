@@ -25,6 +25,12 @@ class Storage
     #[ORM\Column(type: 'datetime_immutable')]
     private \DateTimeImmutable $createdAt;
 
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    private ?\DateTimeImmutable $updated_at = null;
+
+    #[ORM\Column(type: 'boolean')]
+    private bool $is_delete = false;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -74,4 +80,25 @@ class Storage
         return $this->createdAt;
     }
 
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updated_at;
+    }
+
+    public function setUpdatedAt(?\DateTimeImmutable $updated_at): self
+    {
+        $this->updated_at = $updated_at;
+        return $this;
+    }
+
+    public function getis_delete(): bool
+    {
+        return $this->is_delete;
+    }
+
+    public function setis_delete(bool $is_delete): self
+    {
+        $this->is_delete = $is_delete;
+        return $this;
+    }
 }
