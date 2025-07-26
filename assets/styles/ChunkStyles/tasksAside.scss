@@ -30,7 +30,7 @@
   }
 }
 
-.aside-tasks-container{
+.aside-container{
   .button-aside {
     color: white;
 
@@ -51,10 +51,21 @@
     padding: 1rem;
     position: fixed;
     top: 0;
-    left: $sidebar-width;
     z-index: 10000;
     display: flex;
     flex-direction: column;
+    left: $sidebar-width;
+
+    &.right {
+      right: 0;
+      left: auto;
+    }
+
+    &.center {
+      left: 50%;
+      transform: translateX(-50%);
+      width: 280px;
+    }
 
     .side-panel-header {
       display: flex;

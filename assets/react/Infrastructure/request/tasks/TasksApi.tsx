@@ -1,14 +1,26 @@
-import { Task } from "../../../ui/props/Tasks/Task";
+import {Task} from "../../../ui/props/Tasks/Task";
 import {TaskUpdate} from "../../../ui/props/Tasks/TaskUpdate";
 import {TasksReqInterface} from "../../../Domain/request/Tasks/TasksReqInterface";
 
 export class TasksApi implements TasksReqInterface{
     async getTasksByDate(date: string): Promise<Task[]> {
-        const res = await fetch(`http://taskflow/api/tasks/get${date}`);
+        const res = await fetch(`/api/tasks/get${date}`);
         const data = await res.json();
         if (!data.success) throw new Error(data.message || 'Ошибка получения задач');
         return data.data;
     }
+
+    async getTasksAll(): Promise<Task[]> {
+        const res = await fetch(`/api/tasks/all/get`);
+
+        if (!res.ok) {
+            const error = await res.json().catch(() => ({}));
+            throw new Error(error.message || 'Ошибка получения задач');
+        }
+
+        return await res.json();
+    }
+
 
     async saveTask(task: Partial<Task>): Promise<any> {
         const res = await fetch('/api/tasks/save', {

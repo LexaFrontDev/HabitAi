@@ -137,6 +137,42 @@ class TasksRepository extends ServiceEntityRepository implements TasksInterface
     }
 
 
+    /***
+     * @param int $userId
+     * @return TasksDay[]
+     */
+    public function getTasksAllByUserId(int $userId): array
+    {
+        $result = $this->createQueryBuilder('t')
+            ->where('t.userId = :userId')
+            ->andWhere('t.is_delete = 0')
+            ->setParameter('userId', $userId)
+            ->getQuery()
+            ->getResult();
+
+        return array_map(
+            fn($task) => new TasksDay(
+                id: $task->getId(),
+                title: $task->getTitleTask(),
+                description: $task->getDescription(),
+                date: $task->getBeginDate(),
+                time: $task->getTime(),
+                startDate: $task->getBeginDate()
+                    ? null
+                    : $task->getStartDate(),
+                startTime: $task->getBeginDate()
+                    ? null
+                    : $task->getStartTime(),
+                endDate: $task->getBeginDate()
+                    ? null
+                    : $task->getEndDate(),
+                endTime: $task->getBeginDate()
+                    ? null
+                    : $task->getEndTime(),
+            ),
+            $result
+        );
+    }
 
 
 

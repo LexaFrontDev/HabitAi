@@ -5,5 +5,8 @@ export interface StartResizeParams {
     minWidth: number;
     maxWidth: number;
     width: number;
-    setWidth: (value: number) => void;
+    setWidth: (width: number) => void;
+    leftWidth?: number;
+    rightWidth?: number;
+    centerWidth?: number;
 }

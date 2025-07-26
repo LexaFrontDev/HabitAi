@@ -12,6 +12,7 @@ import TasksPage from "./pages/Tasks/TasksPage";
 import MatricPage from "./pages/MatricPage/MatricPage";
 import Premium from "./pages/main/pages/Premium";
 import PremiumPage from "./pages/main/pages/Premium";
+import Static from "./pages/Static/StaticPage";
 
 const RouterDom = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(null);
@@ -55,6 +56,7 @@ const RouterDom = () => {
             <Route path="/users/login" element={<LoginPage />} />
             <Route path="/tasks" element={<TasksPage />} />
             <Route path="/matric" element={<MatricPage />} />
+            <Route path="/profile/statistics" element={<Static />} />
             <Route path="/premium" element={<PremiumPage isAuthenticated={isAuthenticated} />} />
         </Routes>
     );

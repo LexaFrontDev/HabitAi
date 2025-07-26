@@ -52,6 +52,14 @@ class TasksControllers extends AbstractController
     }
 
 
+    #[Route('/api/tasks/all/get', name: 'get_tasks_all', methods: ['GET'])]
+    #[RequiresJwt]
+    public function getTasksAll(Request $request): JsonResponse
+    {
+        $result = $this->queryTasksUseCase->getTasksAll($request);
+        return $this->json($result);
+    }
+
 
     #[Route('/api/tasks/update', name: 'tasks_update', methods: ['PUT'])]
     #[RequiresJwt]

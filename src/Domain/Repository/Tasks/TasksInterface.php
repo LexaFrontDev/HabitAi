@@ -11,6 +11,7 @@ interface TasksInterface
 
 
     /**
+     * @param int $userId
      * @param TasksForSaveDto $tasksForSaveDto
      * @return int|bool
      */
@@ -18,6 +19,7 @@ interface TasksInterface
 
 
     /**
+     * @param int $userId
      * @param TasksForUpdateDto $tasksForUpdateDto
      * @return int|bool
      */
@@ -25,6 +27,7 @@ interface TasksInterface
 
 
     /**
+     * @param int $userId
      * @param int $id
      * @return bool
      */
@@ -39,5 +42,11 @@ interface TasksInterface
      */
     public function getTasksByDay(int $userId, int $day): array;
 
+
+    /***
+     * @param int $userId
+     * @return TasksDay[] Массив задач
+     */
+    public function getTasksAllByUserId(int $userId): array;
 
 }

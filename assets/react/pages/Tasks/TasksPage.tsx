@@ -15,6 +15,10 @@ import {SaveTasksDto} from "../../ui/props/Tasks/SaveTasksDto";
 import {TasksDateDto} from "../../ui/props/Tasks/TasksDateDto";
 import {Period} from "../../ui/props/Tasks/type/periodType";
 import ResizablePanel from "../../ui/organism/Aside/ResizablePanel";
+import {ImperativePanelGroupHandle, Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
+import {Button} from "../../ui/atoms/button/Button";
+
+
 
 
 const tasksService = new TasksService(new TasksApi());
@@ -43,18 +47,14 @@ const TasksPage: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     const [showEditDateModal, setShowEditDateModal] = useState<boolean>(false);
-    const [activePeriod, setActivePeriod] = useState<'today' | 'tomorrow' | 'nextWeek'>('today');
+    const [activePeriod, setActivePeriod] = useState<'today' | 'tomorrow' | 'nextWeek' | 'nextMonth' | 'all'>('all');
     const [showPanel, setShowPanel] = useState<boolean>(true);
     const [showAddList, setAddList] = useState<boolean>(false);
     const [listType, setListType] = useState<ListTypeDTO[]>([]);
-    const [containerWidth, setContainerWidth] = useState<number>(800);
-    const [containerLeft, setContainerLeft] = useState<number>(260);
-    const containerRef = useRef<HTMLDivElement>(null);
-    const isResizing = useRef<'left' | 'right' | null>(null);
-    const startX = useRef<number>(0);
-    const startWidth = useRef<number>(0);
-    const startLeft = useRef<number>(0);
-    const [asideWidth, setAsideWidth] = useState<number>(300);
+    const groupRef = useRef<ImperativePanelGroupHandle>(null);
+    const [centerSize, setCenterSize] = useState<number>(0);
+    const [shouldIndent, setShouldIndent] = useState<boolean>(false);
+    const [activeId, setActiveId] = useState<number | null>(1);
 
     const formatDate = (date: Date): string => {
         const year = date.getFullYear();
@@ -63,9 +63,7 @@ const TasksPage: React.FC = () => {
         return `${year}${month}${day}`;
     };
 
-    useEffect(() => {
-        setContainerLeft(asideWidth + 20);
-    }, [asideWidth]);
+
 
     const getActiveDate = (): string => {
         const today = new Date();
@@ -78,6 +76,10 @@ const TasksPage: React.FC = () => {
                 const nextWeek = new Date(today);
                 nextWeek.setDate(nextWeek.getDate() + 7);
                 return formatDate(nextWeek);
+            case 'nextMonth':
+                const nextMonth = new Date(today);
+                nextMonth.setDate(nextMonth.getDate() + 30);
+                return formatDate(nextMonth);
             default:
                 return formatDate(today);
         }
@@ -87,9 +89,14 @@ const TasksPage: React.FC = () => {
         const fetchTasks = async () => {
             try {
                 setLoading(true);
-                const date = getActiveDate();
-                const tasks = await tasksService.getTasksFor(date);
-                setTasks(tasks);
+                if (activePeriod === 'all') {
+                    const tasks = await tasksService.getTasksAll();
+                    setTasks(tasks);
+                } else {
+                    const date = getActiveDate();
+                    const tasks = await tasksService.getTasksFor(date);
+                    setTasks(tasks);
+                }
             } catch (err: any) {
                 setError(err.message);
                 setTasks([]);
@@ -101,43 +108,33 @@ const TasksPage: React.FC = () => {
         fetchTasks();
     }, [activePeriod]);
 
-    const handlePeriodChange = (period: Period) => {
-        if (period === 'all') return;
+    const handlePeriodChange = async (period: Period) => {
+
+        if (period === 'all') {
+            await getTasks(period);
+        }
         setActivePeriod(period);
     };
 
-    const startResize = (e: React.MouseEvent<HTMLDivElement>, side: 'left' | 'right') => {
-        isResizing.current = side;
-        startX.current = e.clientX;
-        startWidth.current = containerWidth;
-        startLeft.current = containerLeft;
-        document.addEventListener('mousemove', handleResize);
-        document.addEventListener('mouseup', stopResize);
-    };
 
-    const handleResize = (e: MouseEvent) => {
-        if (!isResizing.current) return;
-
-        const dx = e.clientX - startX.current;
-
-        if (isResizing.current === 'right') {
-            let newWidth = startWidth.current + dx;
-            newWidth = Math.max(600, Math.min(1200, newWidth));
-            setContainerWidth(newWidth);
-        }
-
-        if (isResizing.current === 'left') {
-            let newWidth = startWidth.current - dx;
-            newWidth = Math.max(600, Math.min(1200, newWidth));
-            setContainerWidth(newWidth);
+    const getTasks = async (period: 'today' | 'tomorrow' | 'nextWeek' | 'nextMonth' | 'all') => {
+        try {
+            setLoading(true);
+            const allTasks = await tasksService.getTasksAll();
+            setTasks(allTasks);
+            setActivePeriod(period);
+        } catch (err: any) {
+            setError(err.message || 'Ошибка получения всех задач');
+            setTasks([]);
+        } finally {
+            setLoading(false);
         }
     };
 
-    const stopResize = () => {
-        isResizing.current = null;
-        document.removeEventListener('mousemove', handleResize);
-        document.removeEventListener('mouseup', stopResize);
-    };
+
+
+
+
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setTitle(e.target.value);
@@ -257,6 +254,27 @@ const TasksPage: React.FC = () => {
         setShowEditDateModal(false);
     };
 
+    const handleLayoutChange = (sizes: number[]) => {
+        setCenterSize(sizes[1]);
+    };
+
+    useEffect(() => {
+        if (centerSize === 75) {
+            setShouldIndent(true);
+        } else {
+            setShouldIndent(false);
+        }
+    }, [centerSize]);
+
+    const closeLeftPanel = () => {
+        groupRef.current?.setLayout([0, 75, 25]);
+        setShowPanel(false)
+    };
+
+    const openLeftPanel = () => {
+        groupRef.current?.setLayout([20, 55, 25]);
+        setShowPanel(true)
+    };
 
     const renderTaskDateTime = (task: Task) => {
         const { duration, time, date } = task.timeData ?? {};
@@ -284,171 +302,208 @@ const TasksPage: React.FC = () => {
     return (
         <div id="tasks-page">
             <Sidebar/>
-            <div className="aside-tasks-container">
 
-                {showPanel && (
-                    <ResizablePanel position="left" minWidth={300}>
-                        <div>Контент внутри панели</div>
-                    </ResizablePanel>
+                <PanelGroup autoSaveId="example" direction="horizontal" style={{ height: "100vh" }} ref={groupRef} onLayout={handleLayoutChange}>
 
-
-                    // <SidePanel
-                    //     onClose={() => setShowPanel(false)}
-                    //     activePeriod={activePeriod}
-                    //     onPeriodChange={handlePeriodChange}
-                    //     filters={[
-                    //         {label: 'Задачи на неделю', value: 'weekTasks'},
-                    //         {label: 'Привычки', value: 'habits'},
-                    //         {label: 'Все задачи', value: 'allTasks'}
-                    //     ]}
-                    //     activeFilter={'weekTasks'}
-                    //     onFilterChange={() => console.log('Добавить')}
-                    //     onAddClick={() => setAddList(true)}
-                    //     closeButtonSrcImg={"/Upload/Images/AppIcons/chevron-left.svg"}
-                    //     plusButtonContent={<img src="/Upload/Images/AppIcons/plus-circle.svg" alt=""/>}
-                    //     onResize={(w: number) => setAsideWidth(w)}
-                    //     availableWidth={asideWidth}
-                    // />
-                )}
-            </div>
-            <div className="app-nav">
-                <button className="open-aside button-aside" onClick={() => setShowPanel(true)}>
-                    <img src="/Upload/Images/AppIcons/chevron-right.svg" alt=""/>
-                </button>
-                <div className="nav-left-side">
-                    <h3 className="header">Задачи</h3>
-                </div>
-            </div>
-
-            <div id="content">
-                <div className="resizable-container" ref={containerRef} style={{width: `${containerWidth}px`}}>
-                    <div className="resize-handle left" onMouseDown={(e) => startResize(e, 'left')}/>
-                    <div className="block-add-tasks" style={{height: showTasksInput ? '110px' : '50px'}}>
-                        {showTasksInput === false ? (
-                            <div onClick={() => setTasksInput(true)} className="button-add-tasks">
-                                <p>Добавить задачу</p>
-                            </div>
-                        ) : (
-                            <div className="input-tasks">
-                                <input
-                                    className="input-tasks-title"
-                                    type="text"
-                                    placeholder="Хотите что то сделать?"
-                                    value={title}
-                                    onChange={handleChange}
-                                />
-                                <div className="actions">
-                                    <span onClick={() => setDataModal(true)}>
-                                        {selectedDate ? ` ${selectedDate}` : 'Добавить дату'}
-                                    </span>
-                                    <button onClick={() => saveTasks()}>Добавить</button>
-                                </div>
-                            </div>
-                        )}
-
-                        {showDataModal && (
-                            <DataChunk onClose={() => setDataModal(false)} onSave={handleSave}/>
-                        )}
-
-                        {loading && <Loading/>}
-                        {error && <div className="error">Ошибка: {error}</div>}
-
-                        <div className="tasks-list">
-                            {tasks.map(task => (
-                                <div key={task.id} className={`task-item ${task.wontDo ? 'wont-do' : ''}`}>
-                                    <div className="task-header">
-                                        <input
-                                            type="checkbox"
-                                            checked={task.wontDo || false}
-                                            onChange={() => handleWontDo(task.id)}
-                                            className="wont-do-checkbox"
-                                        />
-                                        <div className="task-content">
-                                            <h3 className="task-title">{task.title}</h3>
-                                            <p className="task-description">{task.description}</p>
-                                        </div>
-                                    </div>
-                                    {renderTaskDateTime(task)}
-                                    <div className="task-actions">
-                                        <div className="dots-menu">
-                                            <span className="dots">...</span>
-                                            <div className="dropdown-menu">
-                                                <button onClick={() => handleEdit(task)}>Редактировать</button>
-                                                <button onClick={() => handleDelete(task.id)}>Удалить</button>
-                                                <button onClick={() => handleWontDo(task.id)}>
-                                                    {task.wontDo ? 'Вернуть' : 'Не буду делать'}
-                                                </button>
+                        <Panel maxSize={25} defaultSize={20} minSize={0}>
+                                <div className="panel-content sidebar-indent">
+                                    <div className="content-panel">
+                                        <div className="lists-buttons">
+                                            <div className="handlers">
+                                                <Button key={1} variant="listButton"  isActive={activeId === 1} onToggle={() => setActiveId(1)} onClick={() => handlePeriodChange('all')} className="all handl">Все</Button>
+                                                <Button key={2} variant="listButton"  isActive={activeId === 2} onToggle={() => setActiveId(2)} onClick={() => handlePeriodChange('today')} className="day handl">Сегодня</Button>
+                                                <Button key={3} variant="listButton"  isActive={activeId === 3} onToggle={() => setActiveId(3)} onClick={() => handlePeriodChange('tomorrow')} className="day handl">Завтра</Button>
+                                                <Button key={4} variant="listButton"  isActive={activeId === 4} onToggle={() => setActiveId(4)} onClick={() => handlePeriodChange('nextWeek')} className="day handl">Неделя</Button>
+                                                <Button key={5} variant="listButton"  isActive={activeId === 5} onToggle={() => setActiveId(5)} onClick={() => handlePeriodChange('nextMonth')} className="day handl">Месяц</Button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            ))}
-                        </div>
-                    </div>
-                    <div className="resize-handle right" onMouseDown={(e) => startResize(e, 'right')}/>
-                </div>
+                        </Panel>
 
-                {showAddList && (
-                    <div className="modal">
-                        <div className="modal-content">
-                            <div className="header-container mb-sm-5">
-                                <h5 className="header-title">Добавить список</h5>
-                                <button className="header-button" onClick={() => setAddList(false)}>
-                                    <img src="/Upload/Images/AppIcons/x-circle.svg" alt=""/>
-                                </button>
+                    <PanelResizeHandle/>
+                    <Panel maxSize={75} defaultSize={50} minSize={20}>
+                        <div className={`panel-content ${(!showPanel || shouldIndent) ? 'sidebar-indent' : ''}`}>
+                            <div className="line-resize"></div>
+
+                            <div className="content-panel">
+                                <div className="header-panel-center">
+                                    <div className="close-block">
+                                        {showPanel ? (
+                                            <Button variant={"imgButton"} onClick={closeLeftPanel}>
+                                                <img src="/Upload/Images/AppIcons/chevron-left.svg" alt="Закрыть"/>
+                                            </Button>
+                                        ) : (
+                                            <Button variant={"imgButton"} onClick={openLeftPanel}>
+                                                <img src="/Upload/Images/AppIcons/chevron-right.svg" alt="Открыть"/>
+                                            </Button>
+                                        )}
+                                    </div>
+
+                                    <div className="header-text mt-xl-1">
+                                        <h4 className="header-title">Задачи</h4>
+                                    </div>
+                                </div>
+
+
+                                <div className="add-tasks-input">
+                                    {!showTasksInput && (
+                                        <div className="add-head" onClick={() => setTasksInput(true)}>
+                                            + Хотите добавить задачу
+                                        </div>
+                                    )}
+                                    {showTasksInput && (
+                                        <div className="block-add-tasks">
+                                            {!showTasksInput ? (
+                                                <div onClick={() => setTasksInput(true)} className="button-add-tasks">
+                                                    <p>+ Хотите добавить задачу</p>
+                                                </div>
+                                            ) : (
+                                                <div className="input-tasks">
+                                                    <input
+                                                        className="input-tasks-title"
+                                                        type="text"
+                                                        placeholder="Хотите что то сделать?"
+                                                        value={title}
+                                                        onChange={handleChange}
+                                                    />
+                                                    <div className="actions">
+                                                <span onClick={() => setDataModal(true)}>
+                                                    {selectedDate ? ` ${selectedDate}` : 'Добавить дату'}
+                                                </span>
+                                                        <button onClick={() => saveTasks()}>Добавить</button>
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {showDataModal && (
+                                                <DataChunk onClose={() => setDataModal(false)} onSave={handleSave}/>
+                                            )}
+
+                                            {loading && <Loading/>}
+                                            {error && <div className="error">Ошибка: {error}</div>}
+                                        </div>
+
+                                    )}
+                                </div>
+                                <div className="tasks-list">
+                                    {loading ? (
+                                        <Loading/>
+                                    ) : (
+                                        tasks.map(task => (
+                                            <div key={task.id} className={`task-item ${task.wontDo ? 'wont-do' : ''}`}>
+                                                <div className="task-header">
+                                                    <div className="checkbox-wrapper-15">
+                                                        <input
+                                                            className="inp-cbx"
+                                                            id={`cbx-${task.id}`}
+                                                            type="checkbox"
+                                                            style={{display: "none"}}
+                                                            checked={task.wontDo || false}
+                                                            onChange={() => handleWontDo(task.id)}
+                                                        />
+                                                        <label className="cbx" htmlFor={`cbx-${task.id}`}>
+                                                      <span>
+                                                        <svg width="12px" height="9px" viewBox="0 0 12 9">
+                                                          <polyline points="1 5 4 8 11 1"></polyline>
+                                                        </svg>
+                                                      </span>
+                                                        </label>
+                                                    </div>
+                                                    <div className="task-content">
+                                                        <h3 className="task-title">{task.title}</h3>
+                                                        <p className="task-description">{task.description}</p>
+                                                    </div>
+                                                </div>
+                                                {renderTaskDateTime(task)}
+                                                <div className="task-actions">
+                                                    <div className="dots-menu">
+                                                        <span className="dots">...</span>
+                                                        <div className="dropdown-menu">
+                                                            <button onClick={() => handleEdit(task)}>Редактировать
+                                                            </button>
+                                                            <button onClick={() => handleDelete(task.id)}>Удалить
+                                                            </button>
+                                                            <button onClick={() => handleWontDo(task.id)}>
+                                                                {task.wontDo ? 'Вернуть' : 'Не буду делать'}
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )))}
+                                </div>
                             </div>
-                            <input type="text" placeholder="Название списка" className="list-header"/>
-                            <select className="type-list" name="Тип списка" id="type-list">
-                                {listType.map((type) => (
-                                    <option key={type.type_id} value={type.type_id}>
-                                        {type.label}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                    </div>
-                )}
 
-                {showEditModal && editingTask && (
-                    <div className="edit-modal">
-                        <div className="modal-content">
-                            <h3>Редактирование задачи</h3>
-                            <input
-                                type="text"
-                                value={editingTask.title || ''}
-                                onChange={(e) => setEditingTask({...editingTask, title: e.target.value})}
-                            />
-                            <textarea
-                                value={editingTask.description || ''}
-                                onChange={(e) => setEditingTask({...editingTask, description: e.target.value})}
-                            />
-                            <div className="date-section">
+                            <div className="line-resize"></div>
+                        </div>
+                    </Panel>
+                    <PanelResizeHandle/>
+                    <Panel defaultSize={25} minSize={10}>
+                        <div className="panel-content">
+                            <div className="line-resize"></div>
+                            <h1>Правая</h1>
+                        </div>
+                    </Panel>
+                </PanelGroup>
+
+            {showAddList && (
+                <div className="modal">
+                    <div className="modal-content">
+                        <div className="header-container mb-sm-5">
+                            <h5 className="header-title">Добавить список</h5>
+                            <button className="header-button" onClick={() => setAddList(false)}>
+                                <img src="/Upload/Images/AppIcons/x-circle.svg" alt=""/>
+                            </button>
+                        </div>
+                        <input type="text" placeholder="Название списка" className="list-header"/>
+                        <select className="type-list" name="Тип списка" id="type-list">
+                            {listType.map((type) => (
+                                <option key={type.type_id} value={type.type_id}>
+                                    {type.label}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                </div>
+            )}
+
+            {showEditModal && editingTask && (
+                <div className="edit-modal">
+                    <div className="modal-content">
+                        <h3>Редактирование задачи</h3>
+                        <input
+                            type="text"
+                            value={editingTask.title || ''}
+                            onChange={(e) => setEditingTask({...editingTask, title: e.target.value})}
+                        />
+                        <textarea
+                            value={editingTask.description || ''}
+                            onChange={(e) => setEditingTask({...editingTask, description: e.target.value})}
+                        />
+                        <div className="date-section">
                                 <span onClick={() => setShowEditDateModal(true)}>
                                     {editingTask.timeData.time ? `Дата: ${editingTask.timeData.time}` : 'Добавить дату'}
                                 </span>
-                            </div>
-                            <div className="modal-actions">
-                                <button onClick={() => setShowEditModal(false)}>Отмена</button>
-                                <button onClick={saveEditedTask}>Сохранить</button>
-                            </div>
+                        </div>
+                        <div className="modal-actions">
+                            <button onClick={() => setShowEditModal(false)}>Отмена</button>
+                            <button onClick={saveEditedTask}>Сохранить</button>
                         </div>
                     </div>
-                )}
+                </div>
+            )}
 
 
+            {showEditDateModal && editingTask && (
+                <DataChunk
+                    onClose={() => setShowEditDateModal(false)}
+                    onSave={handleEditDateSave}
+                    initialDate={editingTask.timeData.time ?? undefined}
+                />
+            )}
 
-                {showEditDateModal && editingTask && (
-                    <DataChunk
-                        onClose={() => setShowEditDateModal(false)}
-                        onSave={handleEditDateSave}
-                        initialDate={editingTask.timeData.time ?? undefined}
-                    />
-                )}
-            </div>
 
-            <ResizablePanel position="right" minWidth={300}>
-                <div>Контент sdasdasdas панели</div>
-            </ResizablePanel>
         </div>
     );
 };

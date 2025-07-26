@@ -1,1 +1,1 @@
-export type Period = 'all' | 'today' | 'tomorrow' | 'nextWeek';
+export type Period = 'all' | 'today' | 'tomorrow' | 'nextWeek' | 'nextMonth';

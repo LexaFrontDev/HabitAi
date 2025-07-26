@@ -6,6 +6,7 @@ import { I18nextProvider } from 'react-i18next';
 import i18n from './Infrastructure/Library/i18n';
 import 'react-toastify/dist/ReactToastify.css';
 
+
 const root = ReactDOM.createRoot(document.getElementById('react-root'));
 
 root.render(

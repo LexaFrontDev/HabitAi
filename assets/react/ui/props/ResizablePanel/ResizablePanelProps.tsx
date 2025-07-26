@@ -7,5 +7,10 @@ export interface ResizablePanelProps {
     minWidth?: number;
     maxWidth?: number;
     children: React.ReactNode;
-    onClose?: boolean; // добавить это
+    onClose?: boolean;
+    widths?: number;
+    onResize?: (widths: number) => void;
+    leftWidth?: number;
+    rightWidth?: number;
+    centerWidth?: number;
 }

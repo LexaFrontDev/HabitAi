@@ -11,6 +11,10 @@ export class TasksService {
         return await this.tasksApi.getTasksByDate(date);
     }
 
+    async getTasksAll(): Promise<Task[]> {
+        return await this.tasksApi.getTasksAll();
+    }
+
     async createTask(task: Partial<SaveTasksDto>): Promise<TaskResponse> {
         try {
             const response = await this.tasksApi.saveTask(task);

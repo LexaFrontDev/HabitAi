@@ -2,14 +2,13 @@
 
 namespace App\Infrastructure\EventListener\Exceptions;
 
-use App\Domain\Exception\ExistException\ExistException;
-use App\Domain\Exception\Message\MessageException;
-use App\Domain\Exception\NotFoundException\NotFoundException;
-use App\Domain\Exception\UsersException\UserNotAuthenticatedException;
+use App\Application\Dto\ExceptionDto\ActionResult;
+use App\Domain\Exception\BaseException\BusinessThrowableInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
+use Symfony\Component\HttpFoundation\Response;
 
 class ExceptionListener
 {
@@ -17,34 +16,50 @@ class ExceptionListener
 
     public function onKernelException(ExceptionEvent $event): void
     {
-        $e = $event->getThrowable();
+        $exception = $event->getThrowable();
 
-        if ($e instanceof UserNotAuthenticatedException) {
-            $event->setResponse(new RedirectResponse('/login'));
+        if ($exception instanceof BusinessThrowableInterface) {
+            $result = $exception->toActionResult();
+
+            $response = $this->buildResponseFromActionResult($result);
+            $event->setResponse($response);
+
+            if ($result->status >= 500) {
+                $this->logger->error($exception->getMessage(), ['exception' => $exception]);
+            }
+
             return;
         }
 
-        $status = 400;
-        $payload = [
-            'error' => (new \ReflectionClass($e))->getShortName(),
-            'message' => $e->getMessage(),
-            'code' => $e->getCode(),
-        ];
+        $status = method_exists($exception, 'getStatusCode') ? $exception->getStatusCode() : 500;
 
-        if ($e instanceof NotFoundException) {
-            $status = 404;
-        } elseif ($e instanceof ExistException) {
-            $status = 400;
-        }elseif ($e instanceof MessageException){
-            $status = 400;
-        }  elseif (method_exists($e, 'getStatusCode')) {
-            $status = $e->getStatusCode();
-        }
+        $payload = [
+            'error' => (new \ReflectionClass($exception))->getShortName(),
+            'message' => $exception->getMessage(),
+            'code' => $exception->getCode(),
+        ];
 
         $event->setResponse(new JsonResponse($payload, $status));
 
         if ($status >= 500) {
-            $this->logger->error($e->getMessage(), ['exception' => $e]);
+            $this->logger->error($exception->getMessage(), ['exception' => $exception]);
         }
     }
+
+    private function buildResponseFromActionResult(ActionResult $result): Response
+    {
+        $status = ($result->status >= 100 && $result->status <= 599) ? $result->status : 500;
+
+        if ($result->redirectUrl !== null) {
+            return new RedirectResponse($result->redirectUrl, $status);
+        }
+
+        if ($result->json !== null) {
+            return new JsonResponse($result->json, $status);
+        }
+
+        return new JsonResponse(['message' => 'Unhandled error'], $status);
+    }
+
 }
+

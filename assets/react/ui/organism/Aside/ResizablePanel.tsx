@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, {useEffect, useRef, useState} from "react";
 import { ResizablePanelProps } from "../../props/ResizablePanel/ResizablePanelProps";
 import { createResizeHandler } from "../../../Aplication/UseCases/Resize/ResizeLogic";
 
@@ -8,6 +8,11 @@ export default function ResizablePanel({
                                            maxWidth = 800,
                                            children,
                                            onClose = false,
+                                           widths: externalWidth,
+                                           onResize,
+                                           leftWidth = undefined,
+                                           rightWidth = undefined,
+                                           centerWidth = undefined
                                        }: ResizablePanelProps) {
     const panelRef = useRef<HTMLElement>(null);
     const [width, setWidth] = useState(300);
@@ -20,9 +25,21 @@ export default function ResizablePanel({
         minWidth,
         maxWidth,
         width,
-        setWidth,
+        setWidth: (newWidth: number) => {
+            setWidth(newWidth);
+            if (onResize) onResize(newWidth);
+        },
+        leftWidth,
+        rightWidth,
+        centerWidth,
     });
 
+
+    useEffect(() => {
+        if (typeof externalWidth === 'number') {
+            setWidth(externalWidth);
+        }
+    }, [externalWidth]);
     return (
         <aside
             ref={panelRef}
@@ -44,8 +61,8 @@ export default function ResizablePanel({
 
             {position === "center" ? (
                 <>
-                    <div onMouseDown={startResize} className="resize-handle left" />
-                    <div onMouseDown={startResize} className="resize-handle right" />
+                    <div onMouseDown={startResize} className="resize-handle left-resize left" />
+                    <div onMouseDown={startResize} className="resize-handle right-resize right" />
                 </>
             ) : (
                 <div

@@ -1,61 +1,70 @@
-.resizable-container {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  height: 100%;
-  display: flex;
+
+
+
+
+.panel-content{
+  width: auto;
+  height: 100vh;
   background: $card-bg;
-  border-radius: 12px;
-  overflow: hidden;
-  transition: none;
-  z-index: 9999;
+
+  .content-panel{
+    padding: 10px;
+  }
+
+
+  .handlers{
+    display: flex;
+    align-content: center;
+    align-items: stretch;
+    flex-wrap: nowrap;
+    justify-content: space-evenly;
+    flex-direction: column;
+
+
+  }
+
+
+  .header-panel{
+    display: flex;
+    width: auto;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+
+
+  .header-panel-center{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 20px;
+  }
 }
 
 
 
-.resize-handle {
-  width: 10px;
-  height: 100%;
-  cursor: col-resize;
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  z-index: 10;
-  background-color: rgba(0, 0, 0, 0.1);
 
-  &:hover {
-    background-color: rgba(0, 0, 0, 0.2);
-  }
 
-  &.left {
-    left: 0;
-  }
 
-  &.right {
-    right: 0;
-  }
+.add-tasks-input{
+  margin-top: 1%;
+  padding: 10px 10px;
+  cursor: pointer;
+  background: rgba(var(--color-grey), var(--opacity-variant-grey-3));
+  width: auto;
 }
-
-
-
-
-
-
-
 
 .block-add-tasks {
   min-width: 400px;
   max-width: 1200px;
   border-radius: 15px;
-  background: $card-bg;
-  padding: 10px 16px;
+
   transition: width 0.2s ease;
+
+
 
   .input-tasks {
     position: relative;
-    border-radius: 4px;
-    padding: 0;
+    border-radius: 3px;
     border: 2px solid transparent;
     transition: border 0.2s ease;
 
@@ -69,6 +78,7 @@
       outline: none;
       background: none;
       padding: 8px;
+      color: $text-dark;
     }
 
     .actions {
@@ -78,79 +88,94 @@
     }
   }
 
-  .tasks-list {
-    margin-top: 20px;
 
-    .task-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px;
-      margin-bottom: 10px;
-      background: lighten($card-bg, 5%);
-      border-radius: 8px;
+}
+
+.tasks-list {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  justify-content: flex-start;
+  align-content: flex-start;
+  margin-top: 5%;
+
+  .task-item {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 10px;
+    margin-bottom: 10px;
+    background: lighten($card-bg, 5%);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: transform 1.2s ease;
+
+
+    &:hover {
+      scale: 1.05;
+    }
+
+    .task-content {
+      flex: 1;
+
+      .task-title {
+        margin: 0 0 5px 0;
+        font-size: 16px;
+      }
+
+      .task-description {
+        margin: 0;
+        font-size: 14px;
+        color: #999;
+      }
+    }
+
+    .task-time {
+      margin: 0 15px;
+      color: #666;
+    }
+
+    .task-actions {
       position: relative;
 
-      .task-content {
-        flex: 1;
+      .dots-menu {
+        cursor: pointer;
 
-        .task-title {
-          margin: 0 0 5px 0;
-          font-size: 16px;
+        .dots {
+          font-size: 20px;
+          padding: 5px;
         }
 
-        .task-description {
-          margin: 0;
-          font-size: 14px;
-          color: #999;
-        }
-      }
+        .dropdown-menu {
+          display: none;
+          position: absolute;
+          right: 0;
+          top: 100%;
+          background: #fff;
+          border: 1px solid #ddd;
+          border-radius: 4px;
+          box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+          z-index: 9999;
 
-      .task-time {
-        margin: 0 15px;
-        color: #666;
-      }
+          button {
+            display: block;
+            width: 100%;
+            padding: 8px 16px;
+            text-align: left;
+            background: none;
+            border: none;
+            cursor: pointer;
 
-      .task-actions {
-        position: relative;
-
-        .dots-menu {
-          cursor: pointer;
-
-          .dots {
-            font-size: 20px;
-            padding: 5px;
-          }
-
-          .dropdown-menu {
-            display: none;
-            position: absolute;
-            right: 0;
-            top: 100%;
-            background: #fff;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            z-index: 10;
-
-            button {
-              display: block;
-              width: 100%;
-              padding: 8px 16px;
-              text-align: left;
-              background: none;
-              border: none;
-              cursor: pointer;
-
-              &:hover {
-                background: #f5f5f5;
-              }
+            &:hover {
+              background: #f5f5f5;
             }
           }
+        }
 
-          &:hover .dropdown-menu {
-            display: block;
-          }
+        &:hover .dropdown-menu {
+          display: block;
         }
       }
     }
@@ -218,16 +243,112 @@
   opacity: 0.6;
 }
 
+
+
 /* Checkbox styling */
-.wont-do-checkbox {
-  margin-right: 10px;
-  cursor: pointer;
+ .checkbox-wrapper-15 .cbx {
+   margin-right: 15px;
+   height: 12px;
+   -webkit-user-select: none;
+   user-select: none;
+   -webkit-tap-highlight-color: transparent;
+   cursor: pointer;
+ }
+.checkbox-wrapper-15 .cbx span {
+  display: inline-block;
+  vertical-align: middle;
+  transform: translate3d(0, 0, 0);
 }
+.checkbox-wrapper-15 .cbx span:first-child {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  transform: scale(1);
+  vertical-align: middle;
+  border: 1px solid #B9B8C3;
+  transition: all 0.2s ease;
+}
+.checkbox-wrapper-15 .cbx span:first-child svg {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  left: 6px;
+  transform: translateY(-50%);
+  fill: none;
+  stroke: white;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 16px;
+  stroke-dashoffset: 16px;
+  transition: all 0.3s ease;
+  transition-delay: 0.1s;
+}
+
+.checkbox-wrapper-15 .cbx span:first-child:before {
+  content: "";
+  width: 100%;
+  height: 100%;
+  background: #506EEC;
+  display: block;
+  transform: scale(0);
+  opacity: 1;
+  border-radius: 50%;
+  transition-delay: 0.2s;
+}
+.checkbox-wrapper-15 .cbx span:last-child {
+  margin-left: 8px;
+}
+.checkbox-wrapper-15 .cbx span:last-child:after {
+  content: "";
+  position: absolute;
+  top: 8px;
+  left: 0;
+  height: 1px;
+  width: 100%;
+  background: #B9B8C3;
+  transform-origin: 0 0;
+  transform: scaleX(0);
+}
+.checkbox-wrapper-15 .cbx:hover span:first-child {
+  border-color: #3c53c7;
+}
+
+.checkbox-wrapper-15 .inp-cbx:checked + .cbx span:first-child {
+  border-color: #3c53c7;
+  background: #3c53c7;
+  animation: check-15 0.6s ease;
+}
+.checkbox-wrapper-15 .inp-cbx:checked + .cbx span:first-child svg {
+  stroke-dashoffset: 0;
+}
+.checkbox-wrapper-15 .inp-cbx:checked + .cbx span:first-child:before {
+  transform: scale(2.2);
+  opacity: 0;
+  transition: all 0.6s ease;
+}
+.checkbox-wrapper-15 .inp-cbx:checked + .cbx span:last-child {
+  color: #B9B8C3;
+  transition: all 0.3s ease;
+}
+.checkbox-wrapper-15 .inp-cbx:checked + .cbx span:last-child:after {
+  transform: scaleX(1);
+  transition: all 0.3s ease;
+}
+
+@keyframes check-15 {
+  50% {
+    transform: scale(1.2);
+  }
+}
+
+
 
 /* Task header layout */
 .task-header {
   display: flex;
-  align-items: flex-start;
+  align-items: baseline;
 }
 
 /* Date section styling in edit modal */
