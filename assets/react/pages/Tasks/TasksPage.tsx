@@ -17,13 +17,9 @@ import {Period} from "../../ui/props/Tasks/type/periodType";
 import ResizablePanel from "../../ui/organism/Aside/ResizablePanel";
 import {ImperativePanelGroupHandle, Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import {Button} from "../../ui/atoms/button/Button";
-
-
-
+import TextArea from "../../ui/atoms/TextArea/TextArea";
 
 const tasksService = new TasksService(new TasksApi());
-
-
 
 const TasksPage: React.FC = () => {
     const [showTasksInput, setTasksInput] = useState<boolean>(false);
@@ -43,7 +39,9 @@ const TasksPage: React.FC = () => {
     });
     const [tasks, setTasks] = useState<Task[]>([]);
     const [editingTask, setEditingTask] = useState<Task | null>(null);
+    const [infoTasks, setInfoTasks] = useState<Task | null>(null);
     const [showEditModal, setShowEditModal] = useState<boolean>(false);
+    const [showInfoTasks, setShowInfoTasks] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     const [showEditDateModal, setShowEditDateModal] = useState<boolean>(false);
@@ -62,8 +60,6 @@ const TasksPage: React.FC = () => {
         const day = String(date.getDate()).padStart(2, '0');
         return `${year}${month}${day}`;
     };
-
-
 
     const getActiveDate = (): string => {
         const today = new Date();
@@ -91,10 +87,12 @@ const TasksPage: React.FC = () => {
                 setLoading(true);
                 if (activePeriod === 'all') {
                     const tasks = await tasksService.getTasksAll();
+                    console.log(tasks);
                     setTasks(tasks);
                 } else {
                     const date = getActiveDate();
                     const tasks = await tasksService.getTasksFor(date);
+                    console.log(tasks);
                     setTasks(tasks);
                 }
             } catch (err: any) {
@@ -109,13 +107,11 @@ const TasksPage: React.FC = () => {
     }, [activePeriod]);
 
     const handlePeriodChange = async (period: Period) => {
-
         if (period === 'all') {
             await getTasks(period);
         }
         setActivePeriod(period);
     };
-
 
     const getTasks = async (period: 'today' | 'tomorrow' | 'nextWeek' | 'nextMonth' | 'all') => {
         try {
@@ -130,11 +126,6 @@ const TasksPage: React.FC = () => {
             setLoading(false);
         }
     };
-
-
-
-
-
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setTitle(e.target.value);
@@ -164,7 +155,6 @@ const TasksPage: React.FC = () => {
         }
     };
 
-
     const handleSave = (dateData: TasksDateDto) => {
         const dateString = dateData.time ? dateData.time.toString() : '';
         setSelectedDate(dateString);
@@ -189,11 +179,12 @@ const TasksPage: React.FC = () => {
         }
     };
 
-
     const handleEdit = (task: Task) => {
         setEditingTask(task);
         setShowEditModal(true);
     };
+
+
 
     const saveEditedTask = async () => {
         if (!editingTask) return;
@@ -202,10 +193,8 @@ const TasksPage: React.FC = () => {
             id: editingTask.id,
             title: editingTask.title!,
             description: editingTask.description || '',
-            timeData
+            timeData: editingTask.timeData
         };
-
-
         const result = await tasksService.updateTask(taskDto);
 
         if (result.success && result.task) {
@@ -213,7 +202,6 @@ const TasksPage: React.FC = () => {
                 task.id === result.task!.id ? result.task! : task
             ));
             setShowEditModal(false);
-            Messages('Задача обновлена');
         } else if (result.front) {
             ErrorAlert(result.message);
         } else {
@@ -240,19 +228,31 @@ const TasksPage: React.FC = () => {
         }
     };
 
-
-    const handleEditDateSave = (dateData: TasksDateDto) => {
+    const handleEditDateSave = async (dateData: TasksDateDto) => {
         if (!editingTask) return;
-        const dateString = dateData.time ? dateData.time.toString() : '';
-        setEditingTask({
+
+        const updatedTask: Task = {
             ...editingTask,
-            timeData: {
-                ...editingTask.timeData,
-                time: dateString,
-            },
-        });
+            timeData: dateData
+        };
+
+        setEditingTask(updatedTask);
+        setTasks(prev =>
+            prev.map(task => task.id === updatedTask.id ? updatedTask : task)
+        );
+
         setShowEditDateModal(false);
+
+
+        await tasksService.updateTask({
+            id: updatedTask.id,
+            title: updatedTask.title!,
+            description: updatedTask.description || '',
+            timeData: updatedTask.timeData
+        });
     };
+
+
 
     const handleLayoutChange = (sizes: number[]) => {
         setCenterSize(sizes[1]);
@@ -279,173 +279,259 @@ const TasksPage: React.FC = () => {
     const renderTaskDateTime = (task: Task) => {
         const { duration, time, date } = task.timeData ?? {};
 
-        if (duration?.startDate) {
-            return <div className="task-time">{time}</div>;
-        } else if (date) {
+        if (duration) {
+            const {
+                startDate,
+                endDate,
+                startTime,
+                endTime
+            } = duration;
+
+            const hasFullDateRange = startDate && endDate;
+            const hasFullTimeRange = startTime && endTime;
+
+            if (hasFullDateRange || hasFullTimeRange) {
+                return (
+                    <div>
+                        {hasFullDateRange && (
+                            <div>{startDate} - {endDate}</div>
+                        )}
+                        {hasFullTimeRange && (
+                            <div>{startTime} - {endTime}</div>
+                        )}
+                    </div>
+                );
+            }
+        }
+
+        if (date) {
             return (
-                <div className="task-time">
-                    <div>{time}</div>
-                </div>
-            );
-        } else if (duration) {
-            return (
-                <div className="task-time">
-                    <div>{duration.startDate} - {duration.endDate}</div>
-                    <div>{duration.startTime} - {duration.endTime}</div>
+                <div>
+                    <div>{date}</div>
+                    {time && <div>{time}</div>}
                 </div>
             );
         }
 
-        return null;
+        if (time) {
+            return <div>{time}</div>;
+        }
+
+        return <div>Время не указано</div>;
     };
+
 
     return (
         <div id="tasks-page">
             <Sidebar/>
 
-                <PanelGroup autoSaveId="example" direction="horizontal" style={{ height: "100vh" }} ref={groupRef} onLayout={handleLayoutChange}>
+            <PanelGroup autoSaveId="example" direction="horizontal" style={{ height: "100vh" }} ref={groupRef} onLayout={handleLayoutChange}>
 
-                        <Panel maxSize={25} defaultSize={20} minSize={0}>
-                                <div className="panel-content sidebar-indent">
-                                    <div className="content-panel">
-                                        <div className="lists-buttons">
-                                            <div className="handlers">
-                                                <Button key={1} variant="listButton"  isActive={activeId === 1} onToggle={() => setActiveId(1)} onClick={() => handlePeriodChange('all')} className="all handl">Все</Button>
-                                                <Button key={2} variant="listButton"  isActive={activeId === 2} onToggle={() => setActiveId(2)} onClick={() => handlePeriodChange('today')} className="day handl">Сегодня</Button>
-                                                <Button key={3} variant="listButton"  isActive={activeId === 3} onToggle={() => setActiveId(3)} onClick={() => handlePeriodChange('tomorrow')} className="day handl">Завтра</Button>
-                                                <Button key={4} variant="listButton"  isActive={activeId === 4} onToggle={() => setActiveId(4)} onClick={() => handlePeriodChange('nextWeek')} className="day handl">Неделя</Button>
-                                                <Button key={5} variant="listButton"  isActive={activeId === 5} onToggle={() => setActiveId(5)} onClick={() => handlePeriodChange('nextMonth')} className="day handl">Месяц</Button>
-                                            </div>
-                                        </div>
-                                    </div>
+                <Panel maxSize={25} defaultSize={20} minSize={0}>
+                    <div className="panel-content sidebar-indent">
+                        <div className="content-panel">
+                            <div className="lists-buttons">
+                                <div className="handlers">
+                                    <Button key={1} variant="listButton"  isActive={activeId === 1} onToggle={() => setActiveId(1)} onClick={() => handlePeriodChange('all')} className="all handl">Все</Button>
+                                    <Button key={2} variant="listButton"  isActive={activeId === 2} onToggle={() => setActiveId(2)} onClick={() => handlePeriodChange('today')} className="day handl">Сегодня</Button>
+                                    <Button key={3} variant="listButton"  isActive={activeId === 3} onToggle={() => setActiveId(3)} onClick={() => handlePeriodChange('tomorrow')} className="day handl">Завтра</Button>
+                                    <Button key={4} variant="listButton"  isActive={activeId === 4} onToggle={() => setActiveId(4)} onClick={() => handlePeriodChange('nextWeek')} className="day handl">Неделя</Button>
+                                    <Button key={5} variant="listButton"  isActive={activeId === 5} onToggle={() => setActiveId(5)} onClick={() => handlePeriodChange('nextMonth')} className="day handl">Месяц</Button>
                                 </div>
-                        </Panel>
+                            </div>
+                        </div>
+                    </div>
+                </Panel>
 
-                    <PanelResizeHandle/>
-                    <Panel maxSize={75} defaultSize={50} minSize={20}>
-                        <div className={`panel-content ${(!showPanel || shouldIndent) ? 'sidebar-indent' : ''}`}>
-                            <div className="line-resize"></div>
+                <PanelResizeHandle/>
+                <Panel maxSize={75} defaultSize={50} minSize={20}>
+                    <div className={`panel-content ${(!showPanel || shouldIndent) ? 'sidebar-indent' : ''}`}>
+                        <div className="line-resize"></div>
 
-                            <div className="content-panel">
-                                <div className="header-panel-center">
-                                    <div className="close-block">
-                                        {showPanel ? (
-                                            <Button variant={"imgButton"} onClick={closeLeftPanel}>
-                                                <img src="/Upload/Images/AppIcons/chevron-left.svg" alt="Закрыть"/>
-                                            </Button>
-                                        ) : (
-                                            <Button variant={"imgButton"} onClick={openLeftPanel}>
-                                                <img src="/Upload/Images/AppIcons/chevron-right.svg" alt="Открыть"/>
-                                            </Button>
-                                        )}
-                                    </div>
-
-                                    <div className="header-text mt-xl-1">
-                                        <h4 className="header-title">Задачи</h4>
-                                    </div>
-                                </div>
-
-
-                                <div className="add-tasks-input">
-                                    {!showTasksInput && (
-                                        <div className="add-head" onClick={() => setTasksInput(true)}>
-                                            + Хотите добавить задачу
-                                        </div>
+                        <div className="content-panel">
+                            <div className="header-panel-center">
+                                <div className="close-block">
+                                    {showPanel ? (
+                                        <Button variant={"imgButton"} onClick={closeLeftPanel}>
+                                            <img src="/Upload/Images/AppIcons/chevron-left.svg" alt="Закрыть"/>
+                                        </Button>
+                                    ) : (
+                                        <Button variant={"imgButton"} onClick={openLeftPanel}>
+                                            <img src="/Upload/Images/AppIcons/chevron-right.svg" alt="Открыть"/>
+                                        </Button>
                                     )}
-                                    {showTasksInput && (
-                                        <div className="block-add-tasks">
-                                            {!showTasksInput ? (
-                                                <div onClick={() => setTasksInput(true)} className="button-add-tasks">
-                                                    <p>+ Хотите добавить задачу</p>
-                                                </div>
-                                            ) : (
-                                                <div className="input-tasks">
-                                                    <input
-                                                        className="input-tasks-title"
-                                                        type="text"
-                                                        placeholder="Хотите что то сделать?"
-                                                        value={title}
-                                                        onChange={handleChange}
-                                                    />
-                                                    <div className="actions">
+                                </div>
+
+                                <div className="header-text mt-xl-1">
+                                    <h4 className="header-title">Задачи</h4>
+                                </div>
+                            </div>
+
+
+                            <div className="add-tasks-input">
+                                {!showTasksInput && (
+                                    <div className="add-head" onClick={() => setTasksInput(true)}>
+                                        + Хотите добавить задачу
+                                    </div>
+                                )}
+                                {showTasksInput && (
+                                    <div className="block-add-tasks">
+                                        {!showTasksInput ? (
+                                            <div onClick={() => setTasksInput(true)} className="button-add-tasks">
+                                                <p>+ Хотите добавить задачу</p>
+                                            </div>
+                                        ) : (
+                                            <div className="input-tasks">
+                                                <input
+                                                    className="input-tasks-title"
+                                                    type="text"
+                                                    placeholder="Хотите что то сделать?"
+                                                    value={title}
+                                                    onChange={handleChange}
+                                                />
+                                                <div className="actions">
                                                 <span onClick={() => setDataModal(true)}>
                                                     {selectedDate ? ` ${selectedDate}` : 'Добавить дату'}
                                                 </span>
-                                                        <button onClick={() => saveTasks()}>Добавить</button>
-                                                    </div>
+                                                    <button onClick={() => saveTasks()}>Добавить</button>
                                                 </div>
-                                            )}
+                                            </div>
+                                        )}
 
-                                            {showDataModal && (
-                                                <DataChunk onClose={() => setDataModal(false)} onSave={handleSave}/>
-                                            )}
+                                        {showDataModal && (
+                                            <DataChunk onClose={() => setDataModal(false)} onSave={handleSave}/>
+                                        )}
 
-                                            {loading && <Loading/>}
-                                            {error && <div className="error">Ошибка: {error}</div>}
-                                        </div>
+                                        {loading && <Loading/>}
+                                    </div>
 
-                                    )}
-                                </div>
-                                <div className="tasks-list">
-                                    {loading ? (
-                                        <Loading/>
-                                    ) : (
-                                        tasks.map(task => (
-                                            <div key={task.id} className={`task-item ${task.wontDo ? 'wont-do' : ''}`}>
-                                                <div className="task-header">
-                                                    <div className="checkbox-wrapper-15">
-                                                        <input
-                                                            className="inp-cbx"
-                                                            id={`cbx-${task.id}`}
-                                                            type="checkbox"
-                                                            style={{display: "none"}}
-                                                            checked={task.wontDo || false}
-                                                            onChange={() => handleWontDo(task.id)}
-                                                        />
-                                                        <label className="cbx" htmlFor={`cbx-${task.id}`}>
+                                )}
+                            </div>
+                            <div className="tasks-list">
+                                {loading ? (
+                                    <Loading/>
+                                ) : (
+                                    tasks.map(task => (
+                                        <div key={task.id} className={`task-item ${task.wontDo ? 'wont-do' : ''}`}
+                                             onClick={(e) => {
+                                                 e.stopPropagation();
+                                                 handleEdit(task);
+                                             }}>
+                                            <div className="task-header">
+                                                <div className="checkbox-wrapper-15">
+                                                    <input
+                                                        className="inp-cbx"
+                                                        id={`cbx-${task.id}`}
+                                                        type="checkbox"
+                                                        style={{display: "none"}}
+                                                        checked={task.wontDo || false}
+                                                        onChange={() => handleWontDo(task.id)}
+                                                    />
+                                                    <label className="cbx" htmlFor={`cbx-${task.id}`}>
                                                       <span>
                                                         <svg width="12px" height="9px" viewBox="0 0 12 9">
                                                           <polyline points="1 5 4 8 11 1"></polyline>
                                                         </svg>
                                                       </span>
-                                                        </label>
-                                                    </div>
-                                                    <div className="task-content">
-                                                        <h3 className="task-title">{task.title}</h3>
-                                                        <p className="task-description">{task.description}</p>
-                                                    </div>
+                                                    </label>
                                                 </div>
+                                                <div className="task-content">
+                                                    <h3 className="task-title">{task.title}</h3>
+                                                    <p className="task-description">{task.description}</p>
+                                                </div>
+                                            </div>
+
+                                            <div className="task-actions">
                                                 {renderTaskDateTime(task)}
-                                                <div className="task-actions">
-                                                    <div className="dots-menu">
-                                                        <span className="dots">...</span>
-                                                        <div className="dropdown-menu">
-                                                            <button onClick={() => handleEdit(task)}>Редактировать
-                                                            </button>
-                                                            <button onClick={() => handleDelete(task.id)}>Удалить
-                                                            </button>
-                                                            <button onClick={() => handleWontDo(task.id)}>
-                                                                {task.wontDo ? 'Вернуть' : 'Не буду делать'}
-                                                            </button>
-                                                        </div>
+                                                <div className="dots-menu">
+                                                    <span className="dots">...</span>
+                                                    <div className="dropdown-menu">
+                                                        <button onClick={() => handleDelete(task.id)}>Удалить
+                                                        </button>
+                                                        <button onClick={() => handleWontDo(task.id)}>
+                                                            {task.wontDo ? 'Вернуть' : 'Не буду делать'}
+                                                        </button>
                                                     </div>
                                                 </div>
                                             </div>
-                                        )))}
+                                        </div>
+                                    )))}
+                            </div>
+                        </div>
+                    </div>
+                </Panel>
+                <PanelResizeHandle/>
+                <Panel defaultSize={25} minSize={10}>
+                    <div className="panel-content">
+                        <div className="line-resize"></div>
+                        {editingTask && (
+                            <div className="content-panel">
+                                <div className="header-panel-center">
+                                    <div className="close-block">
+                                        <div className="checkbox-wrapper-15">
+                                            <input
+                                                className="inp-cbx"
+                                                id={`cbx-${editingTask.id}`}
+                                                type="checkbox"
+                                                style={{display: "none"}}
+                                                checked={editingTask.wontDo || false}
+                                                onChange={() => handleWontDo(editingTask.id)}
+                                            />
+                                            <label className="cbx" htmlFor={`cbx-${editingTask.id}`}>
+                                                      <span>
+                                                        <svg width="12px" height="9px" viewBox="0 0 12 9">
+                                                          <polyline points="1 5 4 8 11 1"></polyline>
+                                                        </svg>
+                                                      </span>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div className="header-text mt-xl-1">
+                                         <span onClick={() => setShowEditDateModal(true)}>
+                                            {editingTask.timeData?.time ? `Дата: ${editingTask.timeData.time}` : 'Добавить дату'}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div className="block-description">
+                                    <div className="edit-panel">
+                                        <input
+                                            className="tasks-text-input"
+                                            type="text"
+                                            value={editingTask.title || ''}
+                                            placeholder="Название"
+                                            onChange={(e) => {
+                                                const updatedTask = {...editingTask, title: e.target.value};
+                                                setEditingTask(updatedTask);
+                                                setTasks(prev =>
+                                                    prev.map(task => task.id === updatedTask.id ? updatedTask : task)
+                                                );
+                                            }}
+                                            onBlur={saveEditedTask}
+                                        />
+
+                                        <TextArea
+                                            variant="default"
+                                            className="tasks-text-input"
+                                            value={editingTask.description || ''}
+                                            placeholder="Описание"
+                                            onChange={(e) => {
+                                                const updatedTask = { ...editingTask, description: e.target.value };
+                                                setEditingTask(updatedTask);
+                                                setTasks(prev =>
+                                                    prev.map(task => task.id === updatedTask.id ? updatedTask : task)
+                                                );
+                                            }}
+                                            onBlur={saveEditedTask}
+                                        />
+
+                                    </div>
                                 </div>
                             </div>
-
-                            <div className="line-resize"></div>
-                        </div>
-                    </Panel>
-                    <PanelResizeHandle/>
-                    <Panel defaultSize={25} minSize={10}>
-                        <div className="panel-content">
-                            <div className="line-resize"></div>
-                            <h1>Правая</h1>
-                        </div>
-                    </Panel>
-                </PanelGroup>
+                        )}
+                    </div>
+                </Panel>
+            </PanelGroup>
 
             {showAddList && (
                 <div className="modal">
@@ -468,42 +554,13 @@ const TasksPage: React.FC = () => {
                 </div>
             )}
 
-            {showEditModal && editingTask && (
-                <div className="edit-modal">
-                    <div className="modal-content">
-                        <h3>Редактирование задачи</h3>
-                        <input
-                            type="text"
-                            value={editingTask.title || ''}
-                            onChange={(e) => setEditingTask({...editingTask, title: e.target.value})}
-                        />
-                        <textarea
-                            value={editingTask.description || ''}
-                            onChange={(e) => setEditingTask({...editingTask, description: e.target.value})}
-                        />
-                        <div className="date-section">
-                                <span onClick={() => setShowEditDateModal(true)}>
-                                    {editingTask.timeData.time ? `Дата: ${editingTask.timeData.time}` : 'Добавить дату'}
-                                </span>
-                        </div>
-                        <div className="modal-actions">
-                            <button onClick={() => setShowEditModal(false)}>Отмена</button>
-                            <button onClick={saveEditedTask}>Сохранить</button>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-
             {showEditDateModal && editingTask && (
                 <DataChunk
                     onClose={() => setShowEditDateModal(false)}
                     onSave={handleEditDateSave}
-                    initialDate={editingTask.timeData.time ?? undefined}
+                    initialDate={editingTask.timeData?.time ?? undefined}
                 />
             )}
-
-
         </div>
     );
 };

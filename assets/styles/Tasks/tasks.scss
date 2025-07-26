@@ -41,7 +41,35 @@
 }
 
 
+.edit-panel{
+  display: flex;
+  flex-direction: column;
+  align-content: space-between;
+  flex-wrap: nowrap;
+  margin-top: 15px;
 
+
+
+  .tasks-text-input {
+    background: none;
+    border: none;
+    padding: 8px;
+    color: #fff;
+    resize: none;
+    overflow: hidden;
+
+    &:focus {
+      outline: none;
+      border: none;
+      box-shadow: none;
+    }
+
+    &::placeholder {
+      color: #aaa;
+    }
+  }
+
+}
 
 
 
@@ -113,9 +141,7 @@
     transition: transform 1.2s ease;
 
 
-    &:hover {
-      scale: 1.05;
-    }
+
 
     .task-content {
       flex: 1;
@@ -141,6 +167,7 @@
       position: relative;
 
       .dots-menu {
+        float: right;
         cursor: pointer;
 
         .dots {

@@ -1641,6 +1641,30 @@ a:hover {
   gap: 20px;
 }
 
+.edit-panel {
+  display: flex;
+  flex-direction: column;
+  align-content: space-between;
+  flex-wrap: nowrap;
+  margin-top: 15px;
+}
+.edit-panel .tasks-text-input {
+  background: none;
+  border: none;
+  padding: 8px;
+  color: #fff;
+  resize: none;
+  overflow: hidden;
+}
+.edit-panel .tasks-text-input:focus {
+  outline: none;
+  border: none;
+  box-shadow: none;
+}
+.edit-panel .tasks-text-input::placeholder {
+  color: #aaa;
+}
+
 .add-tasks-input {
   margin-top: 1%;
   padding: 10px 10px;
@@ -1699,9 +1723,6 @@ a:hover {
   cursor: pointer;
   transition: transform 1.2s ease;
 }
-.tasks-list .task-item:hover {
-  scale: 1.05;
-}
 .tasks-list .task-item .task-content {
   flex: 1;
 }
@@ -1722,6 +1743,7 @@ a:hover {
   position: relative;
 }
 .tasks-list .task-item .task-actions .dots-menu {
+  float: right;
   cursor: pointer;
 }
 .tasks-list .task-item .task-actions .dots-menu .dots {

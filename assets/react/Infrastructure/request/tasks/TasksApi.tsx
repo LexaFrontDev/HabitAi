@@ -32,7 +32,7 @@ export class TasksApi implements TasksReqInterface{
     }
 
     async updateTask(task: TaskUpdate): Promise<any> {
-        const res = await fetch(`/api/tasks/${task.id}`, {
+        const res = await fetch(`/api/tasks/update`, {
             method: 'PUT',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(task),

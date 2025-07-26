@@ -36,9 +36,25 @@ export class TasksService {
 
 
 
-    async updateTask(task: TaskUpdate) {
-        return await this.tasksApi.updateTask(task);
+    async updateTask(task: TaskUpdate): Promise<TaskResponse> {
+        try {
+            const response = await this.tasksApi.updateTask(task);
+            return {
+                success: true,
+                message: response.data?.message ?? 'Задача успешно обновлена',
+                front: response.data?.front ?? false,
+                task: response.data,
+            };
+        } catch (error: any) {
+            const errRes = error?.response?.data;
+            return {
+                success: false,
+                message: errRes?.message ?? 'Ошибка при обновлении задачи',
+                front: errRes?.front ?? false,
+            };
+        }
     }
+
 
     async deleteTask(taskId: number): Promise<TaskResponse> {
         try {

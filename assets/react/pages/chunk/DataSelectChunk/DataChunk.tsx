@@ -13,7 +13,7 @@ const DataChunk: React.FC<DataChunkProps> = ({ onClose, onSave, initialDate }) =
     const [activeTab, setActiveTab] = useState<number>(1);
     const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-    const [selectedTime, setSelectedTime] = useState<string | null>(null);
+    const [selectedTime, setSelectedTime] = useState<string | undefined>(undefined);
     const [repeat, setRepeat] = useState<string>('ежедневно');
     const [showTimeList, setShowTimeList] = useState<boolean>(false);
     const [position, setPosition] = useState<{ top: number; left: number }>({ top: 100, left: 100 });
@@ -38,7 +38,7 @@ const DataChunk: React.FC<DataChunkProps> = ({ onClose, onSave, initialDate }) =
                     setSelectedDate(parsedDate);
                     setCurrentMonth(startOfMonth(parsedDate));
 
-                    // Если в initialDate есть время, устанавливаем его
+
                     const timePart = initialDate.split('T')[1];
                     if (timePart) {
                         const [hours, minutes] = timePart.split(':');
@@ -147,7 +147,7 @@ const DataChunk: React.FC<DataChunkProps> = ({ onClose, onSave, initialDate }) =
     }, [showTimeList]);
 
     const handleCloseTimeSelect = () => {
-        setSelectedTime(null);
+        setSelectedTime(undefined);
         setShowTimeList(false);
     };
 

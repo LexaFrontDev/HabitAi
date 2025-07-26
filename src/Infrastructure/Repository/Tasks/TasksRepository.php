@@ -2,13 +2,17 @@
 
 namespace App\Infrastructure\Repository\Tasks;
 
+use App\Aplication\Dto\TasksDto\TasksDateGet;
 use App\Aplication\Dto\TasksDto\TasksDay;
+use App\Aplication\Dto\TasksDto\TasksDurationGet;
 use App\Aplication\Dto\TasksDto\TasksForSaveDto;
 use App\Aplication\Dto\TasksDto\TasksForUpdateDto;
 use App\Domain\Entity\Tasks\Task;
 use App\Domain\Repository\Tasks\TasksInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use App\Aplication\Dto\TasksDto\TasksDateDto;
+use App\Aplication\Dto\TasksDto\TaskDurationDto;
 
 /**
  * @extends ServiceEntityRepository<Task>
@@ -53,7 +57,9 @@ class TasksRepository extends ServiceEntityRepository implements TasksInterface
         }
 
         $task->setTitleTask($tasksForUpdateDto->title);
-        $beginDate = !empty($date) ? new \DateTime($date) : null;
+        $beginDate = !empty($tasksForUpdateDto->timeData->date)
+            ? new \DateTime($tasksForUpdateDto->timeData->date)
+            : null;
         $task->setBeginDate($beginDate);
         $task->setTime($tasksForUpdateDto->timeData->time);
         $task->setRepeatMode($tasksForUpdateDto->timeData->repeat);
@@ -117,23 +123,21 @@ class TasksRepository extends ServiceEntityRepository implements TasksInterface
                 id: $task->getId(),
                 title: $task->getTitleTask(),
                 description: $task->getDescription(),
-                date: $task->getBeginDate(),
-                time: $task->getTime(),
-                startDate: $task->getBeginDate()
-                    ? null
-                    : $task->getStartDate(),
-                startTime: $task->getBeginDate()
-                    ? null
-                    : $task->getStartTime(),
-                endDate: $task->getBeginDate()
-                    ? null
-                    : $task->getEndDate(),
-                endTime: $task->getBeginDate()
-                    ? null
-                    : $task->getEndTime(),
+                timeData: new TasksDateGet(
+                    date: $task->getBeginDate() ?? null,
+                    time: $task->getTime(),
+                    repeat: $task->getRepeatMode() ?? 'none',
+                    duration: new TasksDurationGet(
+                        startDate: $task->getBeginDate() ? null : $task->getStartDate(),
+                        startTime: $task->getBeginDate() ? null : $task->getStartTime(),
+                        endDate: $task->getBeginDate() ? null : $task->getEndDate(),
+                        endTime: $task->getBeginDate() ? null : $task->getEndTime(),
+                    )
+                )
             ),
             $result
         );
+
     }
 
 
@@ -155,20 +159,17 @@ class TasksRepository extends ServiceEntityRepository implements TasksInterface
                 id: $task->getId(),
                 title: $task->getTitleTask(),
                 description: $task->getDescription(),
-                date: $task->getBeginDate(),
-                time: $task->getTime(),
-                startDate: $task->getBeginDate()
-                    ? null
-                    : $task->getStartDate(),
-                startTime: $task->getBeginDate()
-                    ? null
-                    : $task->getStartTime(),
-                endDate: $task->getBeginDate()
-                    ? null
-                    : $task->getEndDate(),
-                endTime: $task->getBeginDate()
-                    ? null
-                    : $task->getEndTime(),
+                timeData: new TasksDateGet(
+                    date: $task->getBeginDate() ?? null,
+                    time: $task->getTime(),
+                    repeat: $task->getRepeatMode() ?? 'none',
+                    duration: new TasksDurationGet(
+                        startDate: $task->getBeginDate() ? null : $task->getStartDate(),
+                        startTime: $task->getBeginDate() ? null : $task->getStartTime(),
+                        endDate: $task->getBeginDate() ? null : $task->getEndDate(),
+                        endTime: $task->getBeginDate() ? null : $task->getEndTime(),
+                    )
+                )
             ),
             $result
         );
