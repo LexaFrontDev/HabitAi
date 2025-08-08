@@ -10,7 +10,7 @@
 
     const timerText = document.getElementById('timer-text');
     const startBtn = document.getElementById('start-btn');
-    const pomodoroWrapper = document.getElementById('pomodoro-wrapper');
+    const pomodoroWrapper = document.getElementById('Pomodoro-wrapper');
     const progressPath = document.getElementById('progress-path');
     const overlay = document.getElementById('modal-overlay');
     const minutesInputEl = document.getElementById('modal-minutes-input');

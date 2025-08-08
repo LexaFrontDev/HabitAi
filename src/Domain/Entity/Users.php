@@ -3,6 +3,7 @@
 namespace App\Domain\Entity;
 
 use App\Infrastructure\Repository\UsersRepository;
+use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\UX\Turbo\Attribute\Broadcast;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -46,16 +47,16 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'integer')]
     private int $is_lang = 0;
 
-#[ORM\Column(type: 'datetime', nullable: true)]
-private ?\DateTimeInterface $created_at = null;
+    #[ORM\Column(name: 'created_at', type: 'datetime', nullable: true, options: ['comment' => 'Дата создания записи'])]
+    private ?DateTimeInterface $created_at = null;
 
-   #[ORM\Column(type: 'datetime', nullable: true)]
-private ?\DateTimeInterface $updated_at = null;
+    #[ORM\Column(name: 'updated_at', type: 'datetime', nullable: true, options: ['comment' => 'Дата обновления записи'])]
+    private ?DateTimeInterface $updated_at = null;
 
-    #[ORM\Column(type: 'boolean')]
+    #[ORM\Column(name: 'is_delete', type: 'boolean', options: ['comment' => 'Флаг логического удаления'])]
     private bool $is_delete = false;
 
-    // ======= Getters & Setters =======
+
 
     public function setId(int $id): void
     {

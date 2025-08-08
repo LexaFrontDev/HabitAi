@@ -301,7 +301,7 @@
 
   function Component(props, context, updater) {
     this.props = props;
-    this.context = context; // If a component has string refs, we will assign a different object later.
+    this.context = context; // If a component has string refs, we will assign a Different object later.
 
     this.refs = emptyObject; // We initialize the default updater but the real one gets injected by the
     // renderer.
@@ -324,7 +324,7 @@
    *
    * When a function is provided to setState, it will be called at some point in
    * the future (not synchronously). It will be called with the up to date
-   * component arguments (state, props, context). These values can be different
+   * component arguments (state, props, context). These values can be Different
    * from this.* because your function may be called after receiveProps but before
    * shouldComponentUpdate, and this new state, props, and context will not yet be
    * assigned to this.
@@ -401,7 +401,7 @@
 
   function PureComponent(props, context, updater) {
     this.props = props;
-    this.context = context; // If a component has string refs, we will assign a different object later.
+    this.context = context; // If a component has string refs, we will assign a Different object later.
 
     this.refs = emptyObject;
     this.updater = updater || ReactNoopUpdateQueue;
@@ -472,7 +472,7 @@
     // The most common types that will cause this exception are `Symbol` instances
     // and Temporal objects like `Temporal.Instant`. But any object that has a
     // `valueOf` or `[Symbol.toPrimitive]` method that throws will also cause this
-    // exception. (Library authors do this to prevent users from using built-in
+    // exception. (Library authors do this to prevent Users from using built-in
     // numeric operators like `+` or comparison operators like `>=` because custom
     // methods are needed to perform accurate arithmetic or comparison.)
     //
@@ -647,7 +647,7 @@
         if (!specialPropKeyWarningShown) {
           specialPropKeyWarningShown = true;
 
-          error('%s: `key` is not a prop. Trying to access it will result ' + 'in `undefined` being returned. If you need to access the same ' + 'value within the child component, you should pass it as a different ' + 'prop. (https://reactjs.org/link/special-props)', displayName);
+          error('%s: `key` is not a prop. Trying to access it will result ' + 'in `undefined` being returned. If you need to access the same ' + 'value within the child component, you should pass it as a Different ' + 'prop. (https://reactjs.org/link/special-props)', displayName);
         }
       }
     };
@@ -665,7 +665,7 @@
         if (!specialPropRefWarningShown) {
           specialPropRefWarningShown = true;
 
-          error('%s: `ref` is not a prop. Trying to access it will result ' + 'in `undefined` being returned. If you need to access the same ' + 'value within the child component, you should pass it as a different ' + 'prop. (https://reactjs.org/link/special-props)', displayName);
+          error('%s: `ref` is not a prop. Trying to access it will result ' + 'in `undefined` being returned. If you need to access the same ' + 'value within the child component, you should pass it as a Different ' + 'prop. (https://reactjs.org/link/special-props)', displayName);
         }
       }
     };
@@ -702,7 +702,7 @@
    * @param {string|object} ref
    * @param {*} owner
    * @param {*} self A *temporary* helper to detect places where `this` is
-   * different from the `owner` when React.createElement is called, so that we
+   * Different from the `owner` when React.createElement is called, so that we
    * can warn. We want to get rid of owner and replace string `ref`s with arrow
    * functions, and as long as `this` and owner are the same, there will be no
    * change in behavior.
@@ -747,7 +747,7 @@
         enumerable: false,
         writable: false,
         value: self
-      }); // Two elements created in two different places should be considered
+      }); // Two elements created in two Different places should be considered
       // equal for testing purposes and therefore we hide it from enumeration.
 
       Object.defineProperty(element, '_source', {
@@ -1254,7 +1254,7 @@
 
     {
       // A separate object, but proxies back to the original context object for
-      // backwards compatibility. It has a different $$typeof, so we can properly
+      // backwards compatibility. It has a Different $$typeof, so we can properly
       // warn for the incorrect usage of Context as a Consumer.
       var Consumer = {
         $$typeof: REACT_CONTEXT_TYPE,
@@ -1833,7 +1833,7 @@
         });
 
         if (typeof Reflect === 'object' && Reflect.construct) {
-          // We construct a different control for this case to include any extra
+          // We construct a Different control for this case to include any extra
           // frames added by the construct call.
           try {
             Reflect.construct(Fake, []);
@@ -2555,7 +2555,7 @@
   var isInputPending = typeof navigator !== 'undefined' && navigator.scheduling !== undefined && navigator.scheduling.isInputPending !== undefined ? navigator.scheduling.isInputPending.bind(navigator.scheduling) : null;
 
   function advanceTimers(currentTime) {
-    // Check for tasks that are no longer delayed and add them to the queue.
+    // Check for Tasks that are no longer delayed and add them to the queue.
     var timer = peek(timerQueue);
 
     while (timer !== null) {
@@ -2806,7 +2806,7 @@
       push(timerQueue, newTask);
 
       if (peek(taskQueue) === null && newTask === peek(timerQueue)) {
-        // All tasks are delayed, and this is the task with the earliest delay.
+        // All Tasks are delayed, and this is the task with the earliest delay.
         if (isHostTimeoutScheduled) {
           // Cancel an existing timeout.
           cancelHostTimeout();
@@ -2863,7 +2863,7 @@
   var scheduledHostCallback = null;
   var taskTimeoutID = -1; // Scheduler periodically yields in case there is other work on the main
   // thread, like user events. By default, it yields multiple times per frame.
-  // It does not attempt to align with frame boundaries, since most tasks don't
+  // It does not attempt to align with frame boundaries, since most Tasks don't
   // need to be frame aligned; for those that do, use requestAnimationFrame.
 
   var frameInterval = frameYieldMs;
@@ -3082,7 +3082,7 @@
               didWarnAboutMessageChannel = true;
 
               if (typeof MessageChannel === 'undefined') {
-                error('This browser does not have a MessageChannel implementation, ' + 'so enqueuing tasks via await act(async () => ...) will fail. ' + 'Please file an issue at https://github.com/facebook/react/issues ' + 'if you encounter this warning.');
+                error('This browser does not have a MessageChannel implementation, ' + 'so enqueuing Tasks via await act(async () => ...) will fail. ' + 'Please file an issue at https://github.com/facebook/react/issues ' + 'if you encounter this warning.');
               }
             }
           }

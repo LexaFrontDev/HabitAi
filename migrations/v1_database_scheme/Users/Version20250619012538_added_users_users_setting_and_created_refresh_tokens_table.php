@@ -1,0 +1,59 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Migrations\V1\Users;
+
+use Doctrine\DBAL\Schema\Schema;
+use Doctrine\Migrations\AbstractMigration;
+
+final class Version20250619012538_added_users_users_setting_and_created_refresh_tokens_table extends AbstractMigration
+{
+    public function getDescription(): string
+    {
+        return 'Добавление таблицы refresh_tokens и поля users_settings в таблицу Users (если не существуют)';
+    }
+
+    public function up(Schema $schema): void
+    {
+        $schemaManager = $this->connection->createSchemaManager();
+
+        if (!$schemaManager->tablesExist(['refresh_tokens'])) {
+            $this->addSql(<<<'SQL'
+                CREATE TABLE refresh_tokens (
+                    id INT AUTO_INCREMENT NOT NULL,
+                    refresh_token VARCHAR(128) NOT NULL,
+                    username VARCHAR(255) NOT NULL,
+                    valid DATETIME NOT NULL,
+                    UNIQUE INDEX UNIQ_9BACE7E1C74F2195 (refresh_token),
+                    PRIMARY KEY(id)
+                ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB
+            SQL);
+        }
+
+        if ($schemaManager->tablesExist(['Users'])) {
+            $columns = $schemaManager->listTableColumns('Users');
+            if (!array_key_exists('users_settings', $columns)) {
+                $this->addSql(<<<'SQL'
+                    ALTER TABLE Users ADD users_settings JSON DEFAULT NULL
+                SQL);
+            }
+        }
+    }
+
+    public function down(Schema $schema): void
+    {
+        $schemaManager = $this->connection->createSchemaManager();
+
+        if ($schemaManager->tablesExist(['refresh_tokens'])) {
+            $this->addSql('DROP TABLE refresh_tokens');
+        }
+
+        if ($schemaManager->tablesExist(['Users'])) {
+            $columns = $schemaManager->listTableColumns('Users');
+            if (array_key_exists('users_settings', $columns)) {
+                $this->addSql('ALTER TABLE Users DROP COLUMN users_settings');
+            }
+        }
+    }
+}

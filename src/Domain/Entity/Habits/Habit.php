@@ -2,9 +2,10 @@
 
 namespace App\Domain\Entity\Habits;
 
+use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity, ORM\Table(name: "habits")]
+#[ORM\Entity, ORM\Table(name: "Habits")]
 class Habit
 {
     #[ORM\Id, ORM\GeneratedValue, ORM\Column(type: "integer")]
@@ -35,14 +36,15 @@ class Habit
     #[ORM\Column(type: "string")]
     private ?string $notificationDate = null;
 
-    #[ORM\Column(type: 'datetime', nullable: true)]
-    private ?\DateTimeInterface $created_at = null;
+    #[ORM\Column(name: 'created_at', type: 'datetime', nullable: true, options: ['comment' => 'Дата создания записи'])]
+    private ?DateTimeInterface $created_at = null;
 
-   #[ORM\Column(type: 'datetime', nullable: true)]
-    private ?\DateTimeInterface $updated_at = null;
+    #[ORM\Column(name: 'updated_at', type: 'datetime', nullable: true, options: ['comment' => 'Дата обновления записи'])]
+    private ?DateTimeInterface $updated_at = null;
 
-    #[ORM\Column(type: 'boolean')]
+    #[ORM\Column(name: 'is_delete', type: 'boolean', options: ['comment' => 'Флаг логического удаления'])]
     private bool $is_delete = false;
+
 
     // ======= Getters & Setters =======
 

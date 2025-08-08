@@ -26,7 +26,7 @@ class HabitsController extends AbstractController
         private CommandHabitsHistoryUseCase  $commandHabitsHistoryUseCase,
     ){}
 
-    #[Route('/api/habits/save', name: 'save_habit', methods: ['POST'])]
+    #[Route('/api/Habits/save', name: 'save_habit', methods: ['POST'])]
     #[RequiresJwt]
     public function saveHabits(#[MapRequestPayload] ReqHabitsDto $reqHabitsDto, Request $request)
     {
@@ -39,7 +39,7 @@ class HabitsController extends AbstractController
         return $this->json(['success' => false, 'message' => 'Привычки не добавлены'], 400);
     }
 
-    #[Route('/api/habits/update', name: 'update_habit', methods: ['PUT'])]
+    #[Route('/api/Habits/update', name: 'update_habit', methods: ['PUT'])]
     #[RequiresJwt]
     public function updateHabits(#[MapRequestPayload] ReqUpdateHabitsDto $reqHabitsDto, Request $request)
     {
@@ -52,7 +52,7 @@ class HabitsController extends AbstractController
         return $this->json(['success' => false, 'message' => 'Привычки не обновлены'], 400);
     }
 
-    #[Route('/api/get/habits/today', name: 'get_habits', methods: ['GET'])]
+    #[Route('/api/get/Habits/today', name: 'get_habits', methods: ['GET'])]
     #[RequiresJwt]
     public function getHabits(Request $request)
     {
@@ -66,7 +66,7 @@ class HabitsController extends AbstractController
     }
 
 
-    #[Route('/api/get/count/habits/today', name: 'get_count_habits', methods: ['GET'])]
+    #[Route('/api/get/count/Habits/today', name: 'get_count_habits', methods: ['GET'])]
     #[RequiresJwt]
     public function getHabitsContToDay(Request $request): JsonResponse
     {
@@ -85,7 +85,7 @@ class HabitsController extends AbstractController
     }
 
 
-    #[Route('/api/habits/save/progress', name: 'save_habit_progress', methods: ['POST'])]
+    #[Route('/api/Habits/save/progress', name: 'save_habit_progress', methods: ['POST'])]
     #[RequiresJwt]
     public function saveHabitsProgress(#[MapRequestPayload] SaveHabitsProgress $reqHabitsDto, Request $request)
     {

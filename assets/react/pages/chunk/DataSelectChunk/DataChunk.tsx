@@ -13,16 +13,23 @@ const DataChunk: React.FC<DataChunkProps> = ({ onClose, onSave, initialDate }) =
     const [activeTab, setActiveTab] = useState<number>(1);
     const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-    const [selectedTime, setSelectedTime] = useState<string | undefined>(undefined);
+    const [selectedTime, setSelectedTime] = useState<string | undefined>('08:00');
     const [repeat, setRepeat] = useState<string>('ежедневно');
     const [showTimeList, setShowTimeList] = useState<boolean>(false);
     const [position, setPosition] = useState<{ top: number; left: number }>({ top: 100, left: 100 });
     const [dragging, setDragging] = useState<boolean>(false);
     const [dragStart, setDragStart] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
 
-    const [startDate, setStartDate] = useState<string>('');
+    const getDefaultDate = (): string => {
+        const now = new Date();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        return `${month}/${day}`;
+    };
+
+    const [startDate, setStartDate] = useState<string>(getDefaultDate());
     const [startTime, setStartTime] = useState<string>('08:00');
-    const [endDate, setEndDate] = useState<string>('');
+    const [endDate, setEndDate] = useState<string>(getDefaultDate());
     const [endTime, setEndTime] = useState<string>('08:00');
     const [durationRepeat, setDurationRepeat] = useState<string>('ежедневно');
 
@@ -211,7 +218,7 @@ const DataChunk: React.FC<DataChunkProps> = ({ onClose, onSave, initialDate }) =
                         {renderDays()}
                         {renderCells()}
                         <div className="time-select">
-                            {selectedTime === null ? (
+                            {selectedTime === undefined ? (
                                 <p onClick={() => setShowTimeList(true)}>Выберите время</p>
                             ) : (
                                 <div className="time-input-wrapper" ref={timeInputRef}>
@@ -293,7 +300,7 @@ const DataChunk: React.FC<DataChunkProps> = ({ onClose, onSave, initialDate }) =
                             />
                         </div>
                         <div className="time-select">
-                            {selectedTime === null ? (
+                            {selectedTime === undefined ? (
                                 <p onClick={() => setShowTimeList(true)}>Выберите время</p>
                             ) : (
                                 <div className="time-input-wrapper" ref={timeInputRef}>

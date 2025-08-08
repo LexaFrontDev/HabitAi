@@ -85,11 +85,11 @@ class JwtAuthListener
         }
 
         $currentPath = $request->getPathInfo();
-        if ($currentPath === '/users/login') {
+        if ($currentPath === '/Users/login') {
             return;
         }
 
-        $response = new RedirectResponse('/users/login');
+        $response = new RedirectResponse('/Users/login');
         $response->send();
         exit;
     }

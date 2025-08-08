@@ -87,12 +87,10 @@ const TasksPage: React.FC = () => {
                 setLoading(true);
                 if (activePeriod === 'all') {
                     const tasks = await tasksService.getTasksAll();
-                    console.log(tasks);
                     setTasks(tasks);
                 } else {
                     const date = getActiveDate();
                     const tasks = await tasksService.getTasksFor(date);
-                    console.log(tasks);
                     setTasks(tasks);
                 }
             } catch (err: any) {
@@ -106,7 +104,9 @@ const TasksPage: React.FC = () => {
         fetchTasks();
     }, [activePeriod]);
 
-    const handlePeriodChange = async (period: Period) => {
+    const handlePeriodChange = async (period: Period,  id: number) => {
+        setActiveId(id)
+
         if (period === 'all') {
             await getTasks(period);
         }
@@ -143,17 +143,25 @@ const TasksPage: React.FC = () => {
         const result = await tasksService.createTask(newTask);
 
         if (result.success && result.task) {
-            setTasks([...tasks, result.task]);
+            const createdTask: Task = {
+                id: result.task,
+                title,
+                description,
+                todo: false,
+                timeData
+            };
+            setTasks(prev => [...prev, createdTask]);
             setTitle('');
             setDescription('');
             setSelectedDate('');
-            Messages('Задача успешно созданно');
+            Messages('Задача успешно создана');
         } else if (result.front) {
             ErrorAlert(result.message);
         } else {
             console.error(result.message);
         }
     };
+
 
     const handleSave = (dateData: TasksDateDto) => {
         const dateString = dateData.time ? dateData.time.toString() : '';
@@ -195,12 +203,24 @@ const TasksPage: React.FC = () => {
             description: editingTask.description || '',
             timeData: editingTask.timeData
         };
+
         const result = await tasksService.updateTask(taskDto);
 
         if (result.success && result.task) {
-            setTasks(tasks.map(task =>
-                task.id === result.task!.id ? result.task! : task
-            ));
+            const updatedTask: Task = {
+                id: result.task,
+                title: editingTask.title!,
+                description: editingTask.description || '',
+                timeData: editingTask.timeData,
+                todo: editingTask.todo ?? false
+            };
+
+            setTasks(prevTasks =>
+                prevTasks.map(task =>
+                    task.id === result.task ? updatedTask : task
+                )
+            );
+
             setShowEditModal(false);
         } else if (result.front) {
             ErrorAlert(result.message);
@@ -209,18 +229,36 @@ const TasksPage: React.FC = () => {
         }
     };
 
-    const handleWontDo = async (taskId: number) => {
+
+    const handleWontDo = async (taskId: number, status: boolean) => {
         const task = tasks.find(t => t.id === taskId);
         if (!task) return;
-        const newStatus = !task.wontDo;
+        const newStatus = !task.todo;
         setTasks(prevTasks =>
             prevTasks.map(task =>
-                task.id === taskId ? { ...task, wontDo: newStatus } : task
+                task.id === taskId ? { ...task, todo: status } : task
             )
         );
-        const result = await tasksService.toggleWontDo(taskId, newStatus);
+
+        setEditingTask(prev => {
+            if (!prev) return null;
+
+            return {
+                ...prev,
+                todo: newStatus,
+                id: prev.id,
+                title: prev.title,
+                description: prev.description,
+                timeData: prev.timeData
+            };
+        });
+        const result = await tasksService.toggleWontDo(taskId);
         if (result.success) {
-            Messages(result.message);
+            if (status) {
+                Messages('Отлично! Задача выполнена — ты молодец 💪');
+            } else {
+                Messages('Задача отменена. Ничего страшного, в следующий раз получится 🙌');
+            }
         } else if (result.front) {
             ErrorAlert(result.message);
         } else {
@@ -332,11 +370,11 @@ const TasksPage: React.FC = () => {
                         <div className="content-panel">
                             <div className="lists-buttons">
                                 <div className="handlers">
-                                    <Button key={1} variant="listButton"  isActive={activeId === 1} onToggle={() => setActiveId(1)} onClick={() => handlePeriodChange('all')} className="all handl">Все</Button>
-                                    <Button key={2} variant="listButton"  isActive={activeId === 2} onToggle={() => setActiveId(2)} onClick={() => handlePeriodChange('today')} className="day handl">Сегодня</Button>
-                                    <Button key={3} variant="listButton"  isActive={activeId === 3} onToggle={() => setActiveId(3)} onClick={() => handlePeriodChange('tomorrow')} className="day handl">Завтра</Button>
-                                    <Button key={4} variant="listButton"  isActive={activeId === 4} onToggle={() => setActiveId(4)} onClick={() => handlePeriodChange('nextWeek')} className="day handl">Неделя</Button>
-                                    <Button key={5} variant="listButton"  isActive={activeId === 5} onToggle={() => setActiveId(5)} onClick={() => handlePeriodChange('nextMonth')} className="day handl">Месяц</Button>
+                                    <Button key={1} variant="listButton"  isActive={activeId === 1}  onClick={() => handlePeriodChange('all', 1)} className="all handl">Все</Button>
+                                    <Button key={2} variant="listButton"  isActive={activeId === 2}  onClick={() => handlePeriodChange('today', 2)} className="day handl">Сегодня</Button>
+                                    <Button key={3} variant="listButton"  isActive={activeId === 3}  onClick={() => handlePeriodChange('tomorrow', 3)} className="day handl">Завтра</Button>
+                                    <Button key={4} variant="listButton"  isActive={activeId === 4}  onClick={() => handlePeriodChange('nextWeek', 4)} className="day handl">Неделя</Button>
+                                    <Button key={5} variant="listButton"  isActive={activeId === 5}  onClick={() => handlePeriodChange('nextMonth', 5)} className="day handl">Месяц</Button>
                                 </div>
                             </div>
                         </div>
@@ -412,7 +450,7 @@ const TasksPage: React.FC = () => {
                                     <Loading/>
                                 ) : (
                                     tasks.map(task => (
-                                        <div key={task.id} className={`task-item ${task.wontDo ? 'wont-do' : ''}`}
+                                        <div key={task.id} className={`task-item ${task.todo ? 'wont-do' : ''}`}
                                              onClick={(e) => {
                                                  e.stopPropagation();
                                                  handleEdit(task);
@@ -424,9 +462,10 @@ const TasksPage: React.FC = () => {
                                                         id={`cbx-${task.id}`}
                                                         type="checkbox"
                                                         style={{display: "none"}}
-                                                        checked={task.wontDo || false}
-                                                        onChange={() => handleWontDo(task.id)}
+                                                        checked={task.todo || false}
+                                                        onChange={() => handleWontDo(task.id, !task.todo)}
                                                     />
+
                                                     <label className="cbx" htmlFor={`cbx-${task.id}`}>
                                                       <span>
                                                         <svg width="12px" height="9px" viewBox="0 0 12 9">
@@ -448,9 +487,6 @@ const TasksPage: React.FC = () => {
                                                     <div className="dropdown-menu">
                                                         <button onClick={() => handleDelete(task.id)}>Удалить
                                                         </button>
-                                                        <button onClick={() => handleWontDo(task.id)}>
-                                                            {task.wontDo ? 'Вернуть' : 'Не буду делать'}
-                                                        </button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -461,7 +497,7 @@ const TasksPage: React.FC = () => {
                     </div>
                 </Panel>
                 <PanelResizeHandle/>
-                <Panel defaultSize={25} minSize={10}>
+                <Panel maxSize={35} defaultSize={25} minSize={10}>
                     <div className="panel-content">
                         <div className="line-resize"></div>
                         {editingTask && (
@@ -474,8 +510,8 @@ const TasksPage: React.FC = () => {
                                                 id={`cbx-${editingTask.id}`}
                                                 type="checkbox"
                                                 style={{display: "none"}}
-                                                checked={editingTask.wontDo || false}
-                                                onChange={() => handleWontDo(editingTask.id)}
+                                                checked={editingTask.todo || false}
+                                                onChange={() => handleWontDo(editingTask.id, !editingTask.todo)}
                                             />
                                             <label className="cbx" htmlFor={`cbx-${editingTask.id}`}>
                                                       <span>

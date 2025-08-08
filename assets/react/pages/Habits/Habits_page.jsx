@@ -65,7 +65,7 @@ const HabitsPage = () => {
         try {
             const url = editingHabit
                 ? `/api/habits/update/${editingHabit.habit_id}`
-                : '/api/habits/save';
+                : '/api/Habits/save';
 
             const method = editingHabit ? 'PUT' : 'POST';
 

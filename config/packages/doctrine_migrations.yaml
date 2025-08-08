@@ -1,6 +1,8 @@
 doctrine_migrations:
     migrations_paths:
-        # namespace is arbitrary but should be different from App\Migrations
-        # as migrations classes should NOT be autoloaded
-        'DoctrineMigrations': '%kernel.project_dir%/migrations'
+        'Migrations\V1\Tasks': '%kernel.project_dir%/migrations/v1_database_scheme/tasks'
+        'Migrations\V1\Habits': '%kernel.project_dir%/migrations/v1_database_scheme/habits'
+        'Migrations\V1\Users': '%kernel.project_dir%/migrations/v1_database_scheme/users'
+        'Migrations\V1\Pomodoro': '%kernel.project_dir%/migrations/v1_database_scheme/pomodoro'
+        'Migrations\V1\Different': '%kernel.project_dir%/migrations/v1_database_scheme/different'
     enable_profiler: false

@@ -47,17 +47,17 @@ class SidebarService implements SidebarServiceInterface
            'item' => [
                new SidebarItemDTO(
                    label: 'Задачи',
-                   url: '/tasks',
+                   url: '/Tasks',
                    icon: 'Upload/Images/AppIcons/check-circle.svg',
                ),
                new SidebarItemDTO(
                    label: 'Помодор таймер',
-                   url: '/pomodoro',
+                   url: '/Pomodoro',
                    icon: 'Upload/Images/Pomodor/clock.svg',
                ),
                new SidebarItemDTO(
                    label: 'Привычки',
-                   url: '/habits',
+                   url: '/Habits',
                    icon: 'Upload/Images/Habits/bar-chart-2.svg',
                ),
                new SidebarItemDTO(

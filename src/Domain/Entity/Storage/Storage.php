@@ -20,7 +20,7 @@ class Storage
     private string $type;
 
     #[ORM\Column(name: 'file_type', type: 'string', length: 20)]
-    private int $fileType;
+    private string $fileType;
 
     #[ORM\Column(type: 'datetime_immutable')]
     private \DateTimeImmutable $createdAt;

@@ -17,13 +17,13 @@ class FeaturesService implements FeaturesServiceInterface
                 title: 'Таймер помодор',
                 desc: 'Фокусируйся эффективно.',
                 icon: 'Upload/Images/Pomodor/clock.svg',
-                url: '/pomodoro',
+                url: '/Pomodoro',
             ),
             new FeatureDTO(
                 title: 'Список Привычек',
                 desc: 'Формируй полезные действия.',
                 icon: 'Upload/Images/Habits/bar-chart-2.svg',
-                url: '/habits',
+                url: '/Habits',
             ),
             new FeatureDTO(
                 title: 'Матрица Эйзенхауэра',
@@ -40,8 +40,8 @@ class FeaturesService implements FeaturesServiceInterface
             new FeatureDTO(
                 title: 'Список Задач',
                 desc: 'Управляй своим списком дел.',
-                icon: 'tasks.svg',
-                url: '/tasks',
+                icon: 'Tasks.svg',
+                url: '/Tasks',
             ),
         ];
     }

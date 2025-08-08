@@ -11,7 +11,7 @@ class ReactController extends AbstractController
 {
 
 
-    #[Route('/{reactRouting}', name: 'react_app', requirements: ['reactRouting' => '^(?!api|users/login).*'])]
+    #[Route('/{reactRouting}', name: 'react_app', requirements: ['reactRouting' => '^(?!api|Users/login).*'])]
     #[RequiresJwt]
     public function index(): Response
     {

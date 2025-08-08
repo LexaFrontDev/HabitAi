@@ -3,7 +3,7 @@ import Loading from "../LoadingChunk/Loading";
 
 const Aside = () => {
     const [data, setData] = useState(null);
-    const [activeTab, setActiveTab] = useState('pomodoro');
+    const [activeTab, setActiveTab] = useState('Pomodoro');
     const [width, setWidth] = useState(() => {
         const savedWidth = localStorage.getItem('asideWidth');
         return savedWidth ? parseInt(savedWidth) : 300;
@@ -96,13 +96,13 @@ const Aside = () => {
             </div>
 
             <nav className="tabs" style={{ fontSize: `${scaleFactor * 1.1}em` }}>
-                <a onClick={() => setActiveTab('habits')}>Привычки</a>
+                <a onClick={() => setActiveTab('Habits')}>Привычки</a>
                 <a onClick={() => setActiveTab('tasks')}>Задачи</a>
-                <a onClick={() => setActiveTab('pomodoro')}>История</a>
+                <a onClick={() => setActiveTab('Pomodoro')}>История</a>
             </nav>
 
             <div className="content" style={{ fontSize: `${scaleFactor * 1}em` }}>
-                {activeTab === 'habits' && (
+                {activeTab === 'Habits' && (
                     <section>
                         <h2 style={{ fontSize: `${scaleFactor * 1.3}em` }}>Привычки</h2>
                         {habitsList && habitsList.length > 0 ? (
@@ -138,7 +138,7 @@ const Aside = () => {
                     </section>
                 )}
 
-                {activeTab === 'pomodoro' && (
+                {activeTab === 'Pomodoro' && (
                     <section id="pomodoro">
                         <h2 style={{ fontSize: `${scaleFactor * 1.3}em` }}>История Pomodoro</h2>
                         {pomodorHistory && pomodorHistory.length > 0 ? (

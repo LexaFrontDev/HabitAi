@@ -2,10 +2,11 @@
 
 namespace App\Domain\Entity\Tasks;
 
+use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
-#[ORM\Table(name: "tasks")]
+#[ORM\Table(name: "Tasks")]
 class Task
 {
     #[ORM\Id]
@@ -48,16 +49,17 @@ class Task
     #[ORM\Column(type: "datetime", nullable: true)]
     private ?\DateTimeInterface $beginDate = null;
 
-#[ORM\Column(type: 'datetime', nullable: true)]
-private ?\DateTimeInterface $created_at = null;
+    #[ORM\Column(name: 'created_at', type: 'datetime', nullable: true, options: ['comment' => 'Дата создания записи'])]
+    private ?DateTimeInterface $created_at = null;
 
-   #[ORM\Column(type: 'datetime', nullable: true)]
-private ?\DateTimeInterface $updated_at = null;
+    #[ORM\Column(name: 'updated_at', type: 'datetime', nullable: true, options: ['comment' => 'Дата обновления записи'])]
+    private ?DateTimeInterface $updated_at = null;
 
-    #[ORM\Column(type: 'boolean')]
+    #[ORM\Column(name: 'is_delete', type: 'boolean', options: ['comment' => 'Флаг логического удаления'])]
     private bool $is_delete = false;
 
-    // ======= Getters & Setters =======
+
+
 
     public function getId(): ?int
     {

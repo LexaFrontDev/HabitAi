@@ -130,7 +130,7 @@ class QueryLanguageUseCasesTest extends TestCase
     public function testGetTranslatePageByLangWithDifferentPages(): void
     {
         // Arrange
-        $page = 'tasks';
+        $page = 'Tasks';
         $lang = 'pt';
         $translateData = [
             'translate' => '{"add_task":"Adicionar tarefa","edit_task":"Editar tarefa","delete_task":"Excluir tarefa"}'

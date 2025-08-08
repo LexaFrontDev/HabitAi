@@ -4,6 +4,7 @@ namespace App\Domain\Entity\JunctionTabels\Habits;
 
 
 use App\Domain\Repository\Dates\DataJunctionRepositoryInterface;
+use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: DataJunctionRepositoryInterface::class)]
@@ -23,14 +24,15 @@ class HabitsDataJuntion
     #[ORM\Column(length: 255)]
     private ?string $data_type = 'daily';
 
-    #[ORM\Column(type: 'datetime', nullable: true)]
-    private ?\DateTimeInterface $created_at = null;
+    #[ORM\Column(name: 'created_at', type: 'datetime', nullable: true, options: ['comment' => 'Дата создания записи'])]
+    private ?DateTimeInterface $created_at = null;
 
-       #[ORM\Column(type: 'datetime', nullable: true)]
-    private ?\DateTimeInterface $updated_at = null;
+    #[ORM\Column(name: 'updated_at', type: 'datetime', nullable: true, options: ['comment' => 'Дата обновления записи'])]
+    private ?DateTimeInterface $updated_at = null;
 
-    #[ORM\Column(type: 'boolean')]
+    #[ORM\Column(name: 'is_delete', type: 'boolean', options: ['comment' => 'Флаг логического удаления'])]
     private bool $is_delete = false;
+
 
     public function getId(): ?int
     {

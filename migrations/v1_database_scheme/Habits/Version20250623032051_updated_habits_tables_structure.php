@@ -1,0 +1,126 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Migrations\V1\Habits;
+
+use Doctrine\DBAL\Schema\Schema;
+use Doctrine\Migrations\AbstractMigration;
+
+final class Version20250623032051_updated_habits_tables_structure extends AbstractMigration
+{
+    public function getDescription(): string
+    {
+        return 'Изменение структуры таблиц Habits, Tasks, добавление связующих таблиц и удаление старых полей.';
+    }
+
+    public function up(Schema $schema): void
+    {
+        $sm = $this->connection->createSchemaManager();
+
+        if (!$sm->tablesExist('habits_data_juntion')) {
+            $this->addSql(<<<'SQL'
+                CREATE TABLE habits_data_juntion (
+                    id INT AUTO_INCREMENT NOT NULL,
+                    habits_id INT NOT NULL,
+                    data_id INT NOT NULL,
+                    data_type VARCHAR(255) NOT NULL,
+                    PRIMARY KEY(id)
+                ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB
+            SQL);
+        }
+
+        if (!$sm->tablesExist('habits_pomodor_junction')) {
+            $this->addSql(<<<'SQL'
+                CREATE TABLE habits_pomodor_junction (
+                    id INT AUTO_INCREMENT NOT NULL,
+                    pomodor_id INT NOT NULL,
+                    habits_id INT NOT NULL,
+                    PRIMARY KEY(id)
+                ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB
+            SQL);
+        }
+
+        if ($sm->tablesExist('date_daily') && $sm->introspectTable('date_daily')->hasColumn('habit_id')) {
+            $this->addSql('ALTER TABLE date_daily DROP habit_id');
+        }
+
+        if ($sm->tablesExist('date_repeat_per_month') && $sm->introspectTable('date_repeat_per_month')->hasColumn('habit_id')) {
+            $this->addSql('ALTER TABLE date_repeat_per_month DROP habit_id');
+        }
+
+        if ($sm->tablesExist('date_weekly') && $sm->introspectTable('date_weekly')->hasColumn('habit_id')) {
+            $this->addSql('ALTER TABLE date_weekly DROP habit_id');
+        }
+
+        if ($sm->tablesExist('Habits') && $sm->introspectTable('Habits')->hasColumn('date_type')) {
+            $this->addSql('ALTER TABLE Habits DROP date_type');
+        }
+
+        if ($sm->tablesExist('pomodor_history') && $sm->introspectTable('pomodor_history')->hasColumn('target_type')) {
+            $this->addSql('ALTER TABLE pomodor_history DROP target_type, DROP target_id');
+        }
+
+        if ($sm->tablesExist('purposes') && $sm->introspectTable('purposes')->hasColumn('target_type')) {
+            $this->addSql('ALTER TABLE purposes DROP target_type, DROP target_id');
+        }
+
+        if ($sm->tablesExist('Tasks')) {
+            $columns = $sm->introspectTable('Tasks')->getColumns();
+
+            if (array_key_exists('habit_id', $columns) || array_key_exists('pomodoro_count', $columns) || array_key_exists('pomodoro_id', $columns)) {
+                $this->addSql('ALTER TABLE Tasks ADD purpose_id INT DEFAULT NULL');
+
+                if (array_key_exists('habit_id', $columns)) {
+                    $this->addSql('ALTER TABLE Tasks DROP habit_id');
+                }
+
+                if (array_key_exists('pomodoro_count', $columns)) {
+                    $this->addSql('ALTER TABLE Tasks DROP pomodoro_count');
+                }
+
+                if (array_key_exists('pomodoro_id', $columns)) {
+                    $this->addSql('ALTER TABLE Tasks DROP pomodoro_id');
+                }
+            }
+        }
+    }
+
+    public function down(Schema $schema): void
+    {
+        $sm = $this->connection->createSchemaManager();
+
+        $this->addSql('DROP TABLE IF EXISTS habits_data_juntion');
+        $this->addSql('DROP TABLE IF EXISTS habits_pomodor_junction');
+
+        if ($sm->tablesExist('date_daily')) {
+            $this->addSql('ALTER TABLE date_daily ADD habit_id INT NOT NULL');
+        }
+
+        if ($sm->tablesExist('date_weekly')) {
+            $this->addSql('ALTER TABLE date_weekly ADD habit_id INT NOT NULL');
+        }
+
+        if ($sm->tablesExist('Tasks')) {
+            $this->addSql('ALTER TABLE Tasks ADD habit_id INT NOT NULL');
+            $this->addSql('ALTER TABLE Tasks ADD pomodoro_id INT DEFAULT NULL');
+            $this->addSql('ALTER TABLE Tasks CHANGE purpose_id pomodoro_count INT DEFAULT NULL');
+        }
+
+        if ($sm->tablesExist('purposes')) {
+            $this->addSql('ALTER TABLE purposes ADD target_type VARCHAR(255) NOT NULL, ADD target_id INT NOT NULL');
+        }
+
+        if ($sm->tablesExist('date_repeat_per_month')) {
+            $this->addSql('ALTER TABLE date_repeat_per_month ADD habit_id INT NOT NULL');
+        }
+
+        if ($sm->tablesExist('Habits')) {
+            $this->addSql('ALTER TABLE Habits ADD date_type VARCHAR(255) NOT NULL');
+        }
+
+        if ($sm->tablesExist('pomodor_history')) {
+            $this->addSql('ALTER TABLE pomodor_history ADD target_type VARCHAR(255) NOT NULL, ADD target_id INT DEFAULT NULL');
+        }
+    }
+}

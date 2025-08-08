@@ -45,11 +45,11 @@ export class TasksApi implements TasksReqInterface{
         return await res.json();
     }
 
-    async toggleWontDo(taskId: string | number, newStatus: boolean): Promise<any> {
-        const res = await fetch(`/api/tasks/${taskId}/wontdo`, {
-            method: 'PATCH',
+    async toggleWontDo(taskId:  number): Promise<any> {
+        const res = await fetch(`/api/tasks/to/do`, {
+            method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ wontDo: newStatus }),
+            body: JSON.stringify({ task_id: taskId }),
         });
         return await res.json();
     }

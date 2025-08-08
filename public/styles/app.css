@@ -1367,7 +1367,7 @@ a:hover {
   padding: 2rem;
   border-radius: 35px;
   width: 100%;
-  height: 200%;
+  height: auto;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   display: flex;
   flex-direction: column;
@@ -1400,9 +1400,10 @@ a:hover {
 }
 .date-chunk-modal .calendar-header, .date-chunk-modal .calendar-days {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
   padding: 0.5rem 0;
-  align-items: center;
+  align-items: baseline;
+  flex-direction: row;
 }
 .date-chunk-modal .calendar-header button {
   background: #588157;
@@ -1572,9 +1573,9 @@ a:hover {
   border-radius: 10px;
   background: rgba(0, 53, 102, 0.1);
   border: 1px solid rgba(0, 53, 102, 0.3);
-  color: #000000;
   cursor: pointer;
   transition: all 0.2s ease;
+  color: #ffffff;
 }
 .date-chunk-modal .repeat-select select:hover {
   background: rgba(0, 53, 102, 0.2);
@@ -1824,7 +1825,7 @@ a:hover {
   color: white;
 }
 
-/* Styling for tasks marked as "Won't do" */
+/* Styling for Tasks marked as "Won't do" */
 .task-item.wont-do .task-title,
 .task-item.wont-do .task-description {
   text-decoration: line-through;

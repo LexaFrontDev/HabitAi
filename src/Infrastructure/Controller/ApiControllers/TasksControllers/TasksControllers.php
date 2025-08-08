@@ -6,6 +6,7 @@ use App\Aplication\Dto\TasksDto\TasksForSaveDto;
 use App\Aplication\Dto\TasksDto\TasksForUpdateDto;
 use App\Aplication\UseCase\TasksUseCases\CommandTasksUseCase;
 use App\Aplication\UseCase\TasksUseCases\QueryTasksUseCase;
+use App\Aplication\UseCase\TasksUseCases\TasksHistoryUseCases;
 use App\Infrastructure\Attribute\RequiresJwt;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -17,7 +18,8 @@ class TasksControllers extends AbstractController
 {
     public function __construct(
         private CommandTasksUseCase $commandTasksUseCase,
-        private QueryTasksUseCase $queryTasksUseCase
+        private QueryTasksUseCase $queryTasksUseCase,
+        private TasksHistoryUseCases $tasksHistoryUseCases,
     ) {}
 
     #[Route('/api/tasks/save', name: 'tasks_save', methods: ['POST'])]
@@ -85,5 +87,20 @@ class TasksControllers extends AbstractController
         }
 
         return $this->json(['success' => true]);
+    }
+
+    #[Route('/api/tasks/to/do', name: 'tasks_to_do', methods: ['POST'])]
+    #[RequiresJwt]
+    public function tasksToDoSave(Request $request)
+    {
+        $data = $request->toArray();
+        $taskId = isset($data['task_id']) ? $data['task_id'] : null;
+        $month = isset($data['month']) ? $data['month'] : null;
+        $date = isset($data['date']) ? $data['date'] : null;
+        if (empty($taskId)) {
+            return $this->json(['success' => false, 'error' => 'Task id  имеет не корректный тип или название не верное как передавать название task_id тип int'], 400);
+        }
+        $result = $this->tasksHistoryUseCases->saveToDo($request, $taskId, $month, $date);
+        return $this->json(['success' => true, 'data' => $result]);
     }
 }

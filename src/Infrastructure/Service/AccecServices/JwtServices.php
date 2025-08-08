@@ -155,6 +155,9 @@ class JwtServices implements JwtServicesInterface
         }
 
         $result = $this->user->findByEmail($payload['username']);
+        if (empty($result)) {
+            throw new AuthenticationException("Такого пользователя не существует: " . $payload['username']);
+        }
         $role = $result->getRoles();
 
         return new UsersInfoForToken(

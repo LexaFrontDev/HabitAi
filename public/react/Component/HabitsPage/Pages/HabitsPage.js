@@ -1,9 +1,9 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    const groups = document.querySelectorAll('.habits-group');
+    const groups = document.querySelectorAll('.Habits-group');
     groups.forEach(group => {
-        const items = group.querySelector('.habits-items');
+        const items = group.querySelector('.Habits-items');
         if (!items || !items.querySelector('li:not(:contains("Нет привычек."))')) {
             group.style.display = 'none';
         }

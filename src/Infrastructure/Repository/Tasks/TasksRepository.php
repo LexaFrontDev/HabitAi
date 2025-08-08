@@ -8,6 +8,7 @@ use App\Aplication\Dto\TasksDto\TasksDurationGet;
 use App\Aplication\Dto\TasksDto\TasksForSaveDto;
 use App\Aplication\Dto\TasksDto\TasksForUpdateDto;
 use App\Domain\Entity\Tasks\Task;
+use App\Domain\Entity\Tasks\TasksHistory;
 use App\Domain\Repository\Tasks\TasksInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -89,7 +90,6 @@ class TasksRepository extends ServiceEntityRepository implements TasksInterface
         return true;
     }
 
-
     /**
      * Возвращает массив DTO задач пользователя за указанный день
      * @param int $userId ID пользователя
@@ -101,7 +101,8 @@ class TasksRepository extends ServiceEntityRepository implements TasksInterface
         $fullDate = \DateTime::createFromFormat('Ymd', (string)$day);
         $formattedDay = $fullDate->format('m/d');
 
-        $result = $this->createQueryBuilder('t')
+        $qb = $this->createQueryBuilder('t')
+            ->leftJoin('App\Domain\Entity\Tasks\TasksHistory', 'th', 'WITH', 'th.tasks_id = t.id')
             ->where('t.userId = :userId')
             ->andWhere('t.is_delete = 0')
             ->andWhere('(
@@ -115,29 +116,31 @@ class TasksRepository extends ServiceEntityRepository implements TasksInterface
             ->setParameter('userId', $userId)
             ->setParameter('fullDate', $fullDate)
             ->setParameter('formattedDay', $formattedDay)
-            ->getQuery()
-            ->getResult();
+            ->select('t', 'th.id AS historyId')
+        ;
+
+        $result = $qb->getQuery()->getResult();
 
         return array_map(
-            fn($task) => new TasksDay(
-                id: $task->getId(),
-                title: $task->getTitleTask(),
-                description: $task->getDescription(),
+            fn($row) => new TasksDay(
+                id: $row[0]->getId(),
+                title: $row[0]->getTitleTask(),
+                todo: isset($row['historyId']) && $row['historyId'] !== null,
+                description: $row[0]->getDescription(),
                 timeData: new TasksDateGet(
-                    date: $task->getBeginDate() ?? null,
-                    time: $task->getTime(),
-                    repeat: $task->getRepeatMode() ?? 'none',
+                    date: $row[0]->getBeginDate() ?? null,
+                    time: $row[0]->getTime(),
+                    repeat: $row[0]->getRepeatMode() ?? 'none',
                     duration: new TasksDurationGet(
-                        startDate: $task->getBeginDate() ? null : $task->getStartDate(),
-                        startTime: $task->getBeginDate() ? null : $task->getStartTime(),
-                        endDate: $task->getBeginDate() ? null : $task->getEndDate(),
-                        endTime: $task->getBeginDate() ? null : $task->getEndTime(),
+                        startDate: $row[0]->getBeginDate() ? null : $row[0]->getStartDate(),
+                        startTime: $row[0]->getBeginDate() ? null : $row[0]->getStartTime(),
+                        endDate: $row[0]->getBeginDate() ? null : $row[0]->getEndDate(),
+                        endTime: $row[0]->getBeginDate() ? null : $row[0]->getEndTime(),
                     )
                 )
             ),
             $result
         );
-
     }
 
 
@@ -147,33 +150,37 @@ class TasksRepository extends ServiceEntityRepository implements TasksInterface
      */
     public function getTasksAllByUserId(int $userId): array
     {
-        $result = $this->createQueryBuilder('t')
+        $qb = $this->createQueryBuilder('t')
+            ->select('t', 'th.id AS historyId')
+            ->leftJoin('App\Domain\Entity\Tasks\TasksHistory', 'th', 'WITH', 'th.tasks_id = t.id')
             ->where('t.userId = :userId')
             ->andWhere('t.is_delete = 0')
-            ->setParameter('userId', $userId)
-            ->getQuery()
-            ->getResult();
+            ->setParameter('userId', $userId);
+
+        $result = $qb->getQuery()->getArrayResult();
 
         return array_map(
-            fn($task) => new TasksDay(
-                id: $task->getId(),
-                title: $task->getTitleTask(),
-                description: $task->getDescription(),
+            fn($row) => new TasksDay(
+                id: $row[0]['id'],
+                title: $row[0]['titleTask'],
+                todo: isset($row['historyId']) && $row['historyId'] !== null,
+                description: $row[0]['description'],
                 timeData: new TasksDateGet(
-                    date: $task->getBeginDate() ?? null,
-                    time: $task->getTime(),
-                    repeat: $task->getRepeatMode() ?? 'none',
+                    date: $row[0]['beginDate'] ?? null,
+                    time: $row[0]['time'] ?? null,
+                    repeat: $row[0]['repeatMode'] ?? 'none',
                     duration: new TasksDurationGet(
-                        startDate: $task->getBeginDate() ? null : $task->getStartDate(),
-                        startTime: $task->getBeginDate() ? null : $task->getStartTime(),
-                        endDate: $task->getBeginDate() ? null : $task->getEndDate(),
-                        endTime: $task->getBeginDate() ? null : $task->getEndTime(),
+                        startDate: ($row[0]['beginDate'] ?? null) ? null : $row[0]['startDate'] ?? null,
+                        startTime: ($row[0]['beginDate'] ?? null) ? null : $row[0]['startTime'] ?? null,
+                        endDate: ($row[0]['beginDate'] ?? null) ? null : $row[0]['endDate'] ?? null,
+                        endTime: ($row[0]['beginDate'] ?? null) ? null : $row[0]['endTime'] ?? null,
                     )
                 )
             ),
             $result
         );
     }
+
 
 
 

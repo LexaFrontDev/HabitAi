@@ -80,7 +80,7 @@
 
   var HostRoot = 3; // Root of a host tree. Could be nested inside another node.
 
-  var HostPortal = 4; // A subtree. Could be an entry point to a different renderer.
+  var HostPortal = 4; // A subtree. Could be an entry point to a Different renderer.
 
   var HostComponent = 5;
   var HostText = 6;
@@ -110,7 +110,7 @@
 
   var enableNewReconciler = false; // Support legacy Primer support on internal FB www
 
-  var enableLazyContextPropagation = false; // FB-only usage. The new API has different semantics.
+  var enableLazyContextPropagation = false; // FB-only usage. The new API has Different semantics.
 
   var enableLegacyHidden = false; // Enables unstable_avoidThisFallback feature in Fiber
 
@@ -228,7 +228,7 @@
     // The most common types that will cause this exception are `Symbol` instances
     // and Temporal objects like `Temporal.Instant`. But any object that has a
     // `valueOf` or `[Symbol.toPrimitive]` method that throws will also cause this
-    // exception. (Library authors do this to prevent users from using built-in
+    // exception. (Library authors do this to prevent Users from using built-in
     // numeric operators like `+` or comparison operators like `>=` because custom
     // methods are needed to perform accurate arithmetic or comparison.)
     //
@@ -467,7 +467,7 @@
     null, // attributeNamespace
     false, // sanitizeURL
     false);
-  }); // A few React string attributes have a different name.
+  }); // A few React string attributes have a Different name.
   // This is a mapping from React prop names to the attribute names.
 
   [['acceptCharset', 'accept-charset'], ['className', 'class'], ['htmlFor', 'for'], ['httpEquiv', 'http-equiv']].forEach(function (_ref) {
@@ -479,7 +479,7 @@
     false, // sanitizeURL
     false);
   }); // These are "enumerated" HTML attributes that accept "true" and "false".
-  // In React, we let users pass `true` and `false` even though technically
+  // In React, we let Users pass `true` and `false` even though technically
   // these aren't boolean attributes (they are coerced to strings).
 
   ['contentEditable', 'draggable', 'spellCheck', 'value'].forEach(function (name) {
@@ -489,7 +489,7 @@
     false, // sanitizeURL
     false);
   }); // These are "enumerated" SVG attributes that accept "true" and "false".
-  // In React, we let users pass `true` and `false` even though technically
+  // In React, we let Users pass `true` and `false` even though technically
   // these aren't boolean attributes (they are coerced to strings).
   // Since these are SVG attributes, their attribute names are case-sensitive.
 
@@ -1051,7 +1051,7 @@
         });
 
         if (typeof Reflect === 'object' && Reflect.construct) {
-          // We construct a different control for this case to include any extra
+          // We construct a Different control for this case to include any extra
           // frames added by the construct call.
           try {
             Reflect.construct(Fake, []);
@@ -1949,7 +1949,7 @@
 
         if (otherNode === rootNode || otherNode.form !== rootNode.form) {
           continue;
-        } // This will throw if radio buttons rendered by different copies of React
+        } // This will throw if radio buttons rendered by Different copies of React
         // and the same name are rendered into the same form (same as #1939).
         // That's probably okay; we don't support it just as we don't support
         // mixing React radio buttons with non-React ones.
@@ -4090,7 +4090,7 @@
     // try-catch in DEV. Instead, we synchronously dispatch a fake event to a fake
     // DOM node, and call the user-provided callback from inside an event handler
     // for that fake event. If the callback throws, the error is "captured" using
-    // a global event handler. But because the error happens in a different
+    // a global event handler. But because the error happens in a Different
     // event loop context, it does not interrupt the normal program flow.
     // Effectively, this gives us try-catch behavior without actually using
     // try-catch. Neat!
@@ -4249,7 +4249,7 @@
    * Returns an error if it throws, otherwise null.
    *
    * In production, this is implemented using a try-catch. The reason we don't
-   * use a try-catch directly is so that we can swap out a different
+   * use a try-catch directly is so that we can swap out a Different
    * implementation in DEV mode.
    *
    * @param {String} name of the guard to use for logging or debugging
@@ -4629,7 +4629,7 @@
       }
 
       if (a.return !== b.return) {
-        // The return pointer of A and the return pointer of B point to different
+        // The return pointer of A and the return pointer of B point to Different
         // fibers. We assume that return pointers never criss-cross, so A must
         // belong to the child set of A.return, and B must belong to the child
         // set of B.return.
@@ -4813,7 +4813,7 @@
       if (enableSchedulingProfiler) {
         // Conditionally inject these hooks only if Timeline profiler is supported by this build.
         // This gives DevTools a way to feature detect that isn't tied to version number
-        // (since profiling and timeline are controlled by different feature flags).
+        // (since profiling and timeline are controlled by Different feature flags).
         internals = assign({}, internals, {
           getLaneLabelMap: getLaneLabelMap,
           injectProfilingHooks: injectProfilingHooks
@@ -6131,7 +6131,7 @@
 
       return queuedEvent;
     } // If we have already queued this exact event, then it's because
-    // the different event systems have different DOM event listeners.
+    // the Different event systems have Different DOM event listeners.
     // We can accumulate the flags, and the targetContainers, and
     // store a single event to be replayed.
 
@@ -6823,7 +6823,7 @@
 
   function functionThatReturnsFalse() {
     return false;
-  } // This is intentionally a factory so that we have different returned constructors.
+  } // This is intentionally a factory so that we have Different returned constructors.
   // If we had a single constructor, it would be megamorphic and engines would deopt.
 
 
@@ -7238,9 +7238,9 @@
     keyCode: function (event) {
       // `keyCode` is the result of a KeyDown/Up event and represents the value of
       // physical keyboard key.
-      // The actual meaning of the value depends on the users' keyboard layout
+      // The actual meaning of the value depends on the Users' keyboard layout
       // which cannot be detected. Assuming that it is a US keyboard layout
-      // provides a surprisingly accurate mapping for US and European users.
+      // provides a surprisingly accurate mapping for US and European Users.
       // Due to this, it is left to the user to implement at this time.
       if (event.type === 'keydown' || event.type === 'keyup') {
         return event.keyCode;
@@ -8152,7 +8152,7 @@
 
     if (keysA.length !== keysB.length) {
       return false;
-    } // Test for A's keys different from B.
+    } // Test for A's keys Different from B.
 
 
     for (var i = 0; i < keysA.length; i++) {
@@ -9215,7 +9215,7 @@
 
       if (targetInst !== null) {
         // The below logic attempts to work out if we need to change
-        // the target fiber to a different ancestor. We had similar logic
+        // the target fiber to a Different ancestor. We had similar logic
         // in the legacy event system, except the big difference between
         // systems is that the modern event system now has an event listener
         // attached to each React Root and React Portal Root. Together,
@@ -9403,7 +9403,7 @@
   }
   /**
    * Return the lowest common ancestor of A and B, or null if they are in
-   * different trees.
+   * Different trees.
    */
 
 
@@ -12204,7 +12204,7 @@
     // Restore the previous values.
     // This is a bit more complicated than other context-like modules in Fiber
     // because the same Fiber may appear on the stack multiple times and for
-    // different reasons. We have to keep popping until the work-in-progress is
+    // Different reasons. We have to keep popping until the work-in-progress is
     // no longer at the top of the stack.
     while (workInProgress === treeForkProvider) {
       treeForkProvider = forkStack[--forkStackIndex];
@@ -13286,7 +13286,7 @@
         if (current.elementType === elementType || ( // Keep this check inline so it only runs on the false path:
          isCompatibleFamilyForHotReloading(current, element) ) || // Lazy types should reconcile their resolved type.
         // We need to do this after the Hot Reloading check above,
-        // because hot reloading has different semantics than prod because
+        // because hot reloading has Different semantics than prod because
         // it doesn't resuspend. So we can't let the call below suspend.
         typeof elementType === 'object' && elementType !== null && elementType.$$typeof === REACT_LAZY_TYPE && resolveLazy(elementType) === current.type) {
           // Move based on index
@@ -13747,7 +13747,7 @@
 
           didWarnAboutMaps = true;
         } // First, validate keys.
-        // We'll get a different iterator later for the main pass.
+        // We'll get a Different iterator later for the main pass.
 
 
         var _newChildren = iteratorFn.call(newChildrenIterable);
@@ -13959,7 +13959,7 @@
             if (child.elementType === elementType || ( // Keep this check inline so it only runs on the false path:
              isCompatibleFamilyForHotReloading(child, element) ) || // Lazy types should reconcile their resolved type.
             // We need to do this after the Hot Reloading check above,
-            // because hot reloading has different semantics than prod because
+            // because hot reloading has Different semantics than prod because
             // it doesn't resuspend. So we can't let the call below suspend.
             typeof elementType === 'object' && elementType !== null && elementType.$$typeof === REACT_LAZY_TYPE && resolveLazy(elementType) === child.type) {
               deleteRemainingChildren(returnFiber, child.sibling);
@@ -14640,7 +14640,7 @@
 
       sharedQueue.pending = update; // Update the childLanes even though we're most likely already rendering
       // this fiber. This is for backwards compatibility in the case where you
-      // update a different component during render phase than the one that is
+      // update a Different component during render phase than the one that is
       // currently renderings (a pattern that is accompanied by a warning).
 
       return unsafe_markUpdateLaneFromFiberToRoot(fiber, lane);
@@ -14876,7 +14876,7 @@
         lastBaseUpdate.next = firstPendingUpdate;
       }
 
-      lastBaseUpdate = lastPendingUpdate; // If there's a current queue, and it's different from the base queue, then
+      lastBaseUpdate = lastPendingUpdate; // If there's a current queue, and it's Different from the base queue, then
       // we need to transfer the updates to that queue, too. Because the base
       // queue is a singly-linked list with no cycles, we can append to both
       // lists and take advantage of structural sharing.
@@ -15096,7 +15096,7 @@
 
     push(contextFiberStackCursor, fiber, fiber); // Finally, we need to push the host context to the stack.
     // However, we can't just call getRootHostContext() and push it because
-    // we'd have a different number of entries on the stack depending on
+    // we'd have a Different number of entries on the stack depending on
     // whether getRootHostContext() throws somewhere in renderer code or not.
     // So we push an empty value first. This lets us safely unwind on errors.
 
@@ -15864,7 +15864,7 @@
       } else {
         newBaseQueueLast.next = newBaseQueueFirst;
       } // Mark that the fiber performed work, but only if the new state is
-      // different from the current state.
+      // Different from the current state.
 
 
       if (!objectIs(newState, hook.memoizedState)) {
@@ -15930,7 +15930,7 @@
         newState = reducer(newState, action);
         update = update.next;
       } while (update !== firstRenderPhaseUpdate); // Mark that the fiber performed work, but only if the new state is
-      // different from the current state.
+      // Different from the current state.
 
 
       if (!objectIs(newState, hook.memoizedState)) {
@@ -16492,7 +16492,7 @@
       // However, if we're currently inside a spawned render, then we need to mark
       // this as an update to prevent the fiber from bailing out.
       //
-      // `baseState` is true when the current value is different from the rendered
+      // `baseState` is true when the current value is Different from the rendered
       // value. The name doesn't really match how we use it because we're reusing
       // a state hook field instead of creating a new one.
       if (hook.baseState) {
@@ -16696,7 +16696,7 @@
             if (objectIs(eagerState, currentState)) {
               // Fast path. We can bail out without scheduling React to re-render.
               // It's still possible that we'll need to rebase this update later,
-              // if the component re-renders for a different reason and by that
+              // if the component re-renders for a Different reason and by that
               // time the reducer has changed.
               // TODO: Do we still need to entangle transitions in this case?
               enqueueConcurrentHookUpdateAndEagerlyBailout(fiber, queue, update, lane);
@@ -18653,7 +18653,7 @@
     };
   }
 
-  // This module is forked in different environments.
+  // This module is forked in Different environments.
   // By default, return `true` to log errors to the console.
   // Forks can return `false` if this isn't desirable.
   function showErrorDialog(boundary, errorInfo) {
@@ -18860,7 +18860,7 @@
   function attachRetryListener(suspenseBoundary, root, wakeable, lanes) {
     // Retry listener
     //
-    // If the fallback does commit, we need to attach a different type of
+    // If the fallback does commit, we need to attach a Different type of
     // listener. This one schedules an update on the Suspense boundary to turn
     // the fallback state off.
     //
@@ -18980,7 +18980,7 @@
     //
     // After this we'll use a set of heuristics to determine whether this
     // render pass will run to completion or restart or "suspend" the commit.
-    // The actual logic for this is spread out in different places.
+    // The actual logic for this is spread out in Different places.
     //
     // This first principle is that if we're going to suspend when we complete
     // a root, then we should also restart if we get an update or ping that
@@ -19428,9 +19428,9 @@
         // same batch.
         //
         // However, as a principle, we should aim to make the behavior consistent
-        // across different ways of memoizing a component. For example, React.memo
-        // has a different internal Fiber layout if you pass a normal function
-        // component (SimpleMemoComponent) versus if you pass a different type
+        // across Different ways of memoizing a component. For example, React.memo
+        // has a Different internal Fiber layout if you pass a normal function
+        // component (SimpleMemoComponent) versus if you pass a Different type
         // like forwardRef (MemoComponent). But this is an implementation detail.
         // Wrapping a component in forwardRef (or React.lazy, etc) shouldn't
         // affect whether the props object is reused during a bailout.
@@ -19814,7 +19814,7 @@
     if (current !== null && didCaptureError) {
       // If we're recovering from an error, reconcile without reusing any of
       // the existing children. Conceptually, the normal children and the children
-      // that are shown on error are two different sets, so we shouldn't reuse
+      // that are shown on error are two Different sets, so we shouldn't reuse
       // normal children even if their identities match.
       forceUnmountCurrentAndReconcile(current, workInProgress, nextChildren, renderLanes);
     } else {
@@ -20351,7 +20351,7 @@
     // boundary's children. This involves some custom reconciliation logic. Two
     // main reasons this is so complicated.
     //
-    // First, Legacy Mode has different semantics for backwards compatibility. The
+    // First, Legacy Mode has Different semantics for backwards compatibility. The
     // primary tree will commit in an inconsistent state, so when we do the
     // second pass to render the fallback, we do some exceedingly, uh, clever
     // hacks to make that not totally break. Like transferring effects and
@@ -20361,12 +20361,12 @@
     // Offscreen doesn't have the first render pass).
     //
     // Second is hydration. During hydration, the Suspense fiber has a slightly
-    // different layout, where the child points to a dehydrated fragment, which
+    // Different layout, where the child points to a dehydrated fragment, which
     // contains the DOM rendered by the server.
     //
     // Third, even if you set all that aside, Suspense is like error boundaries in
     // that we first we try to render one tree, and if that fails, we render again
-    // and switch to a different tree. Like a try/catch block. So we have to track
+    // and switch to a Different tree. Like a try/catch block. So we have to track
     // which branch we're currently rendering. Ideally we would model this using
     // a stack.
 
@@ -21524,7 +21524,7 @@
           var renderState = workInProgress.memoizedState;
 
           if (renderState !== null) {
-            // Reset to the "together" mode in case we've started a different
+            // Reset to the "together" mode in case we've started a Different
             // update in the past but didn't complete it.
             renderState.rendering = null;
             renderState.tail = null;
@@ -25346,7 +25346,7 @@
 
   var workInProgressRootRenderLanes = NoLanes; // Stack that allows components to change the render lanes for its subtree
   // This is a superset of the lanes we started working on at the root. The only
-  // case where it's different from `workInProgressRootRenderLanes` is when we
+  // case where it's Different from `workInProgressRootRenderLanes` is when we
   // enter a subtree that is hidden and needs to be unhidden: Suspense and
   // Offscreen component.
   //
@@ -25359,7 +25359,7 @@
   var workInProgressRootExitStatus = RootInProgress; // A fatal error, if one is thrown
 
   var workInProgressRootFatalError = null; // "Included" lanes refer to lanes that were worked on during this render. It's
-  // slightly different than `renderLanes` because `renderLanes` can change as you
+  // slightly Different than `renderLanes` because `renderLanes` can change as you
   // enter and exit an Offscreen tree. This value is the combination of all render
   // lanes for the entire render phase.
 
@@ -26109,7 +26109,7 @@
     suspendedLanes = removeLanes(suspendedLanes, workInProgressRootPingedLanes);
     suspendedLanes = removeLanes(suspendedLanes, workInProgressRootInterleavedUpdatedLanes);
     markRootSuspended(root, suspendedLanes);
-  } // This is the entry point for synchronous tasks that don't go
+  } // This is the entry point for synchronous Tasks that don't go
   // through Scheduler
 
 
@@ -26462,7 +26462,7 @@
             memoizedUpdaters.clear();
           } // At this point, move Fibers that scheduled the upcoming work from the Map to the Set.
           // If we bailout on this work, we'll move them back (like above).
-          // It's important to move them now in case the work spawns more work at the same priority with different updaters.
+          // It's important to move them now in case the work spawns more work at the same priority with Different updaters.
           // That way we can keep the current update and future updates separate.
 
 
@@ -26532,7 +26532,7 @@
             memoizedUpdaters.clear();
           } // At this point, move Fibers that scheduled the upcoming work from the Map to the Set.
           // If we bailout on this work, we'll move them back (like above).
-          // It's important to move them now in case the work spawns more work at the same priority with different updaters.
+          // It's important to move them now in case the work spawns more work at the same priority with Different updaters.
           // That way we can keep the current update and future updates separate.
 
 
@@ -27538,7 +27538,7 @@
                 didWarnAboutUpdateInRenderForAnotherComponent.add(dedupeKey);
                 var setStateComponentName = getComponentNameFromFiber(fiber) || 'Unknown';
 
-                error('Cannot update a component (`%s`) while rendering a ' + 'different component (`%s`). To locate the bad setState() call inside `%s`, ' + 'follow the stack trace as described in https://reactjs.org/link/setstate-in-render', setStateComponentName, renderingComponentName, renderingComponentName);
+                error('Cannot update a component (`%s`) while rendering a ' + 'Different component (`%s`). To locate the bad setState() call inside `%s`, ' + 'follow the stack trace as described in https://reactjs.org/link/setstate-in-render', setStateComponentName, renderingComponentName, renderingComponentName);
               }
 
               break;
@@ -27705,7 +27705,7 @@
         if (type !== null && type !== undefined && typeof type.render === 'function') {
           // ForwardRef is special because its resolved .type is an object,
           // but it's possible that we only have its inner render function in the map.
-          // If that inner render function is different, we'll build a new forwardRef type.
+          // If that inner render function is Different, we'll build a new forwardRef type.
           var currentRender = resolveFunctionForHotReloading(type.render);
 
           if (type.render !== currentRender) {
@@ -28227,7 +28227,7 @@
       {
         // We intentionally reset, rather than copy, actualDuration & actualStartTime.
         // This prevents time from endlessly accumulating in new commits.
-        // This has the downside of resetting values for different priority renders,
+        // This has the downside of resetting values for Different priority renders,
         // But works for yielding (the common case) and should support resuming.
         workInProgress.actualDuration = 0;
         workInProgress.actualStartTime = -1;
@@ -28838,7 +28838,7 @@
     var hydrate = true;
     var root = createFiberRoot(containerInfo, tag, hydrate, initialChildren, hydrationCallbacks, isStrictMode, concurrentUpdatesByDefaultOverride, identifierPrefix, onRecoverableError); // TODO: Move this to FiberRoot constructor
 
-    root.context = getContextForSubtree(null); // Schedule the initial render. In a hydration root, this is different from
+    root.context = getContextForSubtree(null); // Schedule the initial render. In a hydration root, this is Different from
     // a regular update because the initial render must match was was rendered
     // on the server.
     // NOTE: This update intentionally doesn't have a payload. We're only using

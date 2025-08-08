@@ -74,9 +74,9 @@ export class TasksService {
     }
 
 
-    async toggleWontDo(id: number, status: boolean): Promise<TaskResponse> {
+    async toggleWontDo(id: number): Promise<TaskResponse> {
         try {
-            const response = await this.tasksApi.toggleWontDo(id, status);
+            const response = await this.tasksApi.toggleWontDo(id);
             return {
                 success: true,
                 message: response?.data?.message || '',

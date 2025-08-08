@@ -8,7 +8,7 @@ interface ImagesServiceInterface
     /**
      * Сохраняет изображение по base64
      *
-     * @param string $imageType Тип изображения (например: users, pomodoro и т.д.)
+     * @param string $imageType Тип изображения (например: Users, Pomodoro и т.д.)
      * @param string $image64   Данные изображения в base64
      * @return bool
      */

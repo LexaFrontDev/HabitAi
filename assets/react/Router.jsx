@@ -20,7 +20,7 @@ const RouterDom = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const excluded = ['/', '/users/login', '/users/register'];
+        const excluded = ['/', '/Users/login', '/Users/register'];
         if (!excluded.includes(location.pathname)) {
             localStorage.setItem('last_page', location.pathname);
         }
@@ -34,7 +34,7 @@ const RouterDom = () => {
                 setIsAuthenticated(ok);
 
                 if (ok && location.pathname === '/') {
-                    const lastPage = localStorage.getItem('last_page') || '/tasks';
+                    const lastPage = localStorage.getItem('last_page') || '/Tasks';
                     navigate(lastPage, { replace: true });
                 }
             } catch {
