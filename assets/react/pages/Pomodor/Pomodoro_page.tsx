@@ -1,13 +1,25 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Sidebar from '../chunk/SideBar';
-import PomodorAsideChunk from "../chunk/PomodorChunk/PomodorAsideChunk";
 import { Messages, ErrorAlert, SuccessAlert, IsDoneAlert } from '../chunk/MessageAlertChunk';
+import {ImperativePanelGroupHandle, Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
+import {Button} from "../../ui/atoms/button/Button";
+import {LanguageRequestUseCase} from "../../Aplication/UseCases/language/LanguageRequestUseCase";
+import {LanguageApi} from "../../Infrastructure/request/Language/LanguageApi";
+import {LangStorage} from "../../Infrastructure/languageStorage/LangStorage";
+import {LangStorageUseCase} from "../../Aplication/UseCases/language/LangStorageUseCase";
+import {useTranslation} from "react-i18next";
+import Loading from "../chunk/LoadingChunk/Loading";
+
+
+const LangUseCase = new LanguageRequestUseCase('pomodoro', new LanguageApi());
+const langStorage = new LangStorage();
+const langUseCase = new LangStorageUseCase(langStorage);
 
 
 const Pomodoro = () => {
     const [userId, setUserId] = useState(null);
-    const [totalTime, setTotalTime] = useState(() => parseInt(localStorage.getItem('pomodoroTotalTime')) || 1500);
-    const [timeLeft, setTimeLeft] = useState(() => parseInt(localStorage.getItem('pomodoroTimeLeft')) || 1500);
+    const [totalTime, setTotalTime] = useState<number>(() => parseInt(localStorage.getItem('pomodoroTotalTime') || '1500', 10));
+    const [timeLeft, setTimeLeft] = useState<number>(() => parseInt(localStorage.getItem('pomodoroTimeLeft') || '1500', 10));
     const [isRunning, setIsRunning] = useState(false);
     const [isPaused, setIsPaused] = useState(false);
     const [showModal, setShowModal] = useState(false);
@@ -20,12 +32,28 @@ const Pomodoro = () => {
     const [TasksTitle, setTasksTitle] = useState('');
     const [breakMinutes, setBreakMinutes] = useState('5');
     const [isBreak, setIsBreak] = useState(false);
-    const startTimeRef = useRef(localStorage.getItem('pomodoroStartTime') || null);
-    const intervalRef = useRef(null);
-    const [data, setDataTasks] = useState(null);
+    const startTimeRef = useRef<string | null>(localStorage.getItem('pomodoroStartTime') || null);
+    const intervalRef = useRef<number | undefined>(undefined);
+    const [data, setDataTasks] = useState<any | null>(null);
+
 
     const radius = 196;
     const circumference = 2 * Math.PI * radius;
+    const [langCode, setLangCode] = useState('en');
+    const { t, i18n } = useTranslation('tasks');
+
+
+    useEffect(() => {
+        const detectLang = async () => {
+            const lang = await langUseCase.getLang();
+            if (lang) {
+                setLangCode(lang);
+                await LangUseCase.getTranslations(lang);
+            }
+        };
+
+        detectLang();
+    }, []);
 
     useEffect(() => {
         fetch('/api/web/user/id')
@@ -34,8 +62,8 @@ const Pomodoro = () => {
     }, []);
 
     useEffect(() => {
-        localStorage.setItem('pomodoroTotalTime', totalTime);
-        localStorage.setItem('pomodoroTimeLeft', timeLeft);
+        localStorage.setItem('pomodoroTotalTime', String(totalTime));
+        localStorage.setItem('pomodoroTimeLeft', String(timeLeft));
     }, [totalTime, timeLeft]);
 
     useEffect(() => {
@@ -44,7 +72,7 @@ const Pomodoro = () => {
             .then(data => setDataTasks({title: data?.data.title, habit_id: data?.data.habit_id || null}));
     }, []);
 
-    const formatTime = (seconds) => {
+    const formatTime = (seconds: number) => {
         const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
         const secs = (seconds % 60).toString().padStart(2, '0');
         return `${mins}:${secs}`;
@@ -71,7 +99,7 @@ const Pomodoro = () => {
                 return;
             }
 
-            startTimeRef.current = new Date();
+            startTimeRef.current = new Date().toISOString();
             localStorage.setItem('pomodoroStartTime', startTimeRef.current);
             setSessionActive(true);
 
@@ -108,7 +136,7 @@ const Pomodoro = () => {
             return;
         }
 
-        if (userId && timeCompleted > 0) {
+        if (userId && timeCompleted > 0 && startTimeRef.current) {
             await fetch("/api/pomodor/create", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -116,8 +144,8 @@ const Pomodoro = () => {
                     userId,
                     timeFocus: timeCompleted,
                     timeStart: Math.floor(new Date(startTimeRef.current).getTime() / 1000),
-                    timeEnd: Math.floor(new Date().getTime() / 1000),
-                    createdDate: Math.floor(new Date().getTime() / 1000),
+                    timeEnd: Math.floor(Date.now() / 1000),
+                    createdDate: Math.floor(Date.now() / 1000),
                 }),
             });
         }
@@ -125,7 +153,7 @@ const Pomodoro = () => {
         resetProgress();
     };
 
-    const handleEndCycle = async (finishTime) => {
+    const handleEndCycle = async (finishTime: any) => {
         const timeCompleted = totalTime;
         setCompletedTime(timeCompleted);
 
@@ -135,7 +163,7 @@ const Pomodoro = () => {
             return;
         }
 
-        if (!isBreak && userId) {
+        if (!isBreak && userId && startTimeRef.current) {
             await fetch("/api/pomodor/create", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -144,14 +172,14 @@ const Pomodoro = () => {
                     timeFocus: timeCompleted,
                     timeStart: Math.floor(new Date(startTimeRef.current).getTime() / 1000),
                     timeEnd: Math.floor(finishTime.getTime() / 1000),
-                    createdDate: Math.floor(new Date().getTime() / 1000),
+                    createdDate: Math.floor(Date.now() / 1000),
                 }),
             });
         }
 
         if (!isBreak) {
             IsDoneAlert("Фокус завершён! Время отдыха.");
-            startTimeRef.current = new Date();
+            startTimeRef.current = new Date().toISOString();
             const breakTime = parseInt(breakMinutes) * 60 || 300;
             setTotalTime(breakTime);
             setTimeLeft(breakTime);
@@ -202,76 +230,92 @@ const Pomodoro = () => {
         setShowModal(true);
     };
 
+    if (!i18n.hasResourceBundle(langCode, 'pomodoro')) return <Loading />;
+
+
     return (
         <div id="pomodor-page">
             <Sidebar />
-            <PomodorAsideChunk />
-            <div className="app-nav">
-                <div className="nav-left-side">
-                    <h3 className="header">Помодоро/фокус</h3>
-                </div>
-            </div>
-            <div id="content">
-                <section className="container mt-4 text-center pomodoro-section">
-                    <div className="pomodoro-wrapper">
-                        <div className="header">
-                            <h4 onClick={() => setTasksModal(true)}>{TasksTitle || 'Фокус'}</h4>
-                        </div>
-                        <svg width="360" height="360" viewBox="0 0 400 400">
-                            <circle
-                                stroke="rgba(255, 255, 255, 0.1)"
-                                cx="200"
-                                cy="200"
-                                r={radius}
-                                strokeWidth="8"
-                                fill="none"
-                            />
-                            <circle
-                                stroke={isBreak ? "#4CAF50" : "#4772fa"}
-                                transform="rotate(-90 200 200)"
-                                cx="200"
-                                cy="200"
-                                r={radius}
-                                strokeDasharray={circumference}
-                                strokeWidth="8"
-                                strokeDashoffset={circumference - calculateProgress()}
-                                strokeLinecap="round"
-                                fill="none"
-                            />
-                            <text
-                                x="200"
-                                y="210"
-                                textAnchor="middle"
-                                dominantBaseline="middle"
-                                fontSize="48"
-                                fill="#fff"
-                                fontFamily="Arial"
-                                onClick={openSettings}
-                                style={{cursor: sessionActive ? 'default' : 'pointer'}}
-                            >
-                                {formatTime(timeLeft)}
-                            </text>
-                        </svg>
-                        <div className="mt-3 btn-group">
-                            <button
-                                className="btn btn-primary"
-                                onClick={handleStartPause}
-                                disabled={timeLeft === 0 && !isRunning}
-                            >
-                                {isRunning ? 'Пауза' : timeLeft === 0 ? 'Начать заново' : 'Старт'}
-                            </button>
-                            {(isPaused || (isRunning && showCompleteButton)) && (
-                                <button
-                                    className="btn btn-danger"
-                                    onClick={handleCompleteSession}
-                                >
-                                    Завершить
-                                </button>
-                            )}
+
+            <PanelGroup direction="horizontal">
+                <PanelResizeHandle/>
+                <Panel maxSize={90} defaultSize={50} minSize={20}>
+                    <div className="panel-content">
+                        <div className="content-panel">
+                            <div className="header-panel-center">
+                                <div className="header-text mt-xl-1">
+                                    <h4 className="header-title">{t('tasks:tasksHeadText')}</h4>
+                                </div>
+                            </div>
+                            <div className="pomodoro-wrapper">
+                                <div className="header">
+                                    <h4 onClick={() => setTasksModal(true)}>{TasksTitle || 'Фокус'}</h4>
+                                </div>
+                                <svg width="360" height="360" viewBox="0 0 400 400">
+                                    <circle
+                                        stroke="rgba(255, 255, 255, 0.1)"
+                                        cx="200"
+                                        cy="200"
+                                        r={radius}
+                                        strokeWidth="8"
+                                        fill="none"
+                                    />
+                                    <circle
+                                        stroke={isBreak ? "#4CAF50" : "#4772fa"}
+                                        transform="rotate(-90 200 200)"
+                                        cx="200"
+                                        cy="200"
+                                        r={radius}
+                                        strokeDasharray={circumference}
+                                        strokeWidth="8"
+                                        strokeDashoffset={circumference - calculateProgress()}
+                                        strokeLinecap="round"
+                                        fill="none"
+                                    />
+                                    <text
+                                        x="200"
+                                        y="210"
+                                        textAnchor="middle"
+                                        dominantBaseline="middle"
+                                        fontSize="48"
+                                        fill="#fff"
+                                        fontFamily="Arial"
+                                        onClick={openSettings}
+                                        style={{cursor: sessionActive ? 'default' : 'pointer'}}
+                                    >
+                                        {formatTime(timeLeft)}
+                                    </text>
+                                </svg>
+                                <div className="mt-3 btn-group">
+                                    <button
+                                        className="btn btn-primary"
+                                        onClick={handleStartPause}
+                                        disabled={timeLeft === 0 && !isRunning}
+                                    >
+                                        {isRunning ? 'Пауза' : timeLeft === 0 ? 'Начать заново' : 'Старт'}
+                                    </button>
+                                    {(isPaused || (isRunning && showCompleteButton)) && (
+                                        <button
+                                            className="btn btn-danger"
+                                            onClick={handleCompleteSession}
+                                        >
+                                            Завершить
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </section>
-            </div>
+                </Panel>
+                <PanelResizeHandle/>
+                <Panel maxSize={35} defaultSize={15} minSize={10}>
+                    <div className="panel-content">
+                        <div className="line-resize"></div>
+
+                    </div>
+                </Panel>
+            </PanelGroup>
+
 
             {showModal && (
                 <div className="modal-overlay">
@@ -307,7 +351,7 @@ const Pomodoro = () => {
                 <div className="modal-tasks-list">
                     <div className="modal-contents">
                         <h3>Задачи которых можно выполнить</h3>
-                        {data && data.map((item) => (
+                        {data && data.map((item: any) => (
                             <div
                                 key={item.habit_id}
                                 onClick={() => {

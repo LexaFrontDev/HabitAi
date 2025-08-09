@@ -23,6 +23,9 @@ class PageTranslateDtoSerializer
             'landing' => \App\Aplication\Dto\LangPageTranslate\LandingPageTranslateDto::class,
             'login' => \App\Aplication\Dto\LangPageTranslate\LoginPageTranslate::class,
             'premium' => \App\Aplication\Dto\LangPageTranslate\PremiumPageTranslateDto::class,
+            'tasks' => \App\Aplication\Dto\LangPageTranslate\TasksTranslations::class,
+            'buttons' => \App\Aplication\Dto\LangPageTranslate\ButtonsTranslations::class,
+            'month' => \App\Aplication\Dto\LangPageTranslate\MonthTranslations::class,
             default => throw new InvalidArgumentException("Unknown page: $page"),
         };
     }

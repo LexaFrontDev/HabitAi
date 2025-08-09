@@ -16,17 +16,16 @@ import ReviewCard from "../../ui/molecule/Cards/ReviewCard";
 import Copyright from "../../ui/atoms/TextBlock/Copyright";
 import Navbar from "../../ui/organism/navbar/Navbar";
 import LanguageSelect from "../../ui/atoms/select/LanguageSelect";
+import {LanguageRequestUseCase} from "../../Aplication/UseCases/language/LanguageRequestUseCase";
+import {LanguageApi} from "../../Infrastructure/request/Language/LanguageApi";
+import {changeLanguage} from "i18next";
 
-const languages = {
-    kz: 'Қазақша',
-    ru: 'Русский',
-    en: 'English',
-};
+
 
 const currentPage = 'landing';
 const langStorage = new LangStorage();
 const langUseCase = new LangStorageUseCase(langStorage);
-
+const languageApi = new LanguageRequestUseCase(currentPage, new LanguageApi());
 
 
 const Lending = () => {
@@ -39,7 +38,7 @@ const Lending = () => {
             const lang = await langUseCase.getLang();
             if (lang) {
                 setLangCode(lang);
-                await loadPageTranslation(currentPage, lang);
+                await languageApi.getTranslations(lang);
             }
         };
 
@@ -51,6 +50,10 @@ const Lending = () => {
             .then(res => res.json())
             .then(setData);
     }, []);
+
+    const changeLanguage = async (lang) => {
+        await languageApi.getTranslations(lang);
+    }
 
     useEffect(() => {
         if (!data) return;
@@ -85,7 +88,7 @@ const Lending = () => {
                         <LanguageSelect
                             langCode={langCode}
                             setLangCode={setLangCode}
-                            loadPageTranslation={loadPageTranslation}
+                            loadPageTranslation={changeLanguage}
                             currentPage={currentPage}
                         />
                         <AppLink to="/download" variant="nav">Скачать</AppLink>

@@ -1,8 +1,35 @@
 import React, {useEffect, useState} from 'react';
+import {LangStorage} from "../../Infrastructure/languageStorage/LangStorage";
+import {LangStorageUseCase} from "../../Aplication/UseCases/language/LangStorageUseCase";
+import {LanguageRequestUseCase} from "../../Aplication/UseCases/language/LanguageRequestUseCase";
+import {LanguageApi} from "../../Infrastructure/request/Language/LanguageApi";
+import {useTranslation} from "react-i18next";
+import Loading from "../chunk/LoadingChunk/Loading";
+
+
+const currentPage = 'register';
+const langStorage = new LangStorage();
+const langUseCase = new LangStorageUseCase(langStorage);
+const languageApi = new LanguageRequestUseCase(currentPage, new LanguageApi());
+
 
 const RegisterPage = () => {
     const [form, setForm] = useState({ name: '', email: '', password: '' });
+    const [langCode, setLangCode] = useState('en');
 
+    const { t, i18n } = useTranslation(currentPage);
+
+    useEffect(() => {
+        const detectLang = async () => {
+            const lang = await langUseCase.getLang();
+            if (lang) {
+                setLangCode(lang);
+                await languageApi.getTranslations(lang);
+            }
+        };
+
+        detectLang();
+    }, []);
 
     useEffect(() => {
         fetch('/api/auth/check')
@@ -31,30 +58,33 @@ const RegisterPage = () => {
         }
     };
 
+    if (!i18n.hasResourceBundle(langCode, currentPage)) return <Loading />;
+
+
     return (
         <div className="register-container">
             <div className="register-image d-none d-lg-block" style={{ background: '#a4ac86 url(/StorageImages/Icons/focused.svg) no-repeat center center', backgroundSize: 'cover' }}></div>
             <div className="register-form-wrapper">
                 <form onSubmit={handleSubmit} className="register-form">
-                    <h2 className="mb-4 text-center fw-bold">Добро пожаловать 👋</h2>
-                    <p className="text-muted text-center mb-4">Создайте аккаунт, чтобы стать ближе к своей цели</p>
+                    <h2 className="mb-4 text-center fw-bold">{t('registerHeadText')}</h2>
+                    <p className="text-muted text-center mb-4">{t('headDescRegister')}</p>
                     <div className="mb-3">
-                        <label className="form-label text-start d-block">Имя</label>
+                        <label className="form-label text-start d-block">{t('nameInputLabel')}</label>
                         <input type="text" className="form-control" name="name" value={form.name} onChange={handleChange} required />
                     </div>
                     <div className="mb-3">
-                        <label className="form-label text-start d-block">Email</label>
+                        <label className="form-label text-start d-block">{t('emailInputLabel')}</label>
                         <input type="email" className="form-control" name="email" value={form.email} onChange={handleChange} required />
                     </div>
                     <div className="mb-3">
-                        <label className="form-label text-start d-block">Пароль</label>
+                        <label className="form-label text-start d-block">{t('passwordInputLabel')}</label>
                         <input type="password" className="form-control" name="password" value={form.password} onChange={handleChange} required />
                     </div>
-                    <button type="submit" className="btn btn-primary">Зарегистрироваться</button>
+                    <button type="submit" className="btn btn-primary">{t('registerButton')}</button>
                     <button type="button" className="btn-google">
-                        <img src="https://www.svgrepo.com/show/355037/google.svg" alt="Google" style={{ width: '20px', height: '20px' }} /> Войти через Google
+                        <img src="https://www.svgrepo.com/show/355037/google.svg" alt="Google" style={{ width: '20px', height: '20px' }} />{t('login:notHaveAccount')}
                     </button>
-                    <a href="/users/login">У вас уже есть аккаунт? войти</a>
+                    <a href="/users/login">{t('haveAccount')}</a>
                 </form>
             </div>
         </div>

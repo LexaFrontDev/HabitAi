@@ -1,0 +1,3 @@
+type TranslationNames = {
+    name: string;
+};

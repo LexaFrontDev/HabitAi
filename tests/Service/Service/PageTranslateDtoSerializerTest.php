@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Tests\AplicationTest\Service\Service;
+namespace App\Tests\Service\Service;
 
 use App\Aplication\Dto\LangPageTranslate\LandingPageTranslateDto;
 use App\Aplication\Service\Serialaizer\PageTranslateDtoSerializer;
-use PHPUnit\Framework\TestCase;
-use Symfony\Component\Serializer\SerializerInterface;
 use InvalidArgumentException;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Serializer\NameConverter\CamelCaseToSnakeCaseNameConverter;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class PageTranslateDtoSerializerTest extends TestCase
 {

@@ -4,11 +4,14 @@ import Loading from '../chunk/LoadingChunk/Loading';
 import { loadPageTranslation } from '../../utils/loadPageTranslation';
 import {LangStorage} from "../../Infrastructure/languageStorage/LangStorage";
 import {LangStorageUseCase} from "../../Aplication/UseCases/language/LangStorageUseCase";
+import {LanguageRequestUseCase} from "../../Aplication/UseCases/language/LanguageRequestUseCase";
+import {LanguageApi} from "../../Infrastructure/request/Language/LanguageApi";
 
 
 const currentPage = 'login';
 const langStorage = new LangStorage();
 const langUseCase = new LangStorageUseCase(langStorage);
+const languageApi = new LanguageRequestUseCase(currentPage, new LanguageApi());
 
 const LoginPage = () => {
     const [email, setEmail] = useState('');
@@ -25,7 +28,7 @@ const LoginPage = () => {
             const lang = await langUseCase.getLang();
             if (lang) {
                 setLangCode(lang);
-                await loadPageTranslation(currentPage, lang);
+                await languageApi.getTranslations(lang);
             }
         };
 
@@ -118,7 +121,7 @@ const LoginPage = () => {
 
                     {loading && <div className="loading-gift"><img src="/StorageImages/Animations/Load.gif" alt="Загрузка..." /></div>}
 
-                    <a href="/users/register">{t('notHaveAccount')}</a>
+                    <a href="/Users/register">{t('notHaveAccount')}</a>
                 </form>
             </div>
         </div>

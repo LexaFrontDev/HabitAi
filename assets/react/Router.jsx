@@ -20,8 +20,16 @@ const RouterDom = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const excluded = ['/', '/Users/login', '/Users/register'];
-        if (!excluded.includes(location.pathname)) {
+        const allowedPages = [
+            '/tasks',
+            '/habits',
+            '/matric',
+            '/pomodoro',
+            '/profile',
+            '/profile/statistics'
+        ];
+
+        if (allowedPages.includes(location.pathname.toLowerCase())) {
             localStorage.setItem('last_page', location.pathname);
         }
     }, [location.pathname]);

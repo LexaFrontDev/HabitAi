@@ -2,7 +2,9 @@
 
 namespace App\Aplication\UseCase\LanguageUseCases;
 
+use App\Aplication\Dto\LangPageTranslate\TranslateNames;
 use App\Aplication\Service\Serialaizer\PageTranslateDtoSerializer;
+use App\Domain\Exception\Message\MessageException;
 use App\Domain\Repository\Language\LanguageInterface;
 
 class QueryLanguageUseCases
@@ -18,10 +20,13 @@ class QueryLanguageUseCases
         $this->language = $language;
     }
 
-    public function getTranslatePageByLang(string $page, string $prefixLang)
+    public function getTranslatePageByLang(string $version, string $prefixLang)
     {
-        $translate = $this->language->getPageTranslateByLangId($page, $prefixLang);
-        if ($translate === null) {return null;}
-        return $this->pageTranslateDtoSerializer->deserializeToDto($page, $translate['translate']);
+        $translate = $this->language->getPageTranslateByLangId($version, $prefixLang);
+        if ($translate === null) throw new MessageException('Перевод не получено');
+        return $translate;
     }
+
+
+
 }

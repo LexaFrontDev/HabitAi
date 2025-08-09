@@ -4,14 +4,17 @@ declare(strict_types=1);
 
 namespace App\Domain\Repository\Language;
 
+use App\Aplication\Dto\LangPageTranslate\LangPageReturn;
+use App\Aplication\Dto\LangPageTranslate\TranslateNames;
+
 interface LanguageInterface
 {
 
-
     /**
-     * @param string $page
+     * @param string $version
      * @param string $prefix
-     * @return array{translate: array, lang: string}|null
+     * @return LangPageReturn|null
      */
-    public function getPageTranslateByLangId(string $page, string $prefix): ?array;
+    public function getPageTranslateByLangId(string $version, string $prefix): ?LangPageReturn;
+
 }

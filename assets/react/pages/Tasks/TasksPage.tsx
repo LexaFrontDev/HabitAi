@@ -18,8 +18,17 @@ import ResizablePanel from "../../ui/organism/Aside/ResizablePanel";
 import {ImperativePanelGroupHandle, Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import {Button} from "../../ui/atoms/button/Button";
 import TextArea from "../../ui/atoms/TextArea/TextArea";
+import {LangStorage} from "../../Infrastructure/languageStorage/LangStorage";
+import {LangStorageUseCase} from "../../Aplication/UseCases/language/LangStorageUseCase";
+import {useTranslation} from "react-i18next";
+import {LanguageRequestUseCase} from "../../Aplication/UseCases/language/LanguageRequestUseCase";
+import {LanguageApi} from "../../Infrastructure/request/Language/LanguageApi";
 
 const tasksService = new TasksService(new TasksApi());
+const LangUseCase = new LanguageRequestUseCase('tasks', new LanguageApi());
+const langStorage = new LangStorage();
+const langUseCase = new LangStorageUseCase(langStorage);
+
 
 const TasksPage: React.FC = () => {
     const [showTasksInput, setTasksInput] = useState<boolean>(false);
@@ -53,6 +62,22 @@ const TasksPage: React.FC = () => {
     const [centerSize, setCenterSize] = useState<number>(0);
     const [shouldIndent, setShouldIndent] = useState<boolean>(false);
     const [activeId, setActiveId] = useState<number | null>(1);
+    const [langCode, setLangCode] = useState('en');
+    const { t, i18n } = useTranslation('tasks');
+
+
+
+    useEffect(() => {
+        const detectLang = async () => {
+            const lang = await langUseCase.getLang();
+            if (lang) {
+                  setLangCode(lang);
+                  await LangUseCase.getTranslations(lang);
+            }
+        };
+
+        detectLang();
+    }, []);
 
     const formatDate = (date: Date): string => {
         const year = date.getFullYear();
@@ -120,7 +145,7 @@ const TasksPage: React.FC = () => {
             setTasks(allTasks);
             setActivePeriod(period);
         } catch (err: any) {
-            setError(err.message || 'Ошибка получения всех задач');
+            setError(err.message || t('tasks:mistakeGetAllTasks'));
             setTasks([]);
         } finally {
             setLoading(false);
@@ -154,7 +179,7 @@ const TasksPage: React.FC = () => {
             setTitle('');
             setDescription('');
             setSelectedDate('');
-            Messages('Задача успешно создана');
+            Messages(t('tasks:createTasksSuccss'));
         } else if (result.front) {
             ErrorAlert(result.message);
         } else {
@@ -179,7 +204,7 @@ const TasksPage: React.FC = () => {
             setDescription('');
             setSelectedDate('');
             setTasksInput(false);
-            Messages('Задача успешно удаленно')
+            Messages(t('tasks:deleteTasksSuccss'))
         } else if (result.front) {
             ErrorAlert(result.message);
         } else {
@@ -231,6 +256,11 @@ const TasksPage: React.FC = () => {
 
 
     const handleWontDo = async (taskId: number, status: boolean) => {
+        if (status) {
+            Messages(t('tasks:confirmTasks'));
+        } else {
+            Messages(t('tasks:unConfirmTasks'));
+        }
         const task = tasks.find(t => t.id === taskId);
         if (!task) return;
         const newStatus = !task.todo;
@@ -253,15 +283,9 @@ const TasksPage: React.FC = () => {
             };
         });
         const result = await tasksService.toggleWontDo(taskId);
-        if (result.success) {
-            if (status) {
-                Messages('Отлично! Задача выполнена — ты молодец 💪');
-            } else {
-                Messages('Задача отменена. Ничего страшного, в следующий раз получится 🙌');
-            }
-        } else if (result.front) {
+        if (!result.success && result.front) {
             ErrorAlert(result.message);
-        } else {
+        } else if(!result.success) {
             console.error(result.message);
         }
     };
@@ -314,6 +338,7 @@ const TasksPage: React.FC = () => {
         setShowPanel(true)
     };
 
+
     const renderTaskDateTime = (task: Task) => {
         const { duration, time, date } = task.timeData ?? {};
 
@@ -358,6 +383,8 @@ const TasksPage: React.FC = () => {
         return <div>Время не указано</div>;
     };
 
+    if (!i18n.hasResourceBundle(langCode, 'tasks')) return <Loading />;
+
 
     return (
         <div id="tasks-page">
@@ -370,11 +397,11 @@ const TasksPage: React.FC = () => {
                         <div className="content-panel">
                             <div className="lists-buttons">
                                 <div className="handlers">
-                                    <Button key={1} variant="listButton"  isActive={activeId === 1}  onClick={() => handlePeriodChange('all', 1)} className="all handl">Все</Button>
-                                    <Button key={2} variant="listButton"  isActive={activeId === 2}  onClick={() => handlePeriodChange('today', 2)} className="day handl">Сегодня</Button>
-                                    <Button key={3} variant="listButton"  isActive={activeId === 3}  onClick={() => handlePeriodChange('tomorrow', 3)} className="day handl">Завтра</Button>
-                                    <Button key={4} variant="listButton"  isActive={activeId === 4}  onClick={() => handlePeriodChange('nextWeek', 4)} className="day handl">Неделя</Button>
-                                    <Button key={5} variant="listButton"  isActive={activeId === 5}  onClick={() => handlePeriodChange('nextMonth', 5)} className="day handl">Месяц</Button>
+                                    <Button key={1} variant="listButton"  isActive={activeId === 1}  onClick={() => handlePeriodChange('all', 1)} className="all handl">{t('buttons:AllButton')}</Button>
+                                    <Button key={2} variant="listButton"  isActive={activeId === 2}  onClick={() => handlePeriodChange('today', 2)} className="day handl">{t('buttons:TodayButton')}</Button>
+                                    <Button key={3} variant="listButton"  isActive={activeId === 3}  onClick={() => handlePeriodChange('tomorrow', 3)} className="day handl">{t('buttons:TomorowButton')}</Button>
+                                    <Button key={4} variant="listButton"  isActive={activeId === 4}  onClick={() => handlePeriodChange('nextWeek', 4)} className="day handl">{t('buttons:WeekButton')}</Button>
+                                    <Button key={5} variant="listButton"  isActive={activeId === 5}  onClick={() => handlePeriodChange('nextMonth', 5)} className="day handl">{t('buttons:MonthButton')}</Button>
                                 </div>
                             </div>
                         </div>
@@ -401,7 +428,7 @@ const TasksPage: React.FC = () => {
                                 </div>
 
                                 <div className="header-text mt-xl-1">
-                                    <h4 className="header-title">Задачи</h4>
+                                    <h4 className="header-title">{t('tasks:tasksHeadText')}</h4>
                                 </div>
                             </div>
 
@@ -409,29 +436,29 @@ const TasksPage: React.FC = () => {
                             <div className="add-tasks-input">
                                 {!showTasksInput && (
                                     <div className="add-head" onClick={() => setTasksInput(true)}>
-                                        + Хотите добавить задачу
+                                        {t('tasks:questionWantDoTasks')}
                                     </div>
                                 )}
                                 {showTasksInput && (
                                     <div className="block-add-tasks">
                                         {!showTasksInput ? (
                                             <div onClick={() => setTasksInput(true)} className="button-add-tasks">
-                                                <p>+ Хотите добавить задачу</p>
+                                                <p>{t('tasks:questionWantDoTasks')}</p>
                                             </div>
                                         ) : (
                                             <div className="input-tasks">
                                                 <input
                                                     className="input-tasks-title"
                                                     type="text"
-                                                    placeholder="Хотите что то сделать?"
+                                                    placeholder={t('tasks:wantToDo')}
                                                     value={title}
                                                     onChange={handleChange}
                                                 />
                                                 <div className="actions">
                                                 <span onClick={() => setDataModal(true)}>
-                                                    {selectedDate ? ` ${selectedDate}` : 'Добавить дату'}
+                                                    {selectedDate ? ` ${selectedDate}` : t('buttons:ChooseTime')}
                                                 </span>
-                                                    <button onClick={() => saveTasks()}>Добавить</button>
+                                                    <button onClick={() => saveTasks()}>{t('buttons:addButton')}</button>
                                                 </div>
                                             </div>
                                         )}
@@ -485,8 +512,7 @@ const TasksPage: React.FC = () => {
                                                 <div className="dots-menu">
                                                     <span className="dots">...</span>
                                                     <div className="dropdown-menu">
-                                                        <button onClick={() => handleDelete(task.id)}>Удалить
-                                                        </button>
+                                                        <button onClick={() => handleDelete(task.id)}>{t('buttons:deleteButton')}</button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -525,8 +551,8 @@ const TasksPage: React.FC = () => {
 
                                     <div className="header-text mt-xl-1">
                                          <span onClick={() => setShowEditDateModal(true)}>
-                                            {editingTask.timeData?.time ? `Дата: ${editingTask.timeData.time}` : 'Добавить дату'}
-                                        </span>
+                                            {editingTask.timeData?.time ? `${editingTask.timeData.time}` : t('buttons:ChooseTime')}
+                                         </span>
                                     </div>
                                 </div>
                                 <div className="block-description">
@@ -535,7 +561,7 @@ const TasksPage: React.FC = () => {
                                             className="tasks-text-input"
                                             type="text"
                                             value={editingTask.title || ''}
-                                            placeholder="Название"
+                                            placeholder={t('tasks:wantToDo')}
                                             onChange={(e) => {
                                                 const updatedTask = {...editingTask, title: e.target.value};
                                                 setEditingTask(updatedTask);
@@ -550,7 +576,7 @@ const TasksPage: React.FC = () => {
                                             variant="default"
                                             className="tasks-text-input"
                                             value={editingTask.description || ''}
-                                            placeholder="Описание"
+                                            placeholder={t('buttons:Description')}
                                             onChange={(e) => {
                                                 const updatedTask = { ...editingTask, description: e.target.value };
                                                 setEditingTask(updatedTask);
