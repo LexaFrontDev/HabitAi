@@ -1,6 +1,6 @@
-TaskFlow
+HabitAi
 
-TaskFlow is an application designed to help people boost their productivity using AI (artificial intelligence).
+HabitAi is an application designed to help people boost their productivity using AI (artificial intelligence).
 
 Currently under active development. The tech stack includes Flutter, React, Vue, Symfony, PHP 8.3, and the architecture follows Clean Architecture principles, Domain-Driven Design (DDD), and Atomic Design.
 
