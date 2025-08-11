@@ -29,7 +29,7 @@ class LanguageController extends AbstractController
 
 
     #[Route('/api/get/prefixs', name: 'get_language_prefixs', methods: ['GET'])]
-    public function getLangPreixs(Request $request): JsonResponse {
+    public function getLangPreixs(): JsonResponse {
         return $this->json(['result' => $this->languagePrefix->getPrefixes()]);
     }
 

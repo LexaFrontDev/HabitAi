@@ -6,6 +6,7 @@ use App\Aplication\Dto\HabitsDtoUseCase\ReqHabitsDto;
 use App\Aplication\Dto\HabitsDtoUseCase\ReqUpdateHabitsDto;
 use App\Aplication\Dto\HabitsDtoUseCase\SaveHabitDto;
 use App\Aplication\UseCase\DatesUseCases\DatesCommandUseCase;
+use App\Domain\Port\TokenProviderInterface;
 use App\Domain\Repository\Dates\DatesDailyRepositoryInterface;
 use App\Domain\Repository\DatesWeekly\DatesWeeklyRepositoryInterface;
 use App\Domain\Repository\DayesRepeat\DatesRepeatRepositoryInterface;
@@ -20,6 +21,7 @@ class CommandHabitsUseCase
 {
 
     public function __construct(
+        private TokenProviderInterface $tokenProvider,
         private HabitsRepositoryInterface $habitsRepository,
         private DatesCommandUseCase $datesCommandUseCase,
         private PurposeRepositoryInterface $purposeRepository,
@@ -29,10 +31,10 @@ class CommandHabitsUseCase
 
 
 
-    public function updateHabits(ReqUpdateHabitsDto $reqHabitsDto, Request $request): bool
+    public function updateHabits(ReqUpdateHabitsDto $reqHabitsDto): bool
     {
-            $token = $this->jwtServices->getTokens($request);
-            $userInfo = $this->jwtServices->getUserInfoFromToken($token['accessToken']);
+            $token = $this->tokenProvider->getTokens();
+            $userInfo = $this->jwtServices->getUserInfoFromToken($token->getAccessToken());
             $userId = $userInfo->getUserId();
 
             $habitDto = new SaveHabitDto(
@@ -72,10 +74,10 @@ class CommandHabitsUseCase
     }
 
 
-    public function saveHabits(ReqHabitsDto $reqHabitsDto, Request $request): bool
+    public function saveHabits(ReqHabitsDto $reqHabitsDto): bool
     {
         try {
-            $token = $this->jwtServices->getTokens($request);
+            $token = $this->tokenProvider->getTokens();
             $userId = $this->jwtServices->getUserInfoFromToken($token['accessToken']);
             $userId = $userId->getUserId();
 

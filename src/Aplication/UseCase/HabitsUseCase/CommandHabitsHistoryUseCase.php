@@ -4,6 +4,7 @@ namespace App\Aplication\UseCase\HabitsUseCase;
 
 use App\Aplication\Dto\HabitsDtoUseCase\RepSaveHabitsProgressDto;
 use App\Aplication\Dto\HabitsDtoUseCase\SaveHabitsProgress;
+use App\Domain\Port\TokenProviderInterface;
 use App\Domain\Repository\Habits\HabitsHistoryRepositoryInterface;
 use App\Domain\Repository\Purpose\PurposeRepositoryInterface;
 use App\Domain\Service\JwtServicesInterface;
@@ -14,6 +15,7 @@ class CommandHabitsHistoryUseCase
 
 
     public function __construct(
+        private TokenProviderInterface $tokenProvider,
         private JwtServicesInterface $jwtServices,
         private HabitsHistoryRepositoryInterface $habitsHistoryRepository,
         private PurposeRepositoryInterface $purposeRepository,
@@ -21,11 +23,11 @@ class CommandHabitsHistoryUseCase
 
 
 
-    public function saveHabitsProgress(SaveHabitsProgress $saveHabitsProgress, Request $request): array|bool
+    public function saveHabitsProgress(SaveHabitsProgress $saveHabitsProgress): array|bool
     {
         if ($saveHabitsProgress->getUserId() === null) {
-            $token = $this->jwtServices->getTokens($request);
-            $userId = $this->jwtServices->getUserInfoFromToken($token['accessToken'])->getUserId();
+            $token = $this->tokenProvider->getTokens();
+            $userId = $this->jwtServices->getUserInfoFromToken($token->getAccessToken())->getUserId();
             $saveHabitsProgress->userId = $userId;
         }
 

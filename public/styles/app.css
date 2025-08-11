@@ -352,16 +352,20 @@ footer {
 }
 #pomodor-page .pomodoro-section {
   display: flex;
-  align-items: center;
-  justify-content: center;
   min-height: 100vh;
   position: relative;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 #pomodor-page .pomodoro-section .pomodoro-wrapper {
-  position: absolute;
-  top: 37%;
-  left: 30%;
-  transform: translate(-50%, -50%);
+  display: flex;
+  margin-bottom: 15rem;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-content: space-around;
+  justify-content: space-between;
+  align-items: center;
   width: 90vw;
   height: 90vw;
   max-width: 400px;

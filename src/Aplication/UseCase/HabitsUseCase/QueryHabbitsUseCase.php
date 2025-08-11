@@ -4,6 +4,7 @@ namespace App\Aplication\UseCase\HabitsUseCase;
 
 use App\Domain\Entity\Habits\Habit;
 use App\Domain\Entity\Purpose\Purpose;
+use App\Domain\Port\TokenProviderInterface;
 use App\Domain\Repository\Habits\HabitsRepositoryInterface;
 use App\Domain\Service\JwtServicesInterface;
 use Psr\Log\LoggerInterface;
@@ -15,6 +16,7 @@ class QueryHabbitsUseCase
 
 
     public function __construct(
+        private TokenProviderInterface $tokenProvider,
         private HabitsRepositoryInterface $habitsRepository,
         private JwtServicesInterface $jwtServices,
         private LoggerInterface $logger
@@ -23,14 +25,10 @@ class QueryHabbitsUseCase
 
 
 
-    public function getHabitsForDate(Request $request): array
+    public function getHabitsForDate($dateString): array
     {
-        $token = $this->jwtServices->getTokens($request);
-        $userId = $this->jwtServices->getUserInfoFromToken($token['accessToken'])->getUserId();
-        $dateString = $request->query->get('date');
-        if (!$dateString) {
-            return [];
-        }
+        $token = $this->tokenProvider->getTokens();
+        $userId = $this->jwtServices->getUserInfoFromToken($token->getAccessToken())->getUserId();
         $targetDate = new \DateTimeImmutable($dateString);
         $dayOfWeekNumber = $targetDate->format('N');
         $dayOfMonth = $targetDate->format('d');
@@ -50,11 +48,11 @@ class QueryHabbitsUseCase
 
 
 
-    public function getHabitsForToday(Request $request): array
+    public function getHabitsForToday(): array
     {
         try {
-            $token = $this->jwtServices->getTokens($request);
-            $userId = $this->jwtServices->getUserInfoFromToken($token['accessToken'])->getUserId();
+            $token = $this->tokenProvider->getTokens();
+            $userId = $this->jwtServices->getUserInfoFromToken($token->getAccessToken())->getUserId();
 
             $dayOfWeekNumber = date('N');
             $dayOfMonth = date('d');
@@ -99,10 +97,10 @@ class QueryHabbitsUseCase
 
 
 
-    public function getCountHabitsToDay(Request $request): int
+    public function getCountHabitsToDay(): int
     {
-        $token = $this->jwtServices->getTokens($request);
-        $userId = $this->jwtServices->getUserInfoFromToken($token['accessToken'])->getUserId();
+        $token = $this->tokenProvider->getTokens();
+        $userId = $this->jwtServices->getUserInfoFromToken($token->getAccessToken())->getUserId();
 
         $dayOfWeekNumber = date('N');
         $dayOfMonth = date('d');

@@ -235,146 +235,147 @@ const Pomodoro = () => {
 
     return (
         <div id="pomodor-page">
-            <Sidebar />
-
-            <PanelGroup direction="horizontal">
-                <PanelResizeHandle/>
-                <Panel maxSize={90} defaultSize={50} minSize={20}>
-                    <div className="panel-content">
-                        <div className="content-panel">
-                            <div className="header-panel-center">
-                                <div className="header-text mt-xl-1">
-                                    <h4 className="header-title">{t('tasks:tasksHeadText')}</h4>
+            <Sidebar/>
+            <div style={{marginLeft: '50px'}}>
+                <PanelGroup direction="horizontal">
+                    <Panel maxSize={75} defaultSize={30} minSize={20}>
+                        <div className="panel-content">
+                            <div className="content-panel">
+                                <div className="header-panel-center">
+                                    <div className="header-text mt-xl-1">
+                                        <h4 className="header-title">{t('tasks:tasksHeadText')}</h4>
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="pomodoro-wrapper">
-                                <div className="header">
-                                    <h4 onClick={() => setTasksModal(true)}>{TasksTitle || 'Фокус'}</h4>
-                                </div>
-                                <svg width="360" height="360" viewBox="0 0 400 400">
-                                    <circle
-                                        stroke="rgba(255, 255, 255, 0.1)"
-                                        cx="200"
-                                        cy="200"
-                                        r={radius}
-                                        strokeWidth="8"
-                                        fill="none"
-                                    />
-                                    <circle
-                                        stroke={isBreak ? "#4CAF50" : "#4772fa"}
-                                        transform="rotate(-90 200 200)"
-                                        cx="200"
-                                        cy="200"
-                                        r={radius}
-                                        strokeDasharray={circumference}
-                                        strokeWidth="8"
-                                        strokeDashoffset={circumference - calculateProgress()}
-                                        strokeLinecap="round"
-                                        fill="none"
-                                    />
-                                    <text
-                                        x="200"
-                                        y="210"
-                                        textAnchor="middle"
-                                        dominantBaseline="middle"
-                                        fontSize="48"
-                                        fill="#fff"
-                                        fontFamily="Arial"
-                                        onClick={openSettings}
-                                        style={{cursor: sessionActive ? 'default' : 'pointer'}}
-                                    >
-                                        {formatTime(timeLeft)}
-                                    </text>
-                                </svg>
-                                <div className="mt-3 btn-group">
-                                    <button
-                                        className="btn btn-primary"
-                                        onClick={handleStartPause}
-                                        disabled={timeLeft === 0 && !isRunning}
-                                    >
-                                        {isRunning ? 'Пауза' : timeLeft === 0 ? 'Начать заново' : 'Старт'}
-                                    </button>
-                                    {(isPaused || (isRunning && showCompleteButton)) && (
-                                        <button
-                                            className="btn btn-danger"
-                                            onClick={handleCompleteSession}
-                                        >
-                                            Завершить
-                                        </button>
-                                    )}
+                                <div className="pomodoro-section">
+                                    <div className="pomodoro-wrapper">
+                                        <div className="header">
+                                            <h4 onClick={() => setTasksModal(true)}>{TasksTitle || 'Фокус'}</h4>
+                                        </div>
+                                        <svg width="360" height="360" viewBox="0 0 400 400">
+                                            <circle
+                                                stroke="rgba(255, 255, 255, 0.1)"
+                                                cx="200"
+                                                cy="200"
+                                                r={radius}
+                                                strokeWidth="8"
+                                                fill="none"
+                                            />
+                                            <circle
+                                                stroke={isBreak ? "#4CAF50" : "#4772fa"}
+                                                transform="rotate(-90 200 200)"
+                                                cx="200"
+                                                cy="200"
+                                                r={radius}
+                                                strokeDasharray={circumference}
+                                                strokeWidth="8"
+                                                strokeDashoffset={circumference - calculateProgress()}
+                                                strokeLinecap="round"
+                                                fill="none"
+                                            />
+                                            <text
+                                                x="200"
+                                                y="210"
+                                                textAnchor="middle"
+                                                dominantBaseline="middle"
+                                                fontSize="48"
+                                                fill="#fff"
+                                                fontFamily="Arial"
+                                                onClick={openSettings}
+                                                style={{cursor: sessionActive ? 'default' : 'pointer'}}
+                                            >
+                                                {formatTime(timeLeft)}
+                                            </text>
+                                        </svg>
+                                        <div className="mt-3 btn-group">
+                                            <button
+                                                className="btn btn-primary"
+                                                onClick={handleStartPause}
+                                                disabled={timeLeft === 0 && !isRunning}
+                                            >
+                                                {isRunning ? 'Пауза' : timeLeft === 0 ? 'Начать заново' : 'Старт'}
+                                            </button>
+                                            {(isPaused || (isRunning && showCompleteButton)) && (
+                                                <button
+                                                    className="btn btn-danger"
+                                                    onClick={handleCompleteSession}
+                                                >
+                                                    Завершить
+                                                </button>
+                                            )}
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </Panel>
-                <PanelResizeHandle/>
-                <Panel maxSize={35} defaultSize={15} minSize={10}>
-                    <div className="panel-content">
-                        <div className="line-resize"></div>
+                    </Panel>
+                    <PanelResizeHandle/>
+                    <Panel maxSize={25} defaultSize={15} minSize={5}>
+                        <div className="panel-content">
+                            <div className="line-resize"></div>
 
-                    </div>
-                </Panel>
-            </PanelGroup>
+                        </div>
+                    </Panel>
+                </PanelGroup>
+            </div>
 
-
-            {showModal && (
-                <div className="modal-overlay">
-                    <div className="modal-content">
-                        <h3>Настройки таймера</h3>
-                        <input
-                            type="number"
-                            min="1"
-                            placeholder="Время фокуса (мин)"
-                            className="time-input"
-                            value={focusMinutes}
-                            onChange={e => setFocusMinutes(e.target.value)}
-                        />
-                        <input
-                            type="number"
-                            min="1"
-                            placeholder="Время отдыха (мин)"
-                            className="time-input"
-                            value={breakMinutes}
-                            onChange={e => setBreakMinutes(e.target.value)}
-                        />
-                        <button className="btn btn-success" onClick={handleSetTime}>
-                            Сохранить
-                        </button>
-                        <button className="btn btn-outline-danger mt-2" onClick={() => setShowModal(false)}>
-                            Закрыть
-                        </button>
-                    </div>
-                </div>
-            )}
-
-            {showTasksModal && (
-                <div className="modal-tasks-list">
-                    <div className="modal-contents">
-                        <h3>Задачи которых можно выполнить</h3>
-                        {data && data.map((item: any) => (
-                            <div
-                                key={item.habit_id}
-                                onClick={() => {
-                                    setTasksTitle(item.title);
-                                    setTasksModal(false);
-                                }}
-                            >
-                                {item.title}
-                            </div>
-                        ))}
-                        <div className="close-button">
-                            <button
-                                className="close-button"
-                                onClick={() => setTasksModal(false)}
-                            >
-                                <img src="/Upload/Images/AppIcons/x-circle.svg" alt="Закрыть"/>
+                {showModal && (
+                    <div className="modal-overlay">
+                        <div className="modal-content">
+                            <h3>Настройки таймера</h3>
+                            <input
+                                type="number"
+                                min="1"
+                                placeholder="Время фокуса (мин)"
+                                className="time-input"
+                                value={focusMinutes}
+                                onChange={e => setFocusMinutes(e.target.value)}
+                            />
+                            <input
+                                type="number"
+                                min="1"
+                                placeholder="Время отдыха (мин)"
+                                className="time-input"
+                                value={breakMinutes}
+                                onChange={e => setBreakMinutes(e.target.value)}
+                            />
+                            <button className="btn btn-success" onClick={handleSetTime}>
+                                Сохранить
+                            </button>
+                            <button className="btn btn-outline-danger mt-2" onClick={() => setShowModal(false)}>
+                                Закрыть
                             </button>
                         </div>
                     </div>
-                </div>
-            )}
-        </div>
-    );
-};
+                )}
 
-export default Pomodoro;
+                {showTasksModal && (
+                    <div className="modal-tasks-list">
+                        <div className="modal-contents">
+                            <h3>Задачи которых можно выполнить</h3>
+                            {data && data.map((item: any) => (
+                                <div
+                                    key={item.habit_id}
+                                    onClick={() => {
+                                        setTasksTitle(item.title);
+                                        setTasksModal(false);
+                                    }}
+                                >
+                                    {item.title}
+                                </div>
+                            ))}
+                            <div className="close-button">
+                                <button
+                                    className="close-button"
+                                    onClick={() => setTasksModal(false)}
+                                >
+                                    <img src="/Upload/Images/AppIcons/x-circle.svg" alt="Закрыть"/>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </div>
+            );
+            };
+
+            export default Pomodoro;

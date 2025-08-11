@@ -3,30 +3,32 @@ namespace App\Aplication\UseCase\PomodorUseCases\Query;
 
 use App\Aplication\Dto\PomodorDto\RepPomodoroHistory;
 use App\Aplication\Dto\PomodorDto\ResPomdorCountStatistic;
+use App\Domain\Port\TokenProviderInterface;
 use App\Domain\Repository\Pomodor\PomodorHistoryRepositoryInterface;
 use App\Domain\Service\JwtServicesInterface;
-use Symfony\Component\HttpFoundation\Request;
+
 
 class QueryPomodorUseCase
 {
     private int $userId;
 
     public function __construct(
+        private TokenProviderInterface $tokenProvider,
         private JwtServicesInterface $jwtServices,
         private PomodorHistoryRepositoryInterface $pomodorHistoryRepository,
     ){}
 
-    private function initUserFromRequest(Request $request): void
+    private function initUserFromRequest(): void
     {
-        $token = $this->jwtServices->getTokens($request);
-        $user = $this->jwtServices->getUserInfoFromToken($token['accessToken']);
+        $token = $this->tokenProvider->getTokens();
+        $user = $this->jwtServices->getUserInfoFromToken($token->getAccessToken());
         $this->userId = $user->getUserId();
     }
 
-    public function getCountAndPeriodLabel(string $target, Request $request): ResPomdorCountStatistic|bool
+    public function getCountAndPeriodLabel(string $target): ResPomdorCountStatistic|bool
     {
         try {
-            $this->initUserFromRequest($request);
+            $this->initUserFromRequest();
             $entries = $this->pomodorHistoryRepository->getDataByUserIdAndPeriod($this->userId, $this->targetToDays($target));
             $summary = $this->aggregate($entries);
             return new ResPomdorCountStatistic($target, $summary['periodLabel'], $summary['count']);
@@ -35,10 +37,10 @@ class QueryPomodorUseCase
         }
     }
 
-    public function getCountAndPeriodLabelToday(Request $request): array|bool
+    public function getCountAndPeriodLabelToday(): array|bool
     {
         try {
-            $this->initUserFromRequest($request);
+            $this->initUserFromRequest();
             $entries = $this->pomodorHistoryRepository->getPomoDayByUserId($this->userId);
             $summary = $this->aggregate($entries);
             return ['periodLabel' => $summary['periodLabel'], 'count' => $summary['count']];
@@ -47,9 +49,9 @@ class QueryPomodorUseCase
         }
     }
 
-    public function getAllCountPomo(Request $request): int|bool
+    public function getAllCountPomo(): int|bool
     {
-        $this->initUserFromRequest($request);
+        $this->initUserFromRequest();
         return $this->pomodorHistoryRepository->getAllCountPomodorByUserId($this->userId) ?? false;
     }
 
@@ -72,9 +74,9 @@ class QueryPomodorUseCase
     }
 
 
-    public function getPomodorHistoryByUserId(Request $request, int $limit = 50): array|bool
+    public function getPomodorHistoryByUserId(int $limit = 50): array|bool
     {
-        $this->initUserFromRequest($request);
+        $this->initUserFromRequest();
         return $this->pomodorHistoryRepository->getHistoryByUserId($this->userId, $limit)?? false;
     }
 

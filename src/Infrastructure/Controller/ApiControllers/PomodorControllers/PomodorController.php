@@ -52,12 +52,12 @@ class PomodorController extends  AbstractController
 
     #[Route('/api/pomodor/summary', name: 'api_pomodor_summary', methods: ['GET'])]
     #[RequiresJwt]
-    public function pomodorSummary(Request $request): JsonResponse
+    public function pomodorSummary(): JsonResponse
     {
-        $stats = $this->queryPomodorUseCase->getCountAndPeriodLabelToday($request);
-        $allCount = $this->queryPomodorUseCase->getAllCountPomo($request);
-        $pomoHistory = $this->queryPomodorUseCase->getPomodorHistoryByUserId($request);
-        $habits = $this->queryHabitsUseCase->getHabitsForToday($request);
+        $stats = $this->queryPomodorUseCase->getCountAndPeriodLabelToday();
+        $allCount = $this->queryPomodorUseCase->getAllCountPomo();
+        $pomoHistory = $this->queryPomodorUseCase->getPomodorHistoryByUserId();
+        $habits = $this->queryHabitsUseCase->getHabitsForToday();
 
         return $this->json([
             'todayPomos' => $stats['count'] ?? 0,
@@ -74,7 +74,7 @@ class PomodorController extends  AbstractController
     public function getPeriod(Request $request): JsonResponse
     {
         $period = $request->query->get('period') ?? 'week';
-        $stats = $this->queryPomodorUseCase->getCountAndPeriodLabel($period, $request);
+        $stats = $this->queryPomodorUseCase->getCountAndPeriodLabel($period);
         return $this->json(['stats' => $stats ?: null]);
     }
 

@@ -16,10 +16,10 @@ class UsersController extends AbstractController
 
     #[Route('/api/web/user/id', name: 'get_users_id', methods: ['GET'])]
     #[RequiresJwt]
-    public function getUserId(Request $request): JsonResponse
+    public function getUserId(): JsonResponse
     {
         try {
-            $userInfo = $this->usersQueryUseCase->getUsersInfoByToken($request);
+            $userInfo = $this->usersQueryUseCase->getUsersInfoByToken();
 
             return new JsonResponse([
                 'userId' => $userInfo->getUserId()

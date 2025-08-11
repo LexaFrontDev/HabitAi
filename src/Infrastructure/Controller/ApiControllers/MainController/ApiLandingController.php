@@ -19,7 +19,7 @@ class ApiLandingController extends  AbstractController
     ) {}
 
     #[Route('/api/landing/data', name: 'get_landing_data', methods: ['get'])]
-    public function lendingData(Request $request)
+    public function lendingData()
     {
         $features = $this->featuresService->getFeatures();
         $reviews = $this->reviewsService->getReviews();

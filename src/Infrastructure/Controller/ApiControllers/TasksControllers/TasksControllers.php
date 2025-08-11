@@ -24,9 +24,9 @@ class TasksControllers extends AbstractController
 
     #[Route('/api/tasks/save', name: 'tasks_save', methods: ['POST'])]
     #[RequiresJwt]
-    public function save(#[MapRequestPayload] TasksForSaveDto $dto, Request $request): JsonResponse
+    public function save(#[MapRequestPayload] TasksForSaveDto $dto): JsonResponse
     {
-        $result = $this->commandTasksUseCase->saveTasksUseCase($dto, $request);
+        $result = $this->commandTasksUseCase->saveTasksUseCase($dto);
 
         if (!$result) {
             return $this->json(['success' => false, 'message' => 'Ошибка при сохранении задачи'], 400);
@@ -37,9 +37,9 @@ class TasksControllers extends AbstractController
 
     #[Route('/api/tasks/get{day}', name: 'get_tasks_by_day', methods: ['GET'])]
     #[RequiresJwt]
-    public function getTasksByDay(Request $request, int $day): JsonResponse
+    public function getTasksByDay(int $day): JsonResponse
     {
-        $result = $this->queryTasksUseCase->getTasksByDay($day, $request);
+        $result = $this->queryTasksUseCase->getTasksByDay($day);
         if (!empty($result)) {
             return $this->json([
                 'success' => true,
@@ -56,18 +56,18 @@ class TasksControllers extends AbstractController
 
     #[Route('/api/tasks/all/get', name: 'get_tasks_all', methods: ['GET'])]
     #[RequiresJwt]
-    public function getTasksAll(Request $request): JsonResponse
+    public function getTasksAll(): JsonResponse
     {
-        $result = $this->queryTasksUseCase->getTasksAll($request);
+        $result = $this->queryTasksUseCase->getTasksAll();
         return $this->json($result);
     }
 
 
     #[Route('/api/tasks/update', name: 'tasks_update', methods: ['PUT'])]
     #[RequiresJwt]
-    public function update(#[MapRequestPayload] TasksForUpdateDto $dto, Request $request): JsonResponse
+    public function update(#[MapRequestPayload] TasksForUpdateDto $dto): JsonResponse
     {
-        $result = $this->commandTasksUseCase->updateTasksUseCase($dto, $request);
+        $result = $this->commandTasksUseCase->updateTasksUseCase($dto);
 
         if (!$result) {
             return $this->json(['success' => false, 'message' => 'Ошибка при обновлении задачи'], 400);
@@ -78,9 +78,9 @@ class TasksControllers extends AbstractController
 
     #[Route('/api/tasks/delete/{id}', name: 'tasks_delete', methods: ['DELETE'])]
     #[RequiresJwt]
-    public function delete(int $id, Request $request): JsonResponse
+    public function delete(int $id): JsonResponse
     {
-        $result = $this->commandTasksUseCase->deleteTasksUseCase($id, $request);
+        $result = $this->commandTasksUseCase->deleteTasksUseCase($id);
 
         if (!$result) {
             return $this->json(['success' => false, 'message' => 'Ошибка при удалении задачи'], 400);
@@ -100,7 +100,7 @@ class TasksControllers extends AbstractController
         if (empty($taskId)) {
             return $this->json(['success' => false, 'error' => 'Task id  имеет не корректный тип или название не верное как передавать название task_id тип int'], 400);
         }
-        $result = $this->tasksHistoryUseCases->saveToDo($request, $taskId, $month, $date);
+        $result = $this->tasksHistoryUseCases->saveToDo($taskId, $month, $date);
         return $this->json(['success' => true, 'data' => $result]);
     }
 }

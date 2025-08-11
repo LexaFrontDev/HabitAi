@@ -4,6 +4,7 @@ namespace App\Aplication\UseCase\TasksUseCases;
 
 use App\Aplication\Dto\TasksDto\TasksDay;
 use App\Domain\Exception\NotFoundException\NotFoundException;
+use App\Domain\Port\TokenProviderInterface;
 use App\Domain\Repository\Tasks\TasksInterface;
 use App\Domain\Service\JwtServicesInterface;
 use phpDocumentor\Reflection\DocBlock\Tags\Throws;
@@ -15,6 +16,7 @@ class QueryTasksUseCase
 {
 
     public function __construct(
+        private TokenProviderInterface $tokenProvider,
         private JwtServicesInterface $jwtServices,
         private TasksInterface $tasksRepository,
         private LoggerInterface $logger,
@@ -24,13 +26,12 @@ class QueryTasksUseCase
 
     /**
      * @param int $day
-     * @param Request $request
      * @return false Массив задач за день
      */
-    public function getTasksByDay(int $day, Request $request): array|bool
+    public function getTasksByDay(int $day): array|bool
     {
-        $token = $this->jwtServices->getTokens($request);
-        $user = $this->jwtServices->getUserInfoFromToken($token['accessToken']);
+        $token = $this->tokenProvider->getTokens();
+        $user = $this->jwtServices->getUserInfoFromToken($token->getAccessToken());
         $userId = $user->getUserId();
 
         try{
@@ -51,10 +52,10 @@ class QueryTasksUseCase
      * @param Request $request
      * @return TasksDay[]
     */
-    public function getTasksAll( Request $request): array
+    public function getTasksAll(): array
     {
-        $token = $this->jwtServices->getTokens($request);
-        $user = $this->jwtServices->getUserInfoFromToken($token['accessToken']);
+        $token = $this->tokenProvider->getTokens();
+        $user = $this->jwtServices->getUserInfoFromToken($token->getAccessToken());
         $userId = $user->getUserId();
 
         $isResult = $this->tasksRepository->getTasksAllByUserId($userId);

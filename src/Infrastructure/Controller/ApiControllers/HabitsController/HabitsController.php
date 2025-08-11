@@ -28,9 +28,9 @@ class HabitsController extends AbstractController
 
     #[Route('/api/Habits/save', name: 'save_habit', methods: ['POST'])]
     #[RequiresJwt]
-    public function saveHabits(#[MapRequestPayload] ReqHabitsDto $reqHabitsDto, Request $request)
+    public function saveHabits(#[MapRequestPayload] ReqHabitsDto $reqHabitsDto)
     {
-        $isResult = $this->commandHabitsUseCase->saveHabits($reqHabitsDto, $request);
+        $isResult = $this->commandHabitsUseCase->saveHabits($reqHabitsDto);
 
         if (!empty($isResult)) {
             return $this->json(['success' => true, 'data' => $isResult, 'message' => 'Привычки добавлены']);
@@ -41,9 +41,9 @@ class HabitsController extends AbstractController
 
     #[Route('/api/Habits/update', name: 'update_habit', methods: ['PUT'])]
     #[RequiresJwt]
-    public function updateHabits(#[MapRequestPayload] ReqUpdateHabitsDto $reqHabitsDto, Request $request)
+    public function updateHabits(#[MapRequestPayload] ReqUpdateHabitsDto $reqHabitsDto)
     {
-        $isResult = $this->commandHabitsUseCase->updateHabits($reqHabitsDto, $request);
+        $isResult = $this->commandHabitsUseCase->updateHabits($reqHabitsDto);
 
         if (!empty($isResult)) {
             return $this->json(['success' => true, 'data' => $isResult, 'message' => 'Привычки обновлены']);
@@ -54,9 +54,9 @@ class HabitsController extends AbstractController
 
     #[Route('/api/get/Habits/today', name: 'get_habits', methods: ['GET'])]
     #[RequiresJwt]
-    public function getHabits(Request $request)
+    public function getHabits()
     {
-        $isResult = $this->queryHabitsUseCase->getHabitsForToday($request);
+        $isResult = $this->queryHabitsUseCase->getHabitsForToday();
 
         if (!empty($isResult)) {
             return $this->json(['success' => true, 'data' => $isResult]);
@@ -68,11 +68,11 @@ class HabitsController extends AbstractController
 
     #[Route('/api/get/count/Habits/today', name: 'get_count_habits', methods: ['GET'])]
     #[RequiresJwt]
-    public function getHabitsContToDay(Request $request): JsonResponse
+    public function getHabitsContToDay(): JsonResponse
     {
-        $countHabits = $this->queryHabitsUseCase->getCountHabitsToDay($request);
-        $countDoneHabits = $this->queryHabitsHistory->getDoneHabitsCount($request);
-        $progressHabits = $this->queryHabitsHistory->getAllProgressWithHabitsTitle($request);
+        $countHabits = $this->queryHabitsUseCase->getCountHabitsToDay();
+        $countDoneHabits = $this->queryHabitsHistory->getDoneHabitsCount();
+        $progressHabits = $this->queryHabitsHistory->getAllProgressWithHabitsTitle();
 
         return $this->json([
             'success' => true,
@@ -87,9 +87,9 @@ class HabitsController extends AbstractController
 
     #[Route('/api/Habits/save/progress', name: 'save_habit_progress', methods: ['POST'])]
     #[RequiresJwt]
-    public function saveHabitsProgress(#[MapRequestPayload] SaveHabitsProgress $reqHabitsDto, Request $request)
+    public function saveHabitsProgress(#[MapRequestPayload] SaveHabitsProgress $reqHabitsDto)
     {
-        $isResult = $this->commandHabitsHistoryUseCase->saveHabitsProgress($reqHabitsDto, $request);
+        $isResult = $this->commandHabitsHistoryUseCase->saveHabitsProgress($reqHabitsDto);
 
         if (isset($isResult['success']) && $isResult['success'] === true) {
             return $this->json(['success' => true, 'data' => $isResult, 'message' => 'Прогресс добавлен']);

@@ -7,6 +7,7 @@ use App\Aplication\Dto\UsersDto\UsersInfoForToken;
 use App\Aplication\Dto\JwtDto\JwtTokenDto;
 use App\Aplication\UseCase\Service\JwtTokens\JwtUseCase;
 use App\Domain\Entity\Users;
+use App\Domain\Port\TokenResponseSetterInterface;
 use App\Domain\Repository\Users\UsersRepositoryInterface;
 use App\Domain\Service\JwtServicesInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
@@ -21,6 +22,7 @@ use Symfony\Component\HttpFoundation\Request;
 class JwtServices implements JwtServicesInterface
 {
     public function __construct(
+        private TokenResponseSetterInterface $tokenResponseSetter,
         private LoggerInterface $logger,
         private JWTTokenManagerInterface $jwtManager,
         private JWTEncoderInterface $jwtEncoder,
@@ -173,13 +175,11 @@ class JwtServices implements JwtServicesInterface
     /**
      * @param string   $accessToken
      * @param string   $refreshToken
-     * @param Response $response
      * @return string status
      */
     public function handleTokens(
         string $accessToken,
         string $refreshToken,
-        Response $response
     ): string {
         if (empty($accessToken) || empty($refreshToken)) {
             $this->logger->error('Отсутствует токен в куках.');
@@ -192,7 +192,7 @@ class JwtServices implements JwtServicesInterface
             $result = $this->validateToken($dto);
 
             if ($result instanceof JwtTokenDto) {
-                $this->setTokens($response, $result);
+                $this->tokenResponseSetter->attachTokens($result);
                 return 'new_tokens';
             }
 
@@ -208,60 +208,4 @@ class JwtServices implements JwtServicesInterface
 
         return 'invalid';
     }
-
-
-    private function setTokens(Response $response, JwtTokenDto $tokens): void
-    {
-        $accessCookie = Cookie::create(
-            'accessToken',
-            $tokens->getAccessToken(),
-            strtotime('+7 days'),
-            '/',
-            null,
-            false,
-            true,
-            false,
-            Cookie::SAMESITE_STRICT
-        );
-
-        $refreshCookie = Cookie::create(
-            'refreshToken',
-            $tokens->getRefreshToken(),
-            strtotime('+7 days'),
-            '/',
-            null,
-            false,
-            true,
-            false,
-            Cookie::SAMESITE_STRICT
-        );
-
-        $response->headers->setCookie($accessCookie);
-        $response->headers->setCookie($refreshCookie);
-    }
-
-    /**
-     * @param Request $request
-     * @return array{accessToken: string, refreshToken: string}
-     * @throws \RuntimeException
-     */
-    public function getTokens(Request $request): array
-    {
-        $accessToken = $request->cookies->get('accessToken')
-            ?? $request->headers->get('access-token');
-
-        $refreshToken = $request->cookies->get('refreshToken')
-            ?? $request->headers->get('refresh-token');
-
-        if (empty($accessToken) || empty($refreshToken)) {
-            throw new \RuntimeException('Missing access or refresh token');
-        }
-
-        return [
-            'accessToken' => $accessToken,
-            'refreshToken' => $refreshToken,
-        ];
-    }
-
-
 }

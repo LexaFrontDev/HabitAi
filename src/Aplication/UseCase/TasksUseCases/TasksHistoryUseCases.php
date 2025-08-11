@@ -3,6 +3,7 @@
 namespace App\Aplication\UseCase\TasksUseCases;
 
 use App\Domain\Exception\Message\MessageException;
+use App\Domain\Port\TokenProviderInterface;
 use App\Domain\Repository\Tasks\TasksHistoryInterface;
 use App\Domain\Service\JwtServicesInterface;
 use Psr\Log\LoggerInterface;
@@ -12,6 +13,7 @@ class TasksHistoryUseCases
 {
 
    public function __construct(
+       private TokenProviderInterface $tokenProvider,
        private JwtServicesInterface $jwtServices,
        private TasksHistoryInterface $tasksHistoryInterface,
        private LoggerInterface $logger
@@ -19,16 +21,15 @@ class TasksHistoryUseCases
 
 
     /**
-     * @param Request $request
      * @param int $tasksId
      * @param string|null $monthly
      * @param string|null $date
      * @return int
      */
-    public function saveToDo(Request $request, int $tasksId, string $monthly = null, string $date = null): int
+    public function saveToDo(int $tasksId, string $monthly = null, string $date = null): int
     {
-        $token = $this->jwtServices->getTokens($request);
-        $user = $this->jwtServices->getUserInfoFromToken($token['accessToken']);
+        $token = $this->tokenProvider->getTokens();
+        $user = $this->jwtServices->getUserInfoFromToken($token->getAccessToken());
         $userId = $user->getUserId();
         $result = $this->tasksHistoryInterface->tasksToDoSave($userId, $tasksId, $monthly, $date);
 
@@ -41,14 +42,13 @@ class TasksHistoryUseCases
 
 
     /**
-     * @param Request $request
      * @param int $tasksId
      * @return bool
      */
-    public function deleteToDo(Request $request, int $tasksId): bool
+    public function deleteToDo( int $tasksId): bool
     {
-        $token = $this->jwtServices->getTokens($request);
-        $user = $this->jwtServices->getUserInfoFromToken($token['accessToken']);
+        $token = $this->tokenProvider->getTokens();
+        $user = $this->jwtServices->getUserInfoFromToken($token->getAccessToken());
         $userId = $user->getUserId();
         $isDelete= $this->tasksHistoryInterface->tasksWontDo($tasksId, $userId);
         if(empty($isDelete)){
@@ -57,12 +57,4 @@ class TasksHistoryUseCases
 
         return true;
     }
-
-
-
-
-
-
-
-
 }
