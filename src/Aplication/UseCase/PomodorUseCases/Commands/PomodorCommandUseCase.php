@@ -38,6 +38,7 @@ class PomodorCommandUseCase
         $periodLabel = $this->calculatePeriodLabel($reqPomodorDto->getTimeFocus());
 
         $data = new RepPomodorDto(
+            $reqPomodorDto->title,
             $reqPomodorDto->getUserId(),
             $reqPomodorDto->getTimeFocus(),
             $reqPomodorDto->getTimeStart(),

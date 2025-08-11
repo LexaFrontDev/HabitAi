@@ -29,5 +29,10 @@ class RepPomodoroHistory
         return $this->startTime;
     }
 
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
 
 }

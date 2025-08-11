@@ -5,6 +5,7 @@ namespace App\Aplication\Dto\PomodorDto;
 class RepPomodorDto
 {
     public function __construct(
+        public  string $title = 'Фокус',
         private int $userId,
         private int $timeFocus,
         private int $timeStart,

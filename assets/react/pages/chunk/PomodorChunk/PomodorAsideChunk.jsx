@@ -11,7 +11,7 @@ const Aside = () => {
     const [isResizing, setIsResizing] = useState(false);
     const asideRef = useRef(null);
 
-    // Рассчитываем коэффициент масштабирования (от 0.7 до 1)
+
     const scaleFactor = Math.min(Math.max(width / 400, 0.7), 1);
 
     useEffect(() => {

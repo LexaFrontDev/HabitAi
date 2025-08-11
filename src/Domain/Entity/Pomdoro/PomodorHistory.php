@@ -19,6 +19,10 @@ class PomodorHistory
     #[ORM\Column]
     private ?int $time_focus = null;
 
+
+    #[ORM\Column(length: 120)]
+    private ?string $title = 'Фокус';
+
     #[ORM\Column(length: 10)]
     private ?string $period_label = null;
 
@@ -96,6 +100,22 @@ class PomodorHistory
     {
         $this->focus_end = $focus_end;
         return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
+    /**
+     * @param string|null $title
+     */
+    public function setTitle(?string $title): void
+    {
+        $this->title = $title;
     }
 
     public function getCreateDate(): ?\DateTime

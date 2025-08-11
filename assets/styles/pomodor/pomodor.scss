@@ -8,27 +8,29 @@
     align-items: center;
 
     .pomodoro-wrapper {
+      background: var(--color-golden-fields-green-dark);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 0 #2a3d18, 0 12px 20px rgba(0, 0, 0, 0.5);
+      border-radius: 16px;
       display: flex;
-      margin-bottom: 15rem;
       flex-direction: column;
-      flex-wrap: nowrap;
-      align-content: space-around;
-      justify-content: space-between;
       align-items: center;
+      justify-content: center;
       width: 90vw;
+      max-width: 550px;
+      margin-bottom: 15rem;
       height: 90vw;
-      max-width: 400px;
-      max-height: 500px;
-
-
+      max-height: 550px;
+      padding: 24px;
+      --bg-color: #184e77;
+      --progress-color: #333;
+      --line-width: 0.5;
 
       @media (max-width: 990px) {
         left: 50%;
       }
 
-      --bg-color: #184e77;
-      --progress-color: #333;
-      --line-width: 0.5;
+
 
       .circular-chart {
         width: 100%;

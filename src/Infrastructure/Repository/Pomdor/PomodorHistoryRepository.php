@@ -26,6 +26,8 @@ class PomodorHistoryRepository extends ServiceEntityRepository implements Pomodo
     {
         $history = new PomodorHistory();
 
+
+        $history->setTitle($reqPomodorDto->title);
         $history->setUserId($reqPomodorDto->getUserId());
         $history->setTimeFocus($reqPomodorDto->getTimeFocus());
         $history->setPeriodLabel($reqPomodorDto->getPeriodLabel());
@@ -75,13 +77,13 @@ class PomodorHistoryRepository extends ServiceEntityRepository implements Pomodo
         $data = [];
         foreach ($results as $row) {
             $history = $row[0];
-            $title = $row['habit_title'] ?? null;
+
 
             $data[] = new RepPomodoroHistory(
                 $history->getPeriodLabel(),
                 $history->getFocusStart()->format('H:i'),
                 $history->getFocusEnd()?->format('H:i'),
-                $title
+                $history->getTitle(),
             );
         }
 

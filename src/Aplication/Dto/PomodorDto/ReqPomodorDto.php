@@ -6,6 +6,7 @@ class ReqPomodorDto
 {
 
     public function __construct(
+        public readonly string $title,
         private int $userId,
         private int $timeFocus,
         private int $timeStart,

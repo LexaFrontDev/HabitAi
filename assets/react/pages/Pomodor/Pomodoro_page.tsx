@@ -9,7 +9,9 @@ import {LangStorage} from "../../Infrastructure/languageStorage/LangStorage";
 import {LangStorageUseCase} from "../../Aplication/UseCases/language/LangStorageUseCase";
 import {useTranslation} from "react-i18next";
 import Loading from "../chunk/LoadingChunk/Loading";
-
+import { PomodoroData } from "../../ui/props/Habits/PomodoroData";
+import {formatTaskDateTime} from "../../Domain/Services/Tasks/taskDateFormatter";
+import {Task} from "../../ui/props/Tasks/Task";
 
 const LangUseCase = new LanguageRequestUseCase('pomodoro', new LanguageApi());
 const langStorage = new LangStorage();
@@ -27,7 +29,7 @@ const Pomodoro = () => {
     const [completedTime, setCompletedTime] = useState(0);
     const [showCompleteButton, setShowCompleteButton] = useState(false);
     const [sessionActive, setSessionActive] = useState(false);
-
+    const [dataPomodoro, setDataPomodoro] = useState<PomodoroData | null>(null);
     const [focusMinutes, setFocusMinutes] = useState('25');
     const [TasksTitle, setTasksTitle] = useState('');
     const [breakMinutes, setBreakMinutes] = useState('5');
@@ -35,12 +37,25 @@ const Pomodoro = () => {
     const startTimeRef = useRef<string | null>(localStorage.getItem('pomodoroStartTime') || null);
     const intervalRef = useRef<number | undefined>(undefined);
     const [data, setDataTasks] = useState<any | null>(null);
+    const [activeTab, setActiveTab] = useState('Pomodoro');
 
 
     const radius = 196;
     const circumference = 2 * Math.PI * radius;
     const [langCode, setLangCode] = useState('en');
     const { t, i18n } = useTranslation('tasks');
+
+
+    useEffect(() => {
+        fetch('/api/pomodor/summary')
+            .then(res => res.json())
+            .then(data => {
+                console.log('Полученные данные:', data); // выведет данные в консоль
+                setDataPomodoro(data);
+            })
+            .catch(err => console.error('Ошибка загрузки:', err));
+    }, []);
+
 
 
     useEffect(() => {
@@ -168,6 +183,7 @@ const Pomodoro = () => {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
+                    title: TasksTitle,
                     userId,
                     timeFocus: timeCompleted,
                     timeStart: Math.floor(new Date(startTimeRef.current).getTime() / 1000),
@@ -222,16 +238,30 @@ const Pomodoro = () => {
 
     const openSettings = () => {
         if (sessionActive) {
-
             Messages("Завершите текущую сессию перед изменением времени");
-
             return;
         }
         setShowModal(true);
     };
 
-    if (!i18n.hasResourceBundle(langCode, 'pomodoro')) return <Loading />;
 
+
+    const renderTaskDateTime = (task: Task) => {
+        const lines = formatTaskDateTime(task);
+        return (
+            <div>
+                {lines.map((line, index) => (
+                    <div key={index}>{line}</div>
+                ))}
+            </div>
+        );
+    };
+
+
+    if (!i18n.hasResourceBundle(langCode, 'pomodoro') || !dataPomodoro) return <Loading />;
+
+
+    const { todayPomos, todayFocusTime, totalPomodorCount, habitsList, tasksList, pomodorHistory } = dataPomodoro;
 
     return (
         <div id="pomodor-page">
@@ -243,7 +273,7 @@ const Pomodoro = () => {
                             <div className="content-panel">
                                 <div className="header-panel-center">
                                     <div className="header-text mt-xl-1">
-                                        <h4 className="header-title">{t('tasks:tasksHeadText')}</h4>
+                                        <h4 className="header-title">{t('pomodoro:pomodoroHeadText')}</h4>
                                     </div>
                                 </div>
                                 <div className="pomodoro-section">
@@ -286,9 +316,9 @@ const Pomodoro = () => {
                                                 {formatTime(timeLeft)}
                                             </text>
                                         </svg>
-                                        <div className="mt-3 btn-group">
+                                        <div className="triger-line">
                                             <button
-                                                className="btn btn-primary"
+                                                className="triger"
                                                 onClick={handleStartPause}
                                                 disabled={timeLeft === 0 && !isRunning}
                                             >
@@ -296,7 +326,7 @@ const Pomodoro = () => {
                                             </button>
                                             {(isPaused || (isRunning && showCompleteButton)) && (
                                                 <button
-                                                    className="btn btn-danger"
+                                                    className="triger-delete"
                                                     onClick={handleCompleteSession}
                                                 >
                                                     Завершить
@@ -312,70 +342,131 @@ const Pomodoro = () => {
                     <Panel maxSize={25} defaultSize={15} minSize={5}>
                         <div className="panel-content">
                             <div className="line-resize"></div>
+                            <div className="content-panel">
+                                <div className="header-panel-center">
+                                    <div className="stats">
+                                        <div className="stat-box">
+                                            <h3>Помидоров сегодня</h3>
+                                            <span>{todayPomos}</span>
+                                        </div>
+                                        <div className="stat-box">
+                                            <h3>Общее время фокуса сегодня</h3>
+                                            <span>{todayFocusTime}</span>
+                                        </div>
+                                        <div className="stat-box">
+                                            <h3>Всего помидоров</h3>
+                                            <span>{totalPomodorCount}</span>
+                                        </div>
+                                    </div>
+                                </div>
 
+                                    <nav className="tabs">
+                                        <a onClick={() => setActiveTab('Habits')}>Привычки</a>
+                                        <a onClick={() => setActiveTab('tasks')}>Задачи</a>
+                                        <a onClick={() => setActiveTab('Pomodoro')}>История</a>
+                                    </nav>
+
+                                    {activeTab === 'Habits' && (
+                                        <section>
+                                            <h2>Привычки</h2>
+                                            {habitsList && habitsList.length > 0 ? (
+                                                <ul className="habits-ul">
+                                                    {habitsList.map((habit, i) => (
+                                                        <li className="habits-li" key={i}>
+                                                            <span>Название привычки: {habit.title}</span>
+                                                            <br/>
+                                                            <span>Количество: {habit.goal_in_days}</span>
+                                                            <br/>
+                                                            <span>Время напоминание: {habit.notification_date}</span>
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            ) : (
+                                                <p>Нет привычек</p>
+                                            )}
+                                        </section>
+                                    )}
+
+                                    {activeTab === 'tasks' && (
+                                        <section>
+                                            <h2>Задачи</h2>
+                                            {tasksList && tasksList.length > 0 ? (
+                                                <ul className="tasks-list">
+                                                    {tasksList.map((task, i) => {
+                                                        return (
+                                                            <li key={i} className="tasks-list-element" onClick={() => setTasksTitle(task.title)}>
+                                                                <span className="info-span">ℹ️ Нажмите чтобы добавить в помо</span>
+                                                                <h3 className="task-title">Задача :  {task.title}</h3>
+                                                                <p className="task-description">Описание : {task.description}</p>
+                                                                {renderTaskDateTime(task)}
+                                                            </li>
+                                                        );
+                                                    })}
+                                                </ul>
+                                            ) : (
+                                                <p>Нет задач</p>
+                                            )}
+                                        </section>
+                                    )}
+
+                                    {activeTab === 'Pomodoro' && (
+                                        <section id="pomodoro">
+                                            <h2>История Помодора</h2>
+                                            {pomodorHistory && pomodorHistory.length > 0 ? (
+                                                <div className="pomodoro-cards">
+                                                    {pomodorHistory.map((record, i) => {
+                                                        console.log(pomodorHistory);
+                                                        return (
+                                                            <div key={i} className="pomodoro-card">
+                                                                <h3>{record.title || 'Фокус'}</h3>
+                                                                <span>{record.startTime}–{record.endTime}</span>
+                                                                <div className="period-label">{record.periodLabel}</div>
+                                                            </div>
+                                                        );
+                                                    })}
+                                                </div>
+                                            ) : (
+                                                <p>Пока нет истории Pomodoro</p>
+                                            )}
+                                        </section>
+                            )}
                         </div>
-                    </Panel>
+            </div>
+        </Panel>
                 </PanelGroup>
             </div>
 
-                {showModal && (
-                    <div className="modal-overlay">
-                        <div className="modal-content">
-                            <h3>Настройки таймера</h3>
-                            <input
-                                type="number"
-                                min="1"
-                                placeholder="Время фокуса (мин)"
-                                className="time-input"
-                                value={focusMinutes}
-                                onChange={e => setFocusMinutes(e.target.value)}
-                            />
-                            <input
-                                type="number"
-                                min="1"
-                                placeholder="Время отдыха (мин)"
-                                className="time-input"
-                                value={breakMinutes}
-                                onChange={e => setBreakMinutes(e.target.value)}
-                            />
-                            <button className="btn btn-success" onClick={handleSetTime}>
-                                Сохранить
-                            </button>
-                            <button className="btn btn-outline-danger mt-2" onClick={() => setShowModal(false)}>
-                                Закрыть
-                            </button>
-                        </div>
+            {showModal && (
+                <div className="modal-overlay">
+                    <div className="modal-content">
+                        <h3>Настройки таймера</h3>
+                        <input
+                            type="number"
+                            min="1"
+                            placeholder="Время фокуса (мин)"
+                            className="time-input"
+                            value={focusMinutes}
+                            onChange={e => setFocusMinutes(e.target.value)}
+                        />
+                        <input
+                            type="number"
+                            min="1"
+                            placeholder="Время отдыха (мин)"
+                            className="time-input"
+                            value={breakMinutes}
+                            onChange={e => setBreakMinutes(e.target.value)}
+                        />
+                        <button className="btn btn-success" onClick={handleSetTime}>
+                            Сохранить
+                        </button>
+                        <button className="btn btn-outline-danger mt-2" onClick={() => setShowModal(false)}>
+                            Закрыть
+                        </button>
                     </div>
-                )}
+                </div>
+            )}
+        </div>
+    );
+};
 
-                {showTasksModal && (
-                    <div className="modal-tasks-list">
-                        <div className="modal-contents">
-                            <h3>Задачи которых можно выполнить</h3>
-                            {data && data.map((item: any) => (
-                                <div
-                                    key={item.habit_id}
-                                    onClick={() => {
-                                        setTasksTitle(item.title);
-                                        setTasksModal(false);
-                                    }}
-                                >
-                                    {item.title}
-                                </div>
-                            ))}
-                            <div className="close-button">
-                                <button
-                                    className="close-button"
-                                    onClick={() => setTasksModal(false)}
-                                >
-                                    <img src="/Upload/Images/AppIcons/x-circle.svg" alt="Закрыть"/>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                )}
-            </div>
-            );
-            };
-
-            export default Pomodoro;
+export default Pomodoro;

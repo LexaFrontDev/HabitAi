@@ -2,58 +2,78 @@
 $stat-card-bg: #2f3e46;
 // Цвет линий — в отдельную переменную для удобства
 $line-color: #66666e;
-#pomodor-page {
-  .pomodoro-aside {
-    position: fixed;
-    top: 0;
-    right: 0;
-    width: 500px;
-    height: 100vh;
-    font-family: 'Inter', Arial, sans-serif;
-    background-color: $sideBgColor;
-    color: $text-dark;
+
+
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  width: 100%;
+  padding: 3px;
+  background-color: $card-bg;
+  justify-items: center;
+  margin-bottom: 15px;
+
+  .stat-box {
+    width: 100%;
+    max-width: 480px;
     display: flex;
     flex-direction: column;
-    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+    padding: 12px;
+    height: 90px;
+    background-color: $color-golden-fields-green-dark;
+    border-radius: 10px;
+    text-align: center;
+    cursor: pointer;
 
-    .stats {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      padding: 15px;
-      background-color: $card-bg;
 
-      .stat-box {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        padding: 12px;
-        height: 90px;
-        background-color: $stat-card-bg;
-        border-radius: 8px;
-        text-align: center;
-        transition: transform 0.2s, box-shadow 0.2s;
-        cursor: pointer;
+    box-shadow:
+            0 6px 0 #2a3d18,
+            0 8px 15px rgba(0, 0, 0, 0.4);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
 
-        h3 {
-          font-size: 14px;
-          color: $text-dark;
-          margin: 0 0 4px 0;
-        }
-
-        span {
-          font-size: 18px;
-          font-weight: bold;
-          color: $text-dark;
-        }
-
-        &:hover {
-          transform: translateY(-3px);
-          box-shadow: 0px 4px 12px rgba(0, 0, 0, .25);
-        }
-      }
+    h3 {
+      font-size: 14px;
+      color: $text-dark;
+      margin: 0 0 4px 0;
     }
+
+    span {
+      font-size: 18px;
+      font-weight: bold;
+      color: $text-dark;
+    }
+
+
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow:
+              0 8px 0 #2a3d18,
+              0 12px 20px rgba(0, 0, 0, 0.5);
+    }
+
+
+    &:active {
+      transform: translateY(2px);
+      box-shadow:
+              0 3px 0 #2a3d18,
+              0 6px 10px rgba(0, 0, 0, 0.4);
+    }
+  }
+
+
+  .stat-box:nth-child(3) {
+    grid-column: span 2;
+    justify-self: center;
+  }
+}
+
+
+
+
 
     .tabs {
       display: flex;
@@ -81,63 +101,60 @@ $line-color: #66666e;
 
 
 
+.pomodoro-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  cursor: pointer;
 
-    .content {
-      flex: 1;
-      overflow-y: auto;
+  .pomodoro-card {
+    display: grid;
+    grid-template-columns: 1fr 7fr;
+    background-color: $color-golden-fields-green-dark;
+    padding: 12px;
+    border-radius: 8px;
+    gap: 1px;
+    align-items: baseline;
+    justify-content: start;
+    justify-items: start;
 
-      section#pomodoro {
-        .pomodoro-cards {
-          display: grid;
-          grid-template-columns: 1fr;
-          gap: 11px;
-          cursor: pointer;
-          margin: 15px 22px;
+    // 🔹 Имитация глубины
+    box-shadow:
+            0 6px 0 #2a3d18, // нижняя грань
+            0 8px 15px rgba(0, 0, 0, 0.4); // общая тень
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
 
-
-          .pomodoro-card {
-            display: grid;
-            background-color: #2f3e46;
-            padding: 12px;
-            border-radius: 8px;
-            grid-template-columns: 1fr 7fr;
-            /* text-align: center; */
-            transition: transform 0.2s, box-shadow 0.2s;
-            gap: 1px;
-
-
-            h3 {
-              font-size: 14px;
-              color: $text-dark;
-              margin: 0 0 4px 0;
-            }
-
-            span {
-              font-size: 16px;
-              font-weight: bold;
-              color: $text-dark;
-            }
-
-            .period-label {
-              font-size: 12px;
-              color: $text-dark;
-            }
-
-            &:hover {
-              transform: translateY(-3px);
-              box-shadow: 0px 4px 12px rgba(0, 0, 0, .25);
-            }
-          }
-        }
-      }
+    h3 {
+      font-size: 14px;
+      color: $text-dark;
+      margin: 0 0 4px 0;
     }
 
-    @media (max-width: 1200px) {
-      width: 400px;
+    span {
+      font-size: 16px;
+      font-weight: bold;
+      color: $text-dark;
     }
 
-    @media (max-width: 990px) {
-      display: none;
+    .period-label {
+      font-size: 12px;
+      color: $text-dark;
+    }
+
+    // 🔹 Hover
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow:
+              0 8px 0 #2a3d18,
+              0 12px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    // 🔹 Active
+    &:active {
+      transform: translateY(2px);
+      box-shadow:
+              0 3px 0 #2a3d18,
+              0 6px 10px rgba(0, 0, 0, 0.4);
     }
   }
 }
@@ -167,4 +184,181 @@ $line-color: #66666e;
 }
 
 
+.tasks-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); // две колонки
+  gap: 12px;
+  width: 100%;
+  padding: 3px;
+  background-color: $card-bg; // твой фон, замени если надо
+  justify-items: center;
+  margin-bottom: 15px;
 
+  .tasks-list-element {
+    width: 100%;
+    display: flex;
+    padding: 12px;
+    height: 90px;
+    background-color: #3e5622;
+    border-radius: 10px;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 0 6px 0 #2a3d18, 0 8px 15px rgba(0, 0, 0, 0.4);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    align-items: baseline;
+    align-content: space-between;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+
+    h3 {
+      font-size: 14px;
+      color: $text-dark;
+      margin: 0 0 4px 0;
+    }
+
+    p {
+      font-size: 14px;
+      color: $text-dark;
+      margin: 0;
+    }
+
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow:
+              0 8px 0 #2a3d18,
+              0 12px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    &:active {
+      transform: translateY(2px);
+      box-shadow:
+              0 3px 0 #2a3d18,
+              0 6px 10px rgba(0, 0, 0, 0.4);
+    }
+  }
+
+
+  .tasks-list-element:nth-child(3) {
+    grid-column: span 2;
+    justify-self: center;
+  }
+}
+
+
+
+
+
+.triger-line {
+  display: flex;
+  gap: 12px;
+  margin-top: 30px;
+  justify-content: center;
+  align-items: center;
+  padding: 6px 23px;
+  background: linear-gradient(145deg, #49a078, #49a078);
+  border-radius: 6px;
+  box-shadow: inset 0 2px 6px rgba(255, 255, 255, 0.1), 0 4px 10px rgba(0, 0, 0, 0.6);
+}
+
+
+
+
+
+.triger {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  color: white;
+  background-color: var(--color-golden-fields-green-dark);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.2s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow:
+            0 6px 0 #2a3d18,
+            0 10px 15px rgba(0, 0, 0, 0.4);
+  }
+
+  &:active {
+    transform: translateY(2px);
+    box-shadow:
+            0 3px 0 #2a3d18,
+            0 6px 10px rgba(0, 0, 0, 0.3);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+    box-shadow: none;
+    transform: none;
+  }
+}
+
+/* Красная кнопка — удаление */
+.triger-delete {
+  @extend .triger;
+  background-color: #dc2626;
+
+  &:hover {
+    box-shadow:
+            0 6px 0 #991b1b,
+            0 10px 15px rgba(153, 27, 27, 0.5);
+  }
+
+  &:active {
+    box-shadow:
+            0 3px 0 #7f1717,
+            0 6px 10px rgba(127, 23, 23, 0.4);
+  }
+}
+
+/* Желто-оранжевая кнопка — пауза */
+.triger-pause {
+  @extend .triger;
+  background-color: #d97706;
+
+  &:hover {
+    box-shadow:
+            0 6px 0 #92400e,
+            0 10px 15px rgba(146, 64, 14, 0.5);
+  }
+
+  &:active {
+    box-shadow:
+            0 3px 0 #78350b,
+            0 6px 10px rgba(120, 53, 11, 0.4);
+  }
+}
+
+
+.triger-delete {
+  @extend .triger;
+  background-color: #dc2626; /* красный */
+  color: white;
+
+  &:hover {
+    background-color: #b91c1c; /* темный красный */
+  }
+
+  &:active {
+    background-color: #991b1b;
+  }
+}
+
+.triger-pause {
+  @extend .triger;
+  background-color: #d97706;
+  color: white;
+
+  &:hover {
+    background-color: #b45309;
+  }
+
+  &:active {
+    background-color: #92400e;
+  }
+}

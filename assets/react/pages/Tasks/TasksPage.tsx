@@ -23,6 +23,7 @@ import {LangStorageUseCase} from "../../Aplication/UseCases/language/LangStorage
 import {useTranslation} from "react-i18next";
 import {LanguageRequestUseCase} from "../../Aplication/UseCases/language/LanguageRequestUseCase";
 import {LanguageApi} from "../../Infrastructure/request/Language/LanguageApi";
+import {formatTaskDateTime} from "../../Domain/Services/Tasks/taskDateFormatter";
 
 const tasksService = new TasksService(new TasksApi());
 const LangUseCase = new LanguageRequestUseCase('tasks', new LanguageApi());
@@ -340,47 +341,15 @@ const TasksPage: React.FC = () => {
 
 
     const renderTaskDateTime = (task: Task) => {
-        const { duration, time, date } = task.timeData ?? {};
-
-        if (duration) {
-            const {
-                startDate,
-                endDate,
-                startTime,
-                endTime
-            } = duration;
-
-            const hasFullDateRange = startDate && endDate;
-            const hasFullTimeRange = startTime && endTime;
-
-            if (hasFullDateRange || hasFullTimeRange) {
-                return (
-                    <div>
-                        {hasFullDateRange && (
-                            <div>{startDate} - {endDate}</div>
-                        )}
-                        {hasFullTimeRange && (
-                            <div>{startTime} - {endTime}</div>
-                        )}
-                    </div>
-                );
-            }
-        }
-
-        if (date) {
-            return (
-                <div>
-                    <div>{date}</div>
-                    {time && <div>{time}</div>}
-                </div>
-            );
-        }
-
-        if (time) {
-            return <div>{time}</div>;
-        }
-
-        return <div>Время не указано</div>;
+        const lines = formatTaskDateTime(task);
+        console.log(task);
+        return (
+            <div>
+                {lines.map((line, index) => (
+                    <div key={index}>{line}</div>
+                ))}
+            </div>
+        );
     };
 
     if (!i18n.hasResourceBundle(langCode, 'tasks')) return <Loading />;

@@ -5,10 +5,14 @@
 :root {
   --color-grey: 255, 255, 255;
   --opacity-variant-grey-3: 0.03;
+  --color-forest-green:  #57886c;
+  --color-golden-fields-yellow-green: #83781b;
+  --color-golden-fields-green: #95b46a;
+  --color-golden-fields-green-dark: #3e5622;
 }
 
 
-
+$color-golden-fields-green-dark: #3e5622;
 $navbar-height: 40px;
 $sidebar-width: 50px;
 
@@ -182,30 +186,30 @@ $line-resize-color: #999;
 
 
 
-@media (max-width: 768px) {
-  #sidebar {
-    flex-direction: row;
-
-    position: fixed;
-    top: $navbar-height;
-
-    height: auto;
-    width: 100%;
-
-    justify-content: space-around;
-  }
-
-  #content {
-    margin-left: 0;
-
-    /* Отступ вниз под navbar и sidebar в мобильной версии */
-    padding-top: calc(#{$app-content-padding} + #{$navbar-height} + 60px);
-  }
-
-  .sidebar-item::after {
-    display: none;
-  }
-}
+//@media (max-width: 768px) {
+//  #sidebar {
+//    flex-direction: row;
+//
+//    position: fixed;
+//    top: $navbar-height;
+//
+//    height: auto;
+//    width: 100%;
+//
+//    justify-content: space-around;
+//  }
+//
+//  #content {
+//    margin-left: 0;
+//
+//    /* Отступ вниз под navbar и sidebar в мобильной версии */
+//    padding-top: calc(#{$app-content-padding} + #{$navbar-height} + 60px);
+//  }
+//
+//  .sidebar-item::after {
+//    display: none;
+//  }
+//}
 
 
 
