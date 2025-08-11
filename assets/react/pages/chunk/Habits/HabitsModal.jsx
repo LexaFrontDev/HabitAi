@@ -255,10 +255,7 @@ const HabitModal = ({ onClose, onSave, edit = false , editData}) => {
             case 1:
                 return (
                     <div className="modal-content">
-                        <div className="header">
-                            <h4>Выберите привычку</h4>
-                        </div>
-
+                        <h4>Выберите привычку</h4>
                         <div className="habit-templates">
                             {habitTemplates.map(habit => (
                                 <div
@@ -270,14 +267,14 @@ const HabitModal = ({ onClose, onSave, edit = false , editData}) => {
                                             titleHabit: habit.title,
                                             quote: habit.quote,
                                             notificationDate: habit.notification,
-                                            datesType:  habit.datesType,
+                                            datesType: habit.datesType,
                                         });
                                         setStep(2);
                                     }}
                                 >
                                     <h5>{habit.title}</h5>
-                                    <p>{habit.quote}</p>
                                     <p>{habit.notification}</p>
+                                    <p>{habit.quote}</p>
                                 </div>
                             ))}
                         </div>

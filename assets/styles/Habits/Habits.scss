@@ -1,25 +1,12 @@
+.week-dates {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 10px;
+}
+
 .habits-container {
-    .week-dates {
-      display: flex;
-      justify-content: space-around;
-      font-size: 1.25rem;
-      font-weight: bold;
-      color: $text-dark;
 
-      .day {
-        flex: 1;
-        text-align: center;
-        padding: 0.5rem 1rem;
-        border-radius: 0.5rem;
-        cursor: pointer;
-        transition: background-color 0.3s, transform 0.2s;
-
-        &:hover {
-          background-color: lighten($card-bg, 5%);
-          transform: translateY(-2px);
-        }
-      }
-    }
 
     .habits-list {
       max-width: 90%;
@@ -161,12 +148,19 @@
     z-index: 9999;
 
     .modal-content {
-      background: $card-bg;
-      padding: 2rem;
-      border-radius: 1rem;
-      margin: 10px 10px;
-      max-width: 600px;
-      width: 100%;
+      background: var(--color-golden-fields-green-dark);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 0 #2a3d18, 0 12px 20px rgba(0, 0, 0, 0.5);
+      border-radius: 16px;
+      width: 90vw;
+      max-width: 550px;
+      margin-bottom: 15rem;
+      height: 90vw;
+      max-height: 550px;
+      padding: 24px;
+      --bg-color: #184e77;
+      --progress-color: #333;
+      --line-width: 0.5;
       min-width: 320px;
 
 
@@ -381,32 +375,68 @@
   flex: 0 1 auto;
   background: none;
   border-radius: 0;
+  display: flex;
   padding: 0.5rem;
   text-align: left;
-  color: $text-dark;
+  color: #ffffff;
   border: none;
   box-shadow: none;
   transition: none;
+  gap: 15px;
   cursor: default;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-content: space-between;
+  align-items: stretch;
 
   .habit-template {
-    flex: 0 1 200px;
-    background: #344e41;
-    border-radius: 1rem;
-    padding: 4px 11px;
-    /* text-align: center; */
-    color: #ffffff;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 14px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    font-weight: 600;
     cursor: pointer;
-    border: 1px solid rgb(72.4, 108.6, 90.5);
-    transition: transform 0.2s, background-color 0.3s;
-    margin-bottom: 10px;
+    height: 70px;
+    border: none;
+    color: white;
+    background-color: var(--color-forest-green);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.2s ease;
+
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow:
+              0 6px 0 #2a3d18,
+              0 10px 15px rgba(0, 0, 0, 0.4);
+    }
+
+    &.active {
+      transform: translateY(-3px);
+      box-shadow:
+              0 6px 0 #2a3d18,
+              0 10px 15px rgba(0, 0, 0, 0.4);
+    }
+
+    &:active {
+      transform: translateY(2px);
+      box-shadow:
+              0 3px 0 #2a3d18,
+              0 6px 10px rgba(0, 0, 0, 0.3);
+    }
+
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+      box-shadow: none;
+      transform: none;
+    }
 
 
 
     h5 {
       font-size: 1rem;
       font-weight: bold;
-      margin: 0.25rem 0;
     }
 
     p {
@@ -414,10 +444,6 @@
       color: $muted-text;
     }
 
-    &:hover {
-      background-color: lighten($card-bg, 5%);
-      transform: translateY(-2px);
-    }
   }
 }
 
@@ -561,7 +587,6 @@
 .add-habit-button{
   background: none;
   border: none;
-  color: #3a86ff;
 }
 
 

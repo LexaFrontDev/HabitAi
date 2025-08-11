@@ -101,34 +101,21 @@ $line-color: #66666e;
 
 
 
-.pomodoro-cards {
+.pomodoro-card {
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  border-radius: 8px;
   gap: 15px;
-  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 
-  .pomodoro-card {
-    display: grid;
-    grid-template-columns: 1fr 7fr;
-    background-color: $color-golden-fields-green-dark;
-    padding: 12px;
-    border-radius: 8px;
-    gap: 1px;
-    align-items: baseline;
-    justify-content: start;
-    justify-items: start;
 
-    // 🔹 Имитация глубины
-    box-shadow:
-            0 6px 0 #2a3d18, // нижняя грань
-            0 8px 15px rgba(0, 0, 0, 0.4); // общая тень
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
-
-    h3 {
-      font-size: 14px;
-      color: $text-dark;
-      margin: 0 0 4px 0;
-    }
+  .left {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
 
     span {
       font-size: 16px;
@@ -136,28 +123,26 @@ $line-color: #66666e;
       color: $text-dark;
     }
 
-    .period-label {
-      font-size: 12px;
+    h3 {
+      font-size: 14px;
       color: $text-dark;
     }
+  }
 
-    // 🔹 Hover
-    &:hover {
-      transform: translateY(-3px);
-      box-shadow:
-              0 8px 0 #2a3d18,
-              0 12px 20px rgba(0, 0, 0, 0.5);
-    }
 
-    // 🔹 Active
-    &:active {
-      transform: translateY(2px);
-      box-shadow:
-              0 3px 0 #2a3d18,
-              0 6px 10px rgba(0, 0, 0, 0.4);
-    }
+  .period-label {
+    font-size: 12px;
+    color: $text-dark;
+  }
+
+  &:active {
+    transform: translateY(2px);
+    box-shadow:
+            0 3px 0 #2a3d18,
+            0 6px 10px rgba(0, 0, 0, 0.4);
   }
 }
+
 
 
 .habits-ul{
@@ -283,12 +268,20 @@ $line-color: #66666e;
             0 10px 15px rgba(0, 0, 0, 0.4);
   }
 
+  &.active {
+    transform: translateY(-3px);
+    box-shadow:
+            0 6px 0 #2a3d18,
+            0 10px 15px rgba(0, 0, 0, 0.4);
+  }
+
   &:active {
     transform: translateY(2px);
     box-shadow:
             0 3px 0 #2a3d18,
             0 6px 10px rgba(0, 0, 0, 0.3);
   }
+
 
   &:disabled {
     cursor: not-allowed;

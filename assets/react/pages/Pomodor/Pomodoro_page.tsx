@@ -43,7 +43,7 @@ const Pomodoro = () => {
     const radius = 196;
     const circumference = 2 * Math.PI * radius;
     const [langCode, setLangCode] = useState('en');
-    const { t, i18n } = useTranslation('tasks');
+    const { t, i18n } = useTranslation('pomodoro');
 
 
     useEffect(() => {
@@ -418,8 +418,10 @@ const Pomodoro = () => {
                                                         console.log(pomodorHistory);
                                                         return (
                                                             <div key={i} className="pomodoro-card">
-                                                                <h3>{record.title || 'Фокус'}</h3>
-                                                                <span>{record.startTime}–{record.endTime}</span>
+                                                                <div className="left">
+                                                                    <span>{record.startTime}–{record.endTime}</span>
+                                                                    <h3>{record.title || 'Фокус'}</h3>
+                                                                </div>
                                                                 <div className="period-label">{record.periodLabel}</div>
                                                             </div>
                                                         );
