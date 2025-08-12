@@ -55,7 +55,7 @@ export const Button: React.FC<ButtonProps> = ({
         'big-orange': 'btn btn-lg text-white bg-orange-500 hover:bg-orange-600',
         'big-green': 'btn btn-lg text-white bg-green-500 hover:bg-green-600',
         subscribe: 'btn-subscribe bg-indigo-600 text-white hover:bg-indigo-700 px-4 py-2 rounded-xl fw-semibold',
-        listButton: 'listButton',
+        listButton: 'triger-list',
         imgButton: 'imgButton',
     };
 

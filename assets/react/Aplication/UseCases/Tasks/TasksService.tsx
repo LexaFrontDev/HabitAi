@@ -56,7 +56,7 @@ export class TasksService {
     }
 
 
-    async deleteTask(taskId: number): Promise<TaskResponse> {
+    async deleteTask(taskId: number | string): Promise<TaskResponse> {
         try {
             await this.tasksApi.deleteTask(taskId);
             return {
@@ -74,7 +74,7 @@ export class TasksService {
     }
 
 
-    async toggleWontDo(id: number): Promise<TaskResponse> {
+    async toggleWontDo(id: number | string): Promise<TaskResponse> {
         try {
             const response = await this.tasksApi.toggleWontDo(id);
             return {

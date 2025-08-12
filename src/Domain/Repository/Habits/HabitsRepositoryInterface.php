@@ -59,6 +59,17 @@ interface HabitsRepositoryInterface
     public function updateHabitById(int $habitId, int $userId, SaveHabitDto $dto): bool;
 
     /**
+     * Возвращает все привычки пользователя с пагинацией, без фильтра по дате.
+     *
+     * @param int $userId
+     * @param int $limit
+     * @param int $offset
+     * @return array
+     */
+    public function getAllHabitsWithLimit(int $userId, int $limit = 50, int $offset = 0): array;
+
+
+    /**
      * @param int $habitId
      * @param int $userId
      * @return bool

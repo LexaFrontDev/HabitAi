@@ -6,6 +6,7 @@ use App\Aplication\Dto\HabitsDtoUseCase\ReqHabitsDto;
 use App\Aplication\Dto\HabitsDtoUseCase\ReqUpdateHabitsDto;
 use App\Aplication\Dto\HabitsDtoUseCase\SaveHabitDto;
 use App\Aplication\UseCase\DatesUseCases\DatesCommandUseCase;
+use App\Domain\Exception\Message\MessageException;
 use App\Domain\Port\TokenProviderInterface;
 use App\Domain\Repository\Dates\DatesDailyRepositoryInterface;
 use App\Domain\Repository\DatesWeekly\DatesWeeklyRepositoryInterface;
@@ -78,7 +79,7 @@ class CommandHabitsUseCase
     {
         try {
             $token = $this->tokenProvider->getTokens();
-            $userId = $this->jwtServices->getUserInfoFromToken($token['accessToken']);
+            $userId = $this->jwtServices->getUserInfoFromToken($token->getAccessToken());
             $userId = $userId->getUserId();
 
             $habitsDto = new SaveHabitDto(
@@ -127,6 +128,27 @@ class CommandHabitsUseCase
         }
     }
 
+
+    /**
+     * @param int $habitId
+     * @return bool
+     * @throw MessageException
+     *
+     */
+    public function deleteHabitsById(int $habitId): bool
+    {
+        $token = $this->tokenProvider->getTokens();
+        $userId = $this->jwtServices->getUserInfoFromToken($token->getAccessToken());
+        $userId = $userId->getUserId();
+
+        $result = $this->habitsRepository->deleteHabitById($habitId, $userId);
+
+        if (empty($result)){
+            throw  new MessageException('Не удалось удалить привычку');
+        }
+
+        return true;
+    }
 
 
 }

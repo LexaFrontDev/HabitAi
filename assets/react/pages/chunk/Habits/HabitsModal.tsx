@@ -1,8 +1,43 @@
 import React, { useState, useRef, useEffect } from 'react';
+import {DateType} from "../../../ui/props/Habits/DateType";
+import {DatesType} from "../../../ui/props/Habits/DatesType";
+import {DataType} from "../../../ui/props/Habits/DataType";
+import {EditDataType} from "../../../ui/props/Habits/EditHabitsDataType";
+import {Days} from "../../../ui/props/Habits/Days";
 
-const HabitModal = ({ onClose, onSave, edit = false , editData}) => {
+type SettingKey = 'goal' | 'startDate' | 'duration' | 'reminder';
+
+
+
+const daysList = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+
+const daysMap: Days[] = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+
+
+
+
+type Day = keyof Omit<DateType, 'count' | 'day'>;
+
+
+interface HabitModalProps {
+    onClose: () => void;
+    onSave?: (data: DataType) => void;
+    edit?: boolean;
+    editData?: EditDataType;
+}
+
+interface HabitTemplate {
+    title: string;
+    quote: string;
+    notification: string;
+    datesType: DatesType;
+}
+
+const HabitModal: React.FC<HabitModalProps> = ({ onClose, onSave, edit = false , editData}) => {
+
     const [step, setStep] = useState(1);
-    const [data, setData] = useState({
+
+    const [data, setData] = useState<DataType>({
         titleHabit: '',
         quote: '',
         goalInDays: '30',
@@ -14,7 +49,7 @@ const HabitModal = ({ onClose, onSave, edit = false , editData}) => {
             thu: false,
             fri: false,
             sat: false,
-            sun: false
+            sun: false,
         },
         beginDate: Math.floor(Date.now() / 1000),
         notificationDate: '',
@@ -23,8 +58,9 @@ const HabitModal = ({ onClose, onSave, edit = false , editData}) => {
         checkManually: false,
         checkAuto: false,
         checkClose: false,
-        autoCount: 0
+        autoCount: 0,
     });
+
     const [error, setError] = useState('');
     const [expandedSettings, setExpandedSettings] = useState({
         goal: false,
@@ -36,53 +72,56 @@ const HabitModal = ({ onClose, onSave, edit = false , editData}) => {
 
     useEffect(() => {
         if (edit && editData) {
-            const notificationRaw = editData.notification_date || '';
+            const notificationRaw = editData.notificationDate || '';
             const timeOnly = notificationRaw.length >= 5 ? notificationRaw.substring(0, 5) : '';
 
             setData({
                 ...data,
-                titleHabit: editData.title,
+                titleHabit: editData.titleHabit,
                 quote: editData.quote,
                 notificationDate: timeOnly,
                 datesType:  editData.datesType,
-                goalInDays:  editData.goal_in_days,
-                beginDate: Math.floor(new Date(editData.begin_date).getTime() / 1000),
-                autoCount: editData.auto_count,
-                checkAuto: editData.check_auto,
-                checkClose: editData.check_close,
-                checkManually:  editData.check_manually,
-                purposeCount: editData.count_purposes,
+                goalInDays:  editData.goalInDays,
+                beginDate: editData.beginDate,
+                autoCount: editData.autoCount,
+                checkAuto: editData.checkAuto,
+                checkClose: editData.checkClose,
+                checkManually:  editData.checkManually,
+                purposeCount: editData.purposeCount,
                 date: editData.date
             });
             setStep(2);
         }
     }, [edit, editData]);
 
-    const habitTemplates = [
+    const habitTemplates: HabitTemplate[] = [
         {
             title: "Ранний подъем",
             quote: "Кто рано встает, тому Бог дает!",
             notification: '6:30',
+            datesType: 'daily'
         },
         {
             title: "Утренняя пробежка",
             quote: "Бег - это жизнь!",
             notification: '10:30',
-
+            datesType: 'daily'
         },
         {
             title: "Чтение книги",
             quote: "Книги - корабли мысли",
             notification: '16:30',
+            datesType: 'daily'
         },
         {
             title: "Медитация",
             quote: "Тишина - великий учитель",
             notification: '14:30',
+            datesType: 'daily'
         }
     ];
 
-    const toggleSetting = (setting) => {
+    const toggleSetting = (setting: SettingKey) => {
         setExpandedSettings(prev => ({
             ...prev,
             [setting]: !prev[setting]
@@ -97,16 +136,19 @@ const HabitModal = ({ onClose, onSave, edit = false , editData}) => {
                 <div className="date-block">
                     <div>Выберите дни недели:</div>
                     <div className="day-grid">
-                        {daysList.map((d, i) => (
-                            <div
-                                key={d}
-                                className={`day-item ${data.date[daysMap[i]] ? 'active-day' : ''}`}
-                                data-day={daysMap[i]}
-                                onClick={() => toggleDay(daysMap[i])}
-                            >
-                                {d}
-                            </div>
-                        ))}
+                        {daysList.map((d, i) => {
+                            const dayKey = daysMap[i] as Days;
+                            return (
+                                <div
+                                    key={d}
+                                    className={`day-item ${data.date[dayKey] ? 'active-day' : ''}`}
+                                    data-day={dayKey}
+                                    onClick={() => toggleDay(dayKey)}
+                                >
+                                    {d}
+                                </div>
+                            );
+                        })}
                     </div>
                 </div>
             );
@@ -149,7 +191,7 @@ const HabitModal = ({ onClose, onSave, edit = false , editData}) => {
         }
     };
 
-    const toggleDay = (day) => {
+    const toggleDay = (day: Day) => {
         setData({
             ...data,
             date: {
@@ -159,21 +201,24 @@ const HabitModal = ({ onClose, onSave, edit = false , editData}) => {
         });
     };
 
-    const handleFileChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                setData({
-                    ...data,
-                    iconBase64: event.target.result
-                });
-            };
-            reader.readAsDataURL(file);
-        }
-    };
+    // const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    //     const file = e.target.files?.[0];
+    //     if (file) {
+    //         const reader = new FileReader();
+    //         reader.onload = (event: ProgressEvent<FileReader>) => {
+    //             if (event.target && typeof event.target.result === 'string') {
+    //                 setData({
+    //                     ...data,
+    //                     iconBase64: event.target.result,
+    //                 });
+    //             }
+    //         };
+    //         reader.readAsDataURL(file);
+    //     }
+    // };
 
-    const validateStep = (currentStep) => {
+
+    const validateStep = (currentStep: number) => {
         if (currentStep === 2) {
             if (!data.titleHabit.trim()) {
                 setError('Введите название привычки');
@@ -207,7 +252,7 @@ const HabitModal = ({ onClose, onSave, edit = false , editData}) => {
     const saveData = () => {
         if (!validateStep(step)) return;
 
-        const payload = {
+        const payload: DataType = {
             titleHabit: data.titleHabit,
             quote: data.quote,
             goalInDays: data.goalInDays,
@@ -223,9 +268,11 @@ const HabitModal = ({ onClose, onSave, edit = false , editData}) => {
             autoCount: data.autoCount
         };
 
-
-        onSave(payload);
+        if (onSave) {
+            onSave(payload);
+        }
     };
+
 
     const prepareDateField = () => {
         if (data.datesType === 'daily') {
@@ -457,16 +504,21 @@ const HabitModal = ({ onClose, onSave, edit = false , editData}) => {
                                 >
                                     Дата начала:
                                 </h3>
-                                <div className={`setting-content ${expandedSettings.startDate ? 'active' : 'inactive'}`}>
+                                <div
+                                    className={`setting-content ${expandedSettings.startDate ? 'active' : 'inactive'}`}>
                                     <input
                                         type="date"
                                         id="start-date"
-                                        value={new Date(data.beginDate * 1000).toISOString().split('T')[0]}
-                                        onChange={(e) => setData({
-                                            ...data,
-                                            beginDate: Math.floor(new Date(e.target.value).getTime() / 1000)
-                                        })}
+                                        value={data.beginDate ? new Date(data.beginDate * 1000).toISOString().split('T')[0] : ''}
+                                        onChange={(e) => {
+                                            const newTimestamp = Math.floor(new Date(e.target.value).getTime() / 1000);
+                                            setData({
+                                                ...data,
+                                                beginDate: newTimestamp,
+                                            });
+                                        }}
                                     />
+
                                 </div>
                             </div>
 
@@ -475,7 +527,7 @@ const HabitModal = ({ onClose, onSave, edit = false , editData}) => {
                                     className="setting-toggle"
                                     onClick={() => toggleSetting('duration')}
                                 >
-                                    Цель в днях:
+                                Цель в днях:
                                 </h3>
                                 <div className={`setting-content ${expandedSettings.duration ? 'active' : 'inactive'}`}>
                                     <input

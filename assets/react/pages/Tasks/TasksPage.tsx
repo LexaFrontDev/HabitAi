@@ -196,7 +196,7 @@ const TasksPage: React.FC = () => {
         setTimeData(dateData);
     };
 
-    const handleDelete = async (taskId: number) => {
+    const handleDelete = async (taskId: number | string) => {
         const result = await tasksService.deleteTask(taskId);
 
         if (result.success) {
@@ -256,7 +256,7 @@ const TasksPage: React.FC = () => {
     };
 
 
-    const handleWontDo = async (taskId: number, status: boolean) => {
+    const handleWontDo = async (taskId: number | string, status: boolean) => {
         if (status) {
             Messages(t('tasks:confirmTasks'));
         } else {
@@ -402,7 +402,7 @@ const TasksPage: React.FC = () => {
                             </div>
 
 
-                            <div className="add-tasks-input">
+                            <div className="add-tasks-input triger">
                                 {!showTasksInput && (
                                     <div className="add-head" onClick={() => setTasksInput(true)}>
                                         {t('tasks:questionWantDoTasks')}
@@ -422,12 +422,18 @@ const TasksPage: React.FC = () => {
                                                     placeholder={t('tasks:wantToDo')}
                                                     value={title}
                                                     onChange={handleChange}
+                                                    onKeyDown={(e) => {
+                                                        if (e.key === 'Enter') {
+                                                            e.preventDefault();
+                                                            saveTasks();
+                                                        }
+                                                    }}
                                                 />
                                                 <div className="actions">
-                                                <span onClick={() => setDataModal(true)}>
+                                                <span className="triger" onClick={() => setDataModal(true)}>
                                                     {selectedDate ? ` ${selectedDate}` : t('buttons:ChooseTime')}
                                                 </span>
-                                                    <button onClick={() => saveTasks()}>{t('buttons:addButton')}</button>
+                                                    <button  className="triger" onClick={() => saveTasks()}>{t('buttons:addButton')}</button>
                                                 </div>
                                             </div>
                                         )}
@@ -446,7 +452,7 @@ const TasksPage: React.FC = () => {
                                     <Loading/>
                                 ) : (
                                     tasks.map(task => (
-                                        <div key={task.id} className={`task-item ${task.todo ? 'wont-do' : ''}`}
+                                        <div key={task.id} className={`task-item triger-list ${task.todo ? 'wont-do' : ''}`}
                                              onClick={(e) => {
                                                  e.stopPropagation();
                                                  handleEdit(task);
@@ -479,9 +485,9 @@ const TasksPage: React.FC = () => {
                                             <div className="task-actions">
                                                 {renderTaskDateTime(task)}
                                                 <div className="dots-menu">
-                                                    <span className="dots">...</span>
+                                                    <span  className="dots">...</span>
                                                     <div className="dropdown-menu">
-                                                        <button onClick={() => handleDelete(task.id)}>{t('buttons:deleteButton')}</button>
+                                                        <button  onClick={() => handleDelete(task.id)}>{t('buttons:deleteButton')}</button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -519,7 +525,7 @@ const TasksPage: React.FC = () => {
                                     </div>
 
                                     <div className="header-text mt-xl-1">
-                                         <span onClick={() => setShowEditDateModal(true)}>
+                                         <span className="triger" onClick={() => setShowEditDateModal(true)}>
                                             {editingTask.timeData?.time ? `${editingTask.timeData.time}` : t('buttons:ChooseTime')}
                                          </span>
                                     </div>

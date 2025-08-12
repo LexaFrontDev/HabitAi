@@ -4,6 +4,8 @@ namespace App\Aplication\UseCase\HabitsUseCase;
 
 use App\Domain\Entity\Habits\Habit;
 use App\Domain\Entity\Purpose\Purpose;
+use App\Domain\Exception\Message\MessageException;
+use App\Domain\Exception\NotFoundException\NotFoundException;
 use App\Domain\Port\TokenProviderInterface;
 use App\Domain\Repository\Habits\HabitsRepositoryInterface;
 use App\Domain\Service\JwtServicesInterface;
@@ -25,27 +27,88 @@ class QueryHabbitsUseCase
 
 
 
-    public function getHabitsForDate($dateString): array
+    public function getHabitsForDate(string $dateString): array
     {
-        $token = $this->tokenProvider->getTokens();
-        $userId = $this->jwtServices->getUserInfoFromToken($token->getAccessToken())->getUserId();
-        $targetDate = new \DateTimeImmutable($dateString);
-        $dayOfWeekNumber = $targetDate->format('N');
-        $dayOfMonth = $targetDate->format('d');
-        $month = $targetDate->format('m');
-        $results = $this->habitsRepository->getHabitsForToday($dayOfMonth, $dayOfWeekNumber, $month, $userId);
-        if (empty($results)) {
-            return [];
+        try {
+            $token = $this->tokenProvider->getTokens();
+            $userId = $this->jwtServices->getUserInfoFromToken($token->getAccessToken())->getUserId();
+            $targetDate = new \DateTimeImmutable($dateString);
+            $dayOfWeekNumber = $targetDate->format('N');
+            $dayOfMonth = $targetDate->format('d');
+            $month = $targetDate->format('m');
+            $results = $this->habitsRepository->getHabitsForToday($dayOfMonth, $dayOfWeekNumber, $month, $userId);
+            if (empty($results)) {
+                throw new NotFoundException('Привычки отсутствует');
+            }
+            $data = [];
+            foreach ($results as $row) {
+                $getTestMorgning = $this->determineTimePeriod($row['notification_date']);
+                $row['period'] = $getTestMorgning;
+
+                $row['date'] = [
+                    'mon' => (bool)$row['mon'],
+                    'tue' => (bool)$row['tue'],
+                    'wed' => (bool)$row['wed'],
+                    'thu' => (bool)$row['thu'],
+                    'fri' => (bool)$row['fri'],
+                    'sat' => (bool)$row['sat'],
+                    'sun' => (bool)$row['sun'],
+                ];
+
+                $data[] = $row;
+            }
+            return $data;
+        } catch (\Exception $e) {
+            $this->logger->error('Error in getHabitsForToday: ' . $e->getMessage(), [
+                'exception' => $e,
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            throw new MessageException('Ошибка сервере');
         }
-        $data = [];
-        foreach ($results as $row) {
-            $getTestMorgning  =  $this->determineTimePeriod($row['notification_date']);
-            $row['period'] = $getTestMorgning;
-            $data[] = $row;
-        }
-        return $data;
     }
 
+
+    public function getHabitsWidthLimit(int $limit, int $offset): array
+    {
+        try{
+            $token = $this->tokenProvider->getTokens();
+            $userId = $this->jwtServices->getUserInfoFromToken($token->getAccessToken())->getUserId();
+            $results = $this->habitsRepository->getAllHabitsWithLimit($userId, $limit, $offset);
+
+            if (empty($results)) {
+                throw new NotFoundException('Привычки отсутствует', true);
+            }
+
+
+            $data = [];
+            foreach ($results as $row) {
+                $getTestMorgning = $this->determineTimePeriod($row['notification_date']);
+                $row['period'] = $getTestMorgning;
+
+                $row['date'] = [
+                    'mon' => (bool)$row['mon'],
+                    'tue' => (bool)$row['tue'],
+                    'wed' => (bool)$row['wed'],
+                    'thu' => (bool)$row['thu'],
+                    'fri' => (bool)$row['fri'],
+                    'sat' => (bool)$row['sat'],
+                    'sun' => (bool)$row['sun'],
+                ];
+
+                $data[] = $row;
+            }
+
+            return $data;
+        } catch (\Exception $e) {
+            $this->logger->error('Error in getHabitsForToday: ' . $e->getMessage(), [
+                'exception' => $e,
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            throw new MessageException('Ошибка сервере');
+        }
+    }
 
 
     public function getHabitsForToday(): array
@@ -61,7 +124,7 @@ class QueryHabbitsUseCase
             $results = $this->habitsRepository->getHabitsForToday($dayOfMonth, $dayOfWeekNumber, $month, $userId);
 
             if (empty($results)) {
-                return [];
+                throw new NotFoundException('Привычки отсутствует', true);
             }
 
             $data = [];
@@ -89,7 +152,7 @@ class QueryHabbitsUseCase
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            return [];
+            throw new MessageException('Ошибка сервере');
         }
     }
 

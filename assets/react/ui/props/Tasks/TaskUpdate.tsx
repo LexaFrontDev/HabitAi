@@ -1,7 +1,7 @@
 import {TasksDateDto} from "./TasksDateDto";
 
 export interface TaskUpdate {
-    id?: number;
+    id?: number | string;
     title: string;
     description?: string;
     timeData: TasksDateDto;

@@ -7,5 +7,5 @@ export interface TasksReqInterface{
      saveTask(task: Partial<Task>): Promise<any>;
      updateTask(task: TaskUpdate): Promise<any>
      deleteTask(taskId: string | number): Promise<any>
-     toggleWontDo(taskId: number): Promise<any>
+     toggleWontDo(taskId: number | string): Promise<any>
 }

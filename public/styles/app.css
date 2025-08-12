@@ -570,6 +570,7 @@ footer {
   border-radius: 8px;
   gap: 15px;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
+  cursor: pointer;
 }
 .pomodoro-card .left {
   display: flex;
@@ -674,7 +675,7 @@ footer {
   box-shadow: inset 0 2px 6px rgba(255, 255, 255, 0.1), 0 4px 10px rgba(0, 0, 0, 0.6);
 }
 
-.triger, .triger-pause, .triger-delete {
+.triger, .triger-pause, .triger-list, .triger-delete {
   padding: 6px 12px;
   border-radius: 6px;
   font-size: 14px;
@@ -685,19 +686,19 @@ footer {
   background-color: var(--color-golden-fields-green-dark);
   transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.2s ease;
 }
-.triger:hover, .triger-pause:hover, .triger-delete:hover {
+.triger:hover, .triger-pause:hover, .triger-list:hover, .triger-delete:hover {
   transform: translateY(-3px);
   box-shadow: 0 6px 0 #2a3d18, 0 10px 15px rgba(0, 0, 0, 0.4);
 }
-.triger.active, .active.triger-pause, .active.triger-delete {
+.triger.active, .active.triger-pause, .active.triger-list, .active.triger-delete {
   transform: translateY(-3px);
   box-shadow: 0 6px 0 #2a3d18, 0 10px 15px rgba(0, 0, 0, 0.4);
 }
-.triger:active, .triger-pause:active, .triger-delete:active {
+.triger:active, .triger-pause:active, .triger-list:active, .triger-delete:active {
   transform: translateY(2px);
   box-shadow: 0 3px 0 #2a3d18, 0 6px 10px rgba(0, 0, 0, 0.3);
 }
-.triger:disabled, .triger-pause:disabled, .triger-delete:disabled {
+.triger:disabled, .triger-pause:disabled, .triger-list:disabled, .triger-delete:disabled {
   cursor: not-allowed;
   opacity: 0.5;
   box-shadow: none;
@@ -713,6 +714,13 @@ footer {
 }
 .triger-delete:active {
   box-shadow: 0 3px 0 #7f1717, 0 6px 10px rgba(127, 23, 23, 0.4);
+}
+
+.triger-list {
+  margin-top: 15px;
+  box-shadow: 0 6px 0 #2a3d18, 0 8px 15px rgba(0, 0, 0, 0.4);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  background-color: #3e5622;
 }
 
 /* Желто-оранжевая кнопка — пауза */
@@ -1762,11 +1770,16 @@ a:hover {
 }
 
 .panel-content {
-  width: auto;
   height: 100vh;
+  display: flex;
+  flex-direction: column;
   background: #344e41;
 }
 .panel-content .content-panel {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   padding: 10px;
 }
 .panel-content .handlers {
@@ -1859,6 +1872,11 @@ a:hover {
   justify-content: flex-start;
   align-content: flex-start;
   margin-top: 5%;
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding-right: 8px;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE и Edge */
 }
 .tasks-list .task-item {
   width: 100%;
@@ -1866,7 +1884,6 @@ a:hover {
   justify-content: space-between;
   align-items: baseline;
   padding: 10px;
-  margin-bottom: 10px;
   background: rgb(62.2, 93.3, 77.75);
   border-radius: 4px;
   cursor: pointer;

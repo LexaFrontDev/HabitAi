@@ -109,7 +109,7 @@ $line-color: #66666e;
   border-radius: 8px;
   gap: 15px;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
-
+  cursor: pointer;
 
   .left {
     display: flex;
@@ -307,6 +307,16 @@ $line-color: #66666e;
             0 3px 0 #7f1717,
             0 6px 10px rgba(127, 23, 23, 0.4);
   }
+}
+
+
+.triger-list{
+  @extend .triger;
+  margin-top: 15px;
+  box-shadow: 0 6px 0 #2a3d18, 0 8px 15px rgba(0, 0, 0, 0.4);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  background-color: #3e5622;
+
 }
 
 /* Желто-оранжевая кнопка — пауза */

@@ -268,7 +268,7 @@ const Pomodoro = () => {
             <Sidebar/>
             <div style={{marginLeft: '50px'}}>
                 <PanelGroup direction="horizontal">
-                    <Panel maxSize={75} defaultSize={30} minSize={20}>
+                    <Panel  defaultSize={30} minSize={20}>
                         <div className="panel-content">
                             <div className="content-panel">
                                 <div className="header-panel-center">
@@ -339,7 +339,7 @@ const Pomodoro = () => {
                         </div>
                     </Panel>
                     <PanelResizeHandle/>
-                    <Panel maxSize={25} defaultSize={15} minSize={5}>
+                    <Panel  defaultSize={15} minSize={5}>
                         <div className="panel-content">
                             <div className="line-resize"></div>
                             <div className="content-panel">
@@ -394,7 +394,7 @@ const Pomodoro = () => {
                                                 <ul className="tasks-list">
                                                     {tasksList.map((task, i) => {
                                                         return (
-                                                            <li key={i} className="tasks-list-element" onClick={() => setTasksTitle(task.title)}>
+                                                            <li key={i} className="task-item tasks-list-element" onClick={() => setTasksTitle(task.title)}>
                                                                 <span className="info-span">ℹ️ Нажмите чтобы добавить в помо</span>
                                                                 <h3 className="task-title">Задача :  {task.title}</h3>
                                                                 <p className="task-description">Описание : {task.description}</p>

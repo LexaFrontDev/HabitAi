@@ -52,18 +52,57 @@ class HabitsController extends AbstractController
         return $this->json(['success' => false, 'message' => 'Привычки не обновлены'], 400);
     }
 
-    #[Route('/api/get/Habits/today', name: 'get_habits', methods: ['GET'])]
+    #[Route('/api/get/Habits/by/day', name: 'get_habits', methods: ['GET'])]
     #[RequiresJwt]
-    public function getHabits()
+    public function getHabits(Request $request): JsonResponse
     {
-        $isResult = $this->queryHabitsUseCase->getHabitsForToday();
-
-        if (!empty($isResult)) {
-            return $this->json(['success' => true, 'data' => $isResult]);
+        $date = $request->query->get('date');
+        $dateTime = \DateTime::createFromFormat('Y-m-d', $date);
+        if (!$dateTime || $dateTime->format('Y-m-d') !== $date) {
+            return $this->json([
+                'success' => false,
+                'message' => 'Неверный формат даты. Ожидается YYYY-MM-DD'
+            ], 400);
         }
 
-        return $this->json(['success' => false, 'message' => 'Привычки не полученны'], 400);
+        $habits = $this->queryHabitsUseCase->getHabitsForDate($date);
+        if (!empty($habits)) return $this->json(['success' => true, 'data' => $habits]);
+        return $this->json([
+            'success' => false,
+            'message' => 'Привычки не получены'
+        ], 404);
     }
+
+    #[Route('/api/get/Habits/all', name: 'get_habits_all', methods: ['GET'])]
+    #[RequiresJwt]
+    public function getHabitsAll(Request $request): JsonResponse
+    {
+        $limit = (int) $request->query->get('limit', 50);
+        $offset = (int) $request->query->get('offset', 0);
+
+        if ($limit < 1 || $offset < 0) {
+            return $this->json([
+                'success' => false,
+                'message' => 'Параметры limit и offset должны быть положительными числами',
+                'code' => 400
+            ], 400);
+        }
+
+        if ($limit > 150) {
+            return $this->json([
+                'success' => false,
+                'message' => 'Больше 150 привычек получать нельзя',
+                'code' => 400
+            ], 400);
+        }
+        $result = $this->queryHabitsUseCase->getHabitsWidthLimit($limit, $offset);
+        return $this->json([
+            'success' => true,
+            'data' => $result
+        ]);
+    }
+
+
 
 
     #[Route('/api/get/count/Habits/today', name: 'get_count_habits', methods: ['GET'])]
@@ -98,4 +137,15 @@ class HabitsController extends AbstractController
         return $this->json(['success' => false, 'message' => 'Прогресс не добавлены'], 400);
     }
 
+
+    #[Route('/api/Habits/delete/{habitId}', name: 'delete_habit', methods: ['DELETE'])]
+    #[RequiresJwt]
+    public function deleteHabits(int $habitId)
+    {
+        $isResult = $this->commandHabitsUseCase->deleteHabitsById($habitId);
+        if (empty($isResult)) {
+            return $this->json(['success' => false, 'data' => 'Не удалось удалить привычку']);
+        }
+        return $this->json(['success' => true, 'message' => 'Привычка удаленно'], 200);
+    }
 }

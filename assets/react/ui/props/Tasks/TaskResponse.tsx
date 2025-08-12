@@ -4,6 +4,6 @@ export interface TaskResponse {
     success: boolean;
     message: string;
     front: boolean;
-    task: number;
+    task?: number|string;
 }
 

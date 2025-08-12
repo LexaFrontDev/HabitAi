@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../chunk/SideBar';
 import Loading from "../chunk/LoadingChunk/Loading";
-// @ts-ignore
 import HabitModal from "../chunk/Habits/HabitsModal";
 import {ImperativePanelGroupHandle, Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import {useTranslation} from "react-i18next";
@@ -9,8 +8,12 @@ import {LanguageRequestUseCase} from "../../Aplication/UseCases/language/Languag
 import {LanguageApi} from "../../Infrastructure/request/Language/LanguageApi";
 import {LangStorage} from "../../Infrastructure/languageStorage/LangStorage";
 import {LangStorageUseCase} from "../../Aplication/UseCases/language/LangStorageUseCase";
+import {DataType} from "../../ui/props/Habits/DataType";
+import {HabitsService} from "../../Aplication/UseCases/Habits/HabitsService";
+import {HabitsApi} from "../../Infrastructure/request/habits/HabitsApi";
+import {Messages} from "../chunk/MessageAlertChunk";
 
-
+const habitsService = new HabitsService(new HabitsApi());
 const LangUseCase = new LanguageRequestUseCase('pomodoro', new LanguageApi());
 const langStorage = new LangStorage();
 const langUseCase = new LangStorageUseCase(langStorage);
@@ -43,7 +46,7 @@ const HabitsPage = () => {
         detectLang();
     }, []);
 
-    const fetchHabits = () => {
+    const fetchHabits = async () => {
         const hours = new Date().getHours();
         let period = 'other';
         if (hours >= 5 && hours < 12) period = 'morning';
@@ -51,22 +54,13 @@ const HabitsPage = () => {
 
         setCurrentPeriod(period);
 
-        fetch('/api/get/habits/today', { method: 'GET' })
-            .then(async res => {
-                setStatus(res.status);
-                const data = await res.json();
-                if (res.ok) {
-                    setHabits(data?.data || []);
-                } else {
-                    console.error('Ошибка при получении привычек:', data);
-                    setHabits([]);
-                }
-            })
-            .catch(err => {
-                setStatus(400);
-                console.error('Ошибка сети:', err);
-                setHabits([]);
-            });
+        let result = await habitsService.getHabitsAll();
+
+        if(!result){
+            return setHabits([]);
+        }
+
+        setHabits(result || []);
     };
 
 
@@ -86,78 +80,45 @@ const HabitsPage = () => {
         }
     };
 
-    const handleSave = async (habitData: any) => {
+    const handleSave = async (habitData: DataType) => {
         try {
-            const url = editingHabit
-                ? `/api/habits/update/${editingHabit.habit_id}`
-                : '/api/Habits/save';
+            let result = await habitsService.createHabits(habitData);
 
-            const method = editingHabit ? 'PUT' : 'POST';
-
-            const response = await fetch(url, {
-                method: method,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(habitData),
-            });
-
-            console.log(habitData);
-
-            const result = await response.json();
 
             if (result.success) {
-                alert(editingHabit ? 'Привычка обновлена!' : 'Привычка сохранена!');
+                Messages(editingHabit ? 'Привычка обновлена!' : 'Привычка сохранена!');
                 setIsModalOpen(false);
                 setEditingHabit(null);
-                fetchHabits();
+                await fetchHabits();
             } else {
-                alert(result.message || 'Ошибка сохранения данных!');
+                Messages(result.message || 'Ошибка сохранения данных!');
             }
         } catch (error) {
-            alert('Произошла ошибка! Попробуйте позже.');
+            Messages('Произошла ошибка! Попробуйте позже.');
         }
     };
 
     const handleEdit = (habit: any) => {
-        console.log(habits);
         setEditingHabit(habit);
         setIsModalOpen(true);
     };
 
-    const handleDelete = async (habitId: any) => {
+    const handleDelete = async (habitId: number) => {
         if (window.confirm('Вы уверены, что хотите удалить эту привычку?')) {
-            try {
-                const response = await fetch(`/api/habits/delete/${habitId}`, {
-                    method: 'DELETE',
-                });
-
-                const result = await response.json();
+                let  result = await habitsService.deleteHabits(habitId)
 
                 if (result.success) {
-                    alert('Привычка удалена!');
-                    fetchHabits();
+                    Messages('Привычка удалена!');
+                    await fetchHabits();
                 } else {
-                    alert(result.message || 'Ошибка удаления привычки!');
+                    Messages(result.message || 'Ошибка удаления привычки!');
                 }
-            } catch (error) {
-                alert('Произошла ошибка! Попробуйте позже.');
-            }
         }
     };
 
-    const saveHabitProgress = async (habitId: any, countProgress: any) => {
-        try {
-            const response = await fetch('/api/habits/save/progress', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    habits_id: habitId,
-                    count_end: countProgress
-                })
-            });
-
-            if (response.ok) {
+    const saveHabitProgress = async (habitId: number, countProgress: number) => {
+            let result = await habitsService.saveProgress(habitId, countProgress)
+            if (result.success) {
                 setHabits(prevHabits =>
                     prevHabits.map(habit => {
                         if (habit.habit_id === habitId) {
@@ -175,14 +136,11 @@ const HabitsPage = () => {
             } else {
                 console.error('Ошибка при сохранении прогресса привычки');
             }
-        } catch (error) {
-            console.error('Ошибка:', error);
-        }
     };
 
     const handleManualConfirm = async () => {
         const count = parseInt(manualInputValue);
-        if (count > 0) {
+        if (count > 0 && currentHabitId) {
             await saveHabitProgress(currentHabitId, count);
             setShowManualInput(false);
             setManualInputValue('');
@@ -194,20 +152,7 @@ const HabitsPage = () => {
         setManualInputValue('');
     };
 
-    const toggleBlock = (blockName: string) => {
-        const list = document.getElementById(blockName);
-        const icon = document.getElementById(`icon-${blockName}`);
 
-        if (!list || !icon) return;
-
-        if (list.style.display === 'none') {
-            list.style.display = 'block';
-            icon.textContent = '▼';
-        } else {
-            list.style.display = 'none';
-            icon.textContent = '▶';
-        }
-    };
 
 
     if (!i18n.hasResourceBundle(langCode, 'pomodoro')) return <Loading />;
@@ -220,12 +165,13 @@ const HabitsPage = () => {
 
         return (
             <div className="habits-group">
-                <h3 className="toggle-header" onClick={() => toggleBlock(blockName)}>
+                <h3 className="toggle-header" onClick={() => habitsService.toggleBlock(blockName)}>
                     <span className="toggle-icon" id={`icon-${blockName}`}>▶</span> {title}
                 </h3>
-                <ul id={blockName} className="habits-items" style={{display: shouldDisplay}}>
+                <ul  id={blockName} className="tasks-list" style={{display: shouldDisplay}}>
                     {filteredHabits.map((habit: any) => (
                         <li
+                            className="task-item triger-list "
                             key={habit.habit_id}
                             data-habit-id={habit.habit_id}
                             data-is-done={habit.is_done || false}
@@ -235,8 +181,8 @@ const HabitsPage = () => {
                                 <small>{habit.notification_date}</small>
                                 <small>{habit.type}</small>
                                 <div className="habit-actions">
-                                    <button onClick={() => handleEdit(habit)} className="edit-button">✏️</button>
-                                    <button onClick={() => handleDelete(habit.habit_id)} className="delete-button">🗑️</button>
+                                    <button onClick={() => handleEdit(habit)} className="triger-pause">✏️</button>
+                                    <button onClick={() => handleDelete(habit.habit_id)} className="triger-delete">🗑️</button>
                                 </div>
                             </div>
                             <div className="habit-progress" onClick={() => handleProgressClick(habit)}>
@@ -339,6 +285,11 @@ const HabitsPage = () => {
                     <Panel  defaultSize={15} minSize={5}>
                         <div className="panel-content">
                             <div className="line-resize"></div>
+
+
+
+
+
                         </div>
                     </Panel>
                 </PanelGroup>

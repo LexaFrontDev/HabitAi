@@ -3,11 +3,16 @@
 
 
 .panel-content{
-  width: auto;
   height: 100vh;
+  display: flex;
+  flex-direction: column;
   background: $card-bg;
 
   .content-panel{
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
     padding: 10px;
   }
 
@@ -127,6 +132,11 @@
   justify-content: flex-start;
   align-content: flex-start;
   margin-top: 5%;
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding-right: 8px;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;  /* IE и Edge */
 
   .task-item {
     width: 100%;
@@ -134,7 +144,6 @@
     justify-content: space-between;
     align-items: baseline;
     padding: 10px;
-    margin-bottom: 10px;
     background: lighten($card-bg, 5%);
     border-radius: 4px;
     cursor: pointer;
