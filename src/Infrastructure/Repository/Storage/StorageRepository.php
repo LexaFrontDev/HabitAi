@@ -10,15 +10,10 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<StorageRepository>
+ * @extends ServiceEntityRepository<Storage>
  */
 class StorageRepository extends ServiceEntityRepository implements StorageInterface
 {
-
-    CONST IMAGE_TYPE = 1;
-    CONST FILE_TYPE = 2;
-
-
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Storage::class);
@@ -26,19 +21,17 @@ class StorageRepository extends ServiceEntityRepository implements StorageInterf
 
     /**
      * Сохраняет память по full path по type
-     * @param SaveStorageDto $saveStorageDto
-     * @return int|false
      */
-    public function saveStorage(SaveStorageDto $dto): int|false
+    public function saveStorage(SaveStorageDto $saveStorageDto): int|false
     {
         $existing = $this->createQueryBuilder('h')
             ->where('h.fullPath = :fullPath')
             ->andWhere('h.type = :type')
             ->andWhere('h.fileType = :fileType')
             ->andWhere('h.is_delete = 0')
-            ->setParameter('fullPath', $dto->fullPath)
-            ->setParameter('type', $dto->type)
-            ->setParameter('fileType', $dto->fileType)
+            ->setParameter('fullPath', $saveStorageDto->fullPath)
+            ->setParameter('type', $saveStorageDto->type)
+            ->setParameter('fileType', $saveStorageDto->fileType)
             ->getQuery()
             ->getOneOrNullResult();
 
@@ -47,42 +40,36 @@ class StorageRepository extends ServiceEntityRepository implements StorageInterf
         }
 
         $entity = new Storage();
-        $entity->setType($dto->type);
-        $entity->setFullPath($dto->fullPath);
-        $entity->setFileType($dto->fileType);
+        $entity->setType($saveStorageDto->type);
+        $entity->setFullPath($saveStorageDto->fullPath);
+        $entity->setFileType($saveStorageDto->fileType);
         $em = $this->getEntityManager();
         $em->persist($entity);
         $em->flush();
+
         return $entity->getId();
     }
 
-
-
     /**
      * Обновляет память по идентификатору
-     * @param UpdateStorageData $saveStorageDto
-     * @return int|false
      */
-    public function updateStorage(UpdateStorageData $dto): int|false
+    public function updateStorage(UpdateStorageData $updateStorageDto): int|false
     {
-        $storage = $this->find($dto->id);
+        $storage = $this->find($updateStorageDto->id);
         if (!$storage) {
             return false;
         }
-        $storage->setFullPath($dto->fullPath);
-        $storage->setType($dto->type);
-        $storage->setFileType($dto->fileType);
+        $storage->setFullPath($updateStorageDto->fullPath);
+        $storage->setType($updateStorageDto->type);
+        $storage->setFileType($updateStorageDto->fileType);
         $em = $this->getEntityManager();
         $em->flush();
+
         return $storage->getId();
     }
 
-
-
     /**
      * Удаляет память по идентификатору
-     * @param int $id
-     * @return bool
      */
     public function deletePathById(int $id): bool
     {
@@ -99,7 +86,14 @@ class StorageRepository extends ServiceEntityRepository implements StorageInterf
         return true;
     }
 
+    public function fineByFileId(int $fileId): Storage|false
+    {
+        $storageEntity = $this->getEntityManager()->getRepository(Storage::class)->find($fileId);
 
+        if (!$storageEntity) {
+            return false;
+        }
 
-
+        return $storageEntity;
+    }
 }

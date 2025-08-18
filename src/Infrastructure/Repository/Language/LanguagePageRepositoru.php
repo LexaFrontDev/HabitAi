@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace App\Infrastructure\Repository\Language;
 
 use App\Aplication\Dto\LangPageTranslate\LangPageReturn;
-use App\Aplication\Dto\LangPageTranslate\TranslateNames;
 use App\Domain\Entity\Language\LanguagePageTranslation;
 use App\Domain\Repository\Language\LanguageInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
+/**
+ * @extends ServiceEntityRepository<LanguagePageTranslation>
+ */
 class LanguagePageRepositoru extends ServiceEntityRepository implements LanguageInterface
 {
     public function __construct(ManagerRegistry $registry)
@@ -18,11 +20,6 @@ class LanguagePageRepositoru extends ServiceEntityRepository implements Language
         parent::__construct($registry, LanguagePageTranslation::class);
     }
 
-    /**
-     * @param string $version
-     * @param string $prefix
-     * @return LangPageReturn
-     */
     public function getPageTranslateByLangId(string $version, string $prefix): ?LangPageReturn
     {
         $qb = $this->createQueryBuilder('lpt')
@@ -41,16 +38,11 @@ class LanguagePageRepositoru extends ServiceEntityRepository implements Language
         }
 
         $rawTranslate = $qb->getPageTranslate();
-        $translateArray = json_decode(json_encode($rawTranslate), true);
+        $translateArray = json_decode((string) json_encode($rawTranslate), true);
 
         return new LangPageReturn(
             translate: $translateArray,
             prefix: $qb->getLanguage()->getPrefix(),
         );
     }
-
-
-
-
-
 }

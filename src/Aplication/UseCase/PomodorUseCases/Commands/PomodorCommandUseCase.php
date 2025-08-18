@@ -9,10 +9,10 @@ use App\Domain\Repository\Pomodor\PomodorHistoryRepositoryInterface;
 
 class PomodorCommandUseCase
 {
-
     public function __construct(
         private PomodorHistoryRepositoryInterface $pomodorHistoryRepository,
-    ){}
+    ) {
+    }
 
     public function calculatePeriodLabel(int $seconds): string
     {
@@ -21,17 +21,16 @@ class PomodorCommandUseCase
         if ($minutes >= 60) {
             $hours = intdiv($minutes, 60);
             $remainingMinutes = $minutes % 60;
-            $label = $hours . 'H';
+            $label = $hours.'H';
             if ($remainingMinutes > 0) {
-                $label .= ' ' . $remainingMinutes . 'm';
+                $label .= ' '.$remainingMinutes.'m';
             }
+
             return $label;
         }
 
-        return $minutes . 'm';
+        return $minutes.'m';
     }
-
-
 
     public function savePomdor(ReqPomodorDto $reqPomodorDto): PomodorHistory
     {
@@ -49,6 +48,4 @@ class PomodorCommandUseCase
 
         return $this->pomodorHistoryRepository->cretePomodorHistory($data);
     }
-
-
 }

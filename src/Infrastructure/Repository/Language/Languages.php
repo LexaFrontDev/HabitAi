@@ -8,6 +8,9 @@ use App\Domain\Repository\Language\LanguagePrefixInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
+/**
+ * @extends ServiceEntityRepository<Language>
+ */
 class Languages extends ServiceEntityRepository implements LanguagePrefixInterface
 {
     public function __construct(ManagerRegistry $registry)
@@ -26,13 +29,9 @@ class Languages extends ServiceEntityRepository implements LanguagePrefixInterfa
             ->getResult();
 
 
-        return array_map(fn($item) => new ReturnPrefiixs(
+        return array_map(fn ($item) => new ReturnPrefiixs(
             lang_label: $item['name'],
             prefix: $item['prefix']
         ), $prefixes);
     }
-
-
-
-
 }

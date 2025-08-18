@@ -2,7 +2,6 @@
 
 namespace App\Infrastructure\Http;
 
-
 use App\Aplication\Dto\JwtDto\JwtTokenDto;
 use App\Domain\Port\TokenResponseSetterInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;

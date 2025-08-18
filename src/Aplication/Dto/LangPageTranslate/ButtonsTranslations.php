@@ -4,8 +4,6 @@ namespace App\Aplication\Dto\LangPageTranslate;
 
 class ButtonsTranslations
 {
-
-
     public function __construct(
         public readonly string $AllButton,
         public readonly string $TodayButton,
@@ -19,7 +17,8 @@ class ButtonsTranslations
         public readonly string $EveryYear,
         public readonly string $Never,
         public readonly string $Description,
-        public readonly string $ChooseTime
-    ) {}
+        public readonly string $ChooseTime,
+    ) {
+    }
 
 }

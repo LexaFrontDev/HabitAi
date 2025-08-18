@@ -2,21 +2,18 @@
 
 namespace App\Infrastructure\Repository\Habits;
 
-use App\Aplication\Dto\HabitsDtoUseCase\ReqHabitsDto;
-use App\Domain\Entity\Dates\DateDaily;
-use App\Domain\Entity\Dates\DateRepeatPerMonth;
-use App\Domain\Entity\Dates\DateWeekly;
 use App\Domain\Entity\Habits\Habit;
-use App\Domain\Entity\JunctionTabels\Habits\HabitsDataJuntion;
-use App\Domain\Entity\Purpose\Purpose;
 use App\Domain\Repository\Habits\HabitsRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Exception;
 use Doctrine\Persistence\ManagerRegistry;
-use App\Aplication\Dto\HabitsDtoUseCase\SaveHabitDto;
+use App\Aplication\Dto\HabitsDto\SaveHabitDto;
 use Doctrine\ORM\EntityNotFoundException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
+/**
+ * @extends ServiceEntityRepository<Habit>
+ */
 class HabitsRepository extends ServiceEntityRepository implements HabitsRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
@@ -24,16 +21,14 @@ class HabitsRepository extends ServiceEntityRepository implements HabitsReposito
         parent::__construct($registry, Habit::class);
     }
 
-
-
-
-    public function getByUserId(int $userId)
+    public function getByUserId(int $userId): Habit
     {
         return $this->createQueryBuilder('h')
             ->where('h.userId = :userId')
             ->andWhere('h.is_delete = 0')
             ->setParameter('userId', $userId)
-            ->getQuery();
+            ->getQuery()
+            ->getResult();
     }
 
     public function updateHabitById(int $habitId, int $userId, SaveHabitDto $dto): bool
@@ -42,19 +37,20 @@ class HabitsRepository extends ServiceEntityRepository implements HabitsReposito
         $habit = $this->find($habitId);
 
         if (!$habit) {
-            throw new EntityNotFoundException("Habit not found or access denied.");
-        }else if ( $habit->getUserId() !== $userId){
-            throw new AccessDeniedException("Пользовател не имееть прав");
+            throw new EntityNotFoundException('Habit not found or access denied.');
+        } elseif ($habit->getUserId() !== $userId) {
+            throw new AccessDeniedException('Пользователь не имеет прав');
         }
 
         $habit->setTitle($dto->getTitleHabit());
         $habit->setIconUrl($dto->getIconUrl());
         $habit->setQuote($dto->getQuote());
-        $habit->setGoalInDays($dto->getGoalInDays());
+        $habit->setGoalInDays((int) $dto->getGoalInDays());
         $habit->setBeginDate((new \DateTime())->setTimestamp($dto->getBeginDate()));
         $habit->setNotificationDate($dto->getNotificationDate());
 
         $em->flush();
+
         return true;
     }
 
@@ -80,16 +76,16 @@ class HabitsRepository extends ServiceEntityRepository implements HabitsReposito
         $habits->setTitle($reqHabitsDto->getTitleHabit());
         $habits->setIconUrl($reqHabitsDto->getIconUrl());
         $habits->setQuote($reqHabitsDto->getQuote());
-        $habits->setGoalInDays($reqHabitsDto->getGoalInDays());
+        $habits->setGoalInDays((int) $reqHabitsDto->getGoalInDays());
         $beginDate = (new \DateTime())->setTimestamp($reqHabitsDto->getBeginDate());
         $habits->setBeginDate($beginDate);
         $habits->setNotificationDate($reqHabitsDto->getNotificationDate());
         $em = $this->getEntityManager();
         $em->persist($habits);
         $em->flush();
+
         return $habits->getId() ?? false;
     }
-
 
     /**
      * Возвращает привычки пользователя, которые активны на сегодня.
@@ -100,17 +96,15 @@ class HabitsRepository extends ServiceEntityRepository implements HabitsReposito
      * - Повторяющиеся в месяц (repeat): проверяет, совпадает ли день месяца
      *
      * Параметры:
-     * @param int $day
-     * @param int $week
-     * @param int $month
-     * @param int $userId
-     * @return array
+     *
+     * @return array<int, array<string, mixed>>|false
+     *
      * @throws Exception
      */
-    public function getHabitsForToday(int $day, int $week, int $month, int $userId): array
+    public function getHabitsForToday(int $day, int $week, int $month, int $userId): array|bool
     {
-        $dayOfWeekNumber = (int)date('w');
-        $dayOfMonth = (int)date('j');
+        $dayOfWeekNumber = (int) date('w');
+        $dayOfMonth = (int) date('j');
 
         $today = new \DateTimeImmutable('today');
         $todayStart = $today->format('Y-m-d 00:00:00');
@@ -138,7 +132,7 @@ class HabitsRepository extends ServiceEntityRepository implements HabitsReposito
               AND hh.recorded_at BETWEEN :todayStart AND :todayEnd
               AND hh.user_id = :userId
         WHERE (
-            (hdj.data_type = 'daily' AND dd.`" . strtolower($today->format('D')) . "` = TRUE) OR
+            (hdj.data_type = 'daily' AND dd.`".strtolower($today->format('D'))."` = TRUE) OR
             (hdj.data_type = 'weekly' AND dw.count_days = :dayOfWeekNumber) OR
             (hdj.data_type = 'repeat' AND dr.day = :dayOfMonth)
         )
@@ -159,20 +153,24 @@ class HabitsRepository extends ServiceEntityRepository implements HabitsReposito
 
         $sqls = $sql;
         $paramss = $params;
-        return $this->getEntityManager()
+
+        $result = $this->getEntityManager()
             ->getConnection()
             ->executeQuery($sql, $params)
             ->fetchAllAssociative();
-    }
 
+        if (empty($result)) {
+            return false;
+        }
+
+        return $result;
+    }
 
     /**
      * Возвращает все привычки пользователя с пагинацией, в формате getHabitsForToday.
      *
-     * @param int $userId
-     * @param int $limit
-     * @param int $offset
-     * @return array
+     * @return array<int, array<string, mixed>>
+     *
      * @throws Exception
      */
     public function getAllHabitsWithLimit(int $userId, int $limit = 50, int $offset = 0): array
@@ -218,12 +216,6 @@ class HabitsRepository extends ServiceEntityRepository implements HabitsReposito
         return $conn->executeQuery($sql, $params, $types)->fetchAllAssociative();
     }
 
-
-
-
-
-
-
     /**
      * Возвращает количество привычек пользователя, которые активны на сегодня.
      *
@@ -233,11 +225,7 @@ class HabitsRepository extends ServiceEntityRepository implements HabitsReposito
      * - Повторяющиеся в месяц (repeat): проверяет, совпадает ли день месяца
      *
      * Параметры:
-     * @param int $day
-     * @param int $week
-     * @param int $month
-     * @param int $userId
-     * @return int
+     *
      * @throws Exception
      */
     public function getCountHabitsToday(int $day, int $week, int $month, int $userId): int
@@ -270,6 +258,4 @@ class HabitsRepository extends ServiceEntityRepository implements HabitsReposito
             ->executeQuery($sql, $params)
             ->fetchOne();
     }
-
-
 }

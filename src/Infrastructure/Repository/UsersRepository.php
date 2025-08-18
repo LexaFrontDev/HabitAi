@@ -2,7 +2,6 @@
 
 namespace App\Infrastructure\Repository;
 
-use App\Aplication\Dto\UsersDto\UsersForRegister;
 use App\Aplication\Dto\UsersDto\UsersForUpdate;
 use App\Domain\Entity\Users;
 use App\Domain\Repository\Users\UsersRepositoryInterface;
@@ -10,6 +9,9 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 
+/**
+ * @extends ServiceEntityRepository<Users>
+ */
 class UsersRepository extends ServiceEntityRepository implements UsersRepositoryInterface
 {
     private EntityManagerInterface $em;
@@ -28,6 +30,7 @@ class UsersRepository extends ServiceEntityRepository implements UsersRepository
             ->setParameter('email', $email)
             ->getQuery()
             ->getOneOrNullResult();
+
         return $user ?? false;
     }
 
@@ -39,6 +42,7 @@ class UsersRepository extends ServiceEntityRepository implements UsersRepository
             ->setParameter('id', $id)
             ->getQuery()
             ->getOneOrNullResult();
+
         return $user ?? false;
     }
 
@@ -61,6 +65,7 @@ class UsersRepository extends ServiceEntityRepository implements UsersRepository
             $user->setRole($userInfo->getRole());
         }
         $this->em->flush();
+
         return true;
     }
 
@@ -69,11 +74,12 @@ class UsersRepository extends ServiceEntityRepository implements UsersRepository
         try {
             $this->em->persist($user);
             $this->em->flush();
+
             return $user->getId();
         } catch (\Throwable $e) {
             $Throwable = $e->getMessage();
+
             return false;
         }
     }
-
 }

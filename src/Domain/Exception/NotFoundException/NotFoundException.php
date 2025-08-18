@@ -2,14 +2,12 @@
 
 namespace App\Domain\Exception\NotFoundException;
 
-
-use App\Application\Dto\ExceptionDto\ActionResult;
+use App\Aplication\Dto\ExceptionDto\ActionResult;
 use App\Domain\Exception\BaseException\BusinessThrowableInterface;
 
 class NotFoundException extends \RuntimeException implements BusinessThrowableInterface
 {
     private bool $isFront;
-
 
     public function __construct(string $message = 'Resource not found.', bool $isFront = false)
     {
@@ -17,12 +15,14 @@ class NotFoundException extends \RuntimeException implements BusinessThrowableIn
         $this->isFront = $isFront;
     }
 
-
     public function getStatusCode(): int
     {
         return  404;
     }
 
+    /**
+     * @return array<string, int|string|bool>
+     */
     private function getPayload(): array
     {
         return [
@@ -32,7 +32,6 @@ class NotFoundException extends \RuntimeException implements BusinessThrowableIn
             'code' => $this->getStatusCode(),
         ];
     }
-
 
     public function toActionResult(): ActionResult
     {

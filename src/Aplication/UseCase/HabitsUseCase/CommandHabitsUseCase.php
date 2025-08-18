@@ -2,25 +2,20 @@
 
 namespace App\Aplication\UseCase\HabitsUseCase;
 
-use App\Aplication\Dto\HabitsDtoUseCase\ReqHabitsDto;
-use App\Aplication\Dto\HabitsDtoUseCase\ReqUpdateHabitsDto;
-use App\Aplication\Dto\HabitsDtoUseCase\SaveHabitDto;
+use App\Aplication\Dto\HabitsDto\ReqHabitsDto;
+use App\Aplication\Dto\HabitsDto\ReqUpdateHabitsDto;
+use App\Aplication\Dto\HabitsDto\SaveHabitDto;
 use App\Aplication\UseCase\DatesUseCases\DatesCommandUseCase;
 use App\Domain\Exception\Message\MessageException;
 use App\Domain\Port\TokenProviderInterface;
-use App\Domain\Repository\Dates\DatesDailyRepositoryInterface;
-use App\Domain\Repository\DatesWeekly\DatesWeeklyRepositoryInterface;
-use App\Domain\Repository\DayesRepeat\DatesRepeatRepositoryInterface;
 use App\Domain\Repository\Habits\HabitsRepositoryInterface;
 use App\Domain\Repository\Purpose\PurposeRepositoryInterface;
 use App\Domain\Service\JwtServicesInterface;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\HttpFoundation\Request;
 use App\Aplication\Dto\PurposeDto\PurposeDto;
 
 class CommandHabitsUseCase
 {
-
     public function __construct(
         private TokenProviderInterface $tokenProvider,
         private HabitsRepositoryInterface $habitsRepository,
@@ -28,52 +23,53 @@ class CommandHabitsUseCase
         private PurposeRepositoryInterface $purposeRepository,
         private JwtServicesInterface $jwtServices,
         private LoggerInterface $logger,
-    ){}
-
-
-
-    public function updateHabits(ReqUpdateHabitsDto $reqHabitsDto): bool
-    {
-            $token = $this->tokenProvider->getTokens();
-            $userInfo = $this->jwtServices->getUserInfoFromToken($token->getAccessToken());
-            $userId = $userInfo->getUserId();
-
-            $habitDto = new SaveHabitDto(
-                $reqHabitsDto->titleHabit,
-                $reqHabitsDto->quote,
-                $reqHabitsDto->goalInDays,
-                $reqHabitsDto->beginDate,
-                $reqHabitsDto->notificationDate,
-                '',
-                $userId
-            );
-
-            $updated = $this->habitsRepository->updateHabitById($reqHabitsDto->habitId, $userId, $habitDto);
-            if (!$updated) {
-                return false;
-            }
-
-            $purposeDto = new PurposeDto(
-                habitsId: $reqHabitsDto->habitId,
-                type: $reqHabitsDto->purposeType,
-                count: $reqHabitsDto->purposeCount,
-                checkManually: $reqHabitsDto->checkManually,
-                autoCount: $reqHabitsDto->autoCount,
-                checkAuto: $reqHabitsDto->checkAuto,
-                checkClose: $reqHabitsDto->checkClose
-            );
-
-            $this->purposeRepository->updatePurposeByHabitId($purposeDto);
-
-            $this->datesCommandUseCase->saveOrUpdateDatesByHabitsId(
-                $reqHabitsDto->habitId,
-                $reqHabitsDto->date,
-                $reqHabitsDto->datesType
-            );
-
-            return true;
+    ) {
     }
 
+    /**
+     * @throws \Exception
+     */
+    public function updateHabits(ReqUpdateHabitsDto $reqHabitsDto): bool
+    {
+        $token = $this->tokenProvider->getTokens();
+        $userInfo = $this->jwtServices->getUserInfoFromToken($token->getAccessToken());
+        $userId = $userInfo->getUserId();
+
+        $habitDto = new SaveHabitDto(
+            $reqHabitsDto->titleHabit,
+            $reqHabitsDto->quote,
+            $reqHabitsDto->goalInDays,
+            $reqHabitsDto->beginDate,
+            $reqHabitsDto->notificationDate,
+            '',
+            $userId
+        );
+
+        $updated = $this->habitsRepository->updateHabitById($reqHabitsDto->habitId, $userId, $habitDto);
+        if (!$updated) {
+            return false;
+        }
+
+        $purposeDto = new PurposeDto(
+            habitsId: $reqHabitsDto->habitId,
+            type: $reqHabitsDto->purposeType,
+            count: $reqHabitsDto->purposeCount,
+            checkManually: $reqHabitsDto->checkManually,
+            autoCount: $reqHabitsDto->autoCount,
+            checkAuto: $reqHabitsDto->checkAuto,
+            checkClose: $reqHabitsDto->checkClose
+        );
+
+        $this->purposeRepository->updatePurposeByHabitId($purposeDto);
+
+        $this->datesCommandUseCase->saveOrUpdateDatesByHabitsId(
+            $reqHabitsDto->habitId,
+            $reqHabitsDto->date,
+            $reqHabitsDto->datesType
+        );
+
+        return true;
+    }
 
     public function saveHabits(ReqHabitsDto $reqHabitsDto): bool
     {
@@ -93,9 +89,12 @@ class CommandHabitsUseCase
             );
 
             $habitsId = $this->habitsRepository->saveHabits($habitsDto);
-            if (empty($habitsId)) {
+            if (empty($habitsId) || !is_int($habitsId)) {
                 return false;
             }
+
+
+
 
             $purposeData = new PurposeDto(
                 $habitsId,
@@ -116,6 +115,7 @@ class CommandHabitsUseCase
                 $reqHabitsDto->getDate(),
                 $habitsId
             );
+
             return !empty($isResult);
 
         } catch (\Exception $exception) {
@@ -124,16 +124,13 @@ class CommandHabitsUseCase
                 'user' => $userId ?? null,
                 'habits_data' => $reqHabitsDto,
             ]);
+
             return false;
         }
     }
 
-
     /**
-     * @param int $habitId
-     * @return bool
      * @throw MessageException
-     *
      */
     public function deleteHabitsById(int $habitId): bool
     {
@@ -143,12 +140,10 @@ class CommandHabitsUseCase
 
         $result = $this->habitsRepository->deleteHabitById($habitId, $userId);
 
-        if (empty($result)){
+        if (empty($result)) {
             throw  new MessageException('Не удалось удалить привычку');
         }
 
         return true;
     }
-
-
 }

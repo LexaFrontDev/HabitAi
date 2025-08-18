@@ -2,7 +2,7 @@
 
 namespace App\Domain\Exception\ExistException;
 
-use App\Application\Dto\ExceptionDto\ActionResult;
+use App\Aplication\Dto\ExceptionDto\ActionResult;
 use App\Domain\Exception\BaseException\BusinessThrowableInterface;
 
 final class ExistException extends \RuntimeException implements BusinessThrowableInterface
@@ -17,7 +17,9 @@ final class ExistException extends \RuntimeException implements BusinessThrowabl
         return $this->getCode();
     }
 
-
+    /**
+     * @return array<string, string|string|int>
+     */
     private function getPayload(): array
     {
         return [

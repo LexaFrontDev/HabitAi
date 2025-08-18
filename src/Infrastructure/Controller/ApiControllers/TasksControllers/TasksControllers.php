@@ -20,7 +20,8 @@ class TasksControllers extends AbstractController
         private CommandTasksUseCase $commandTasksUseCase,
         private QueryTasksUseCase $queryTasksUseCase,
         private TasksHistoryUseCases $tasksHistoryUseCases,
-    ) {}
+    ) {
+    }
 
     #[Route('/api/tasks/save', name: 'tasks_save', methods: ['POST'])]
     #[RequiresJwt]
@@ -47,21 +48,21 @@ class TasksControllers extends AbstractController
                 'message' => 'Задачи успешно получены',
             ]);
         }
+
         return $this->json([
             'success' => false,
             'message' => 'Задачи отсутствуют',
         ]);
     }
 
-
     #[Route('/api/tasks/all/get', name: 'get_tasks_all', methods: ['GET'])]
     #[RequiresJwt]
     public function getTasksAll(): JsonResponse
     {
         $result = $this->queryTasksUseCase->getTasksAll();
+
         return $this->json($result);
     }
-
 
     #[Route('/api/tasks/update', name: 'tasks_update', methods: ['PUT'])]
     #[RequiresJwt]
@@ -91,7 +92,7 @@ class TasksControllers extends AbstractController
 
     #[Route('/api/tasks/to/do', name: 'tasks_to_do', methods: ['POST'])]
     #[RequiresJwt]
-    public function tasksToDoSave(Request $request)
+    public function tasksToDoSave(Request $request): JsonResponse
     {
         $data = $request->toArray();
         $taskId = isset($data['task_id']) ? $data['task_id'] : null;
@@ -101,6 +102,7 @@ class TasksControllers extends AbstractController
             return $this->json(['success' => false, 'error' => 'Task id  имеет не корректный тип или название не верное как передавать название task_id тип int'], 400);
         }
         $result = $this->tasksHistoryUseCases->saveToDo($taskId, $month, $date);
+
         return $this->json(['success' => true, 'data' => $result]);
     }
 }

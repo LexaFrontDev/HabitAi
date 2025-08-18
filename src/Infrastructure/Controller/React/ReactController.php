@@ -9,8 +9,6 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ReactController extends AbstractController
 {
-
-
     #[Route('/{reactRouting}', name: 'react_app', requirements: ['reactRouting' => '^(?!api|Users/login).*'])]
     #[RequiresJwt]
     public function index(): Response

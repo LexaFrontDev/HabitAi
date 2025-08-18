@@ -8,14 +8,15 @@ use App\Domain\Repository\Purpose\PurposeRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-
+/**
+ * @extends ServiceEntityRepository<Purpose>
+ */
 class PurposeRepository extends ServiceEntityRepository implements PurposeRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Purpose::class);
     }
-
 
     public function savePurpose(PurposeDto $purpose): int|bool
     {
@@ -31,6 +32,7 @@ class PurposeRepository extends ServiceEntityRepository implements PurposeReposi
         $em = $this->getEntityManager();
         $em->persist($purposeEntity);
         $em->flush();
+
         return $purposeEntity->getId() ?? false;
     }
 
@@ -56,9 +58,9 @@ class PurposeRepository extends ServiceEntityRepository implements PurposeReposi
         $purpose->setCheckClose($dto->isCheckClose());
 
         $em->flush();
+
         return true;
     }
-
 
     public function getPurposeCountByHabitId(int $habitId): int
     {
@@ -87,8 +89,7 @@ class PurposeRepository extends ServiceEntityRepository implements PurposeReposi
 
         $em->remove($purpose);
         $em->flush();
+
         return true;
     }
-
-
 }

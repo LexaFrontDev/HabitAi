@@ -4,8 +4,6 @@ namespace App\Infrastructure\Repository\Pomdor;
 
 use App\Aplication\Dto\PomodorDto\RepPomodorDto;
 use App\Aplication\Dto\PomodorDto\RepPomodoroHistory;
-use App\Aplication\Dto\PomodorDto\ResPomdorCountStatistic;
-use App\Domain\Entity\Habits\Habit;
 use App\Domain\Entity\Pomdoro\PomodorHistory;
 use App\Domain\Repository\Pomodor\PomodorHistoryRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -20,7 +18,6 @@ class PomodorHistoryRepository extends ServiceEntityRepository implements Pomodo
     {
         parent::__construct($registry, PomodorHistory::class);
     }
-
 
     public function cretePomodorHistory(RepPomodorDto $reqPomodorDto): PomodorHistory
     {
@@ -45,8 +42,6 @@ class PomodorHistoryRepository extends ServiceEntityRepository implements Pomodo
         return $history;
     }
 
-
-
     public function deletePomodorHistory(int $pomodorId): bool
     {
         $entity = $this->find($pomodorId);
@@ -55,12 +50,13 @@ class PomodorHistoryRepository extends ServiceEntityRepository implements Pomodo
         }
         $entity->setis_delete(1);
         $this->getEntityManager()->flush();
+
         return true;
     }
 
-
-
-
+    /**
+     * @return RepPomodoroHistory[]
+     */
     public function getHistoryByUserId(int $userId, int $limit = 50): array
     {
         $results = $this->createQueryBuilder('h')
@@ -90,11 +86,9 @@ class PomodorHistoryRepository extends ServiceEntityRepository implements Pomodo
         return $data;
     }
 
-
-
-
-
-
+    /**
+     * @return PomodorHistory[]
+     */
     public function getDataByUserIdAndPeriod(int $userId, int $target): array
     {
         $now = new \DateTime();
@@ -112,11 +106,13 @@ class PomodorHistoryRepository extends ServiceEntityRepository implements Pomodo
             ->getResult();
     }
 
-
+    /**
+     * @return PomodorHistory[]
+     */
     public function getPomoDayByUserId(int $userId): array
     {
-        $start = new \DateTime("today 00:00:00");
-        $end = new \DateTime("today 23:59:59");
+        $start = new \DateTime('today 00:00:00');
+        $end = new \DateTime('today 23:59:59');
 
         return $this->createQueryBuilder('h')
             ->andWhere('h.user_id = :userId')
@@ -144,5 +140,4 @@ class PomodorHistoryRepository extends ServiceEntityRepository implements Pomodo
             return false;
         }
     }
-
 }

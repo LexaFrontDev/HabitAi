@@ -2,10 +2,12 @@
 
 namespace App\Domain\Service\TwigServices;
 
+use App\Aplication\Dto\Main\FeatureDTO;
+
 interface FeaturesServiceInterface
 {
-
-
-    public function getFeatures();
-
+    /**
+     * @return FeatureDTO[]
+     */
+    public function getFeatures(): array;
 }

@@ -29,6 +29,9 @@ const HabitsPage = () => {
     const [status, setStatus] = useState<number | null>(null);
     const [langCode, setLangCode] = useState('en');
     const { t, i18n } = useTranslation('pomodoro');
+    const [habitsSide, setHabitSide] = useState<any | null>(null);
+
+
 
     useEffect(() => {
         fetchHabits();
@@ -175,15 +178,12 @@ const HabitsPage = () => {
                             key={habit.habit_id}
                             data-habit-id={habit.habit_id}
                             data-is-done={habit.is_done || false}
+                            onClick={() => setHabitSide(habit)}
                         >
                             <div className="habit-text">
                                 <strong>{habit.title}</strong><br/>
                                 <small>{habit.notification_date}</small>
                                 <small>{habit.type}</small>
-                                <div className="habit-actions">
-                                    <button onClick={() => handleEdit(habit)} className="triger-pause">✏️</button>
-                                    <button onClick={() => handleDelete(habit.habit_id)} className="triger-delete">🗑️</button>
-                                </div>
                             </div>
                             <div className="habit-progress" onClick={() => handleProgressClick(habit)}>
                                 <svg className="progress-circle" width="40" height="40" viewBox="0 0 40 40">
@@ -285,16 +285,23 @@ const HabitsPage = () => {
                     <Panel  defaultSize={15} minSize={5}>
                         <div className="panel-content">
                             <div className="line-resize"></div>
-
-
-
-
-
+                                {habitsSide && (
+                                    <div className="content-panel">
+                                        <div className="header-text">
+                                            <h4 className="header-title">{habitsSide.title}</h4>
+                                        </div>
+                                        <div className="habit-actions">
+                                            <button onClick={() => handleEdit(habitsSide)} className="triger-pause">✏️</button>
+                                            <button onClick={() => handleDelete(habitsSide.habit_id)}
+                                                    className="triger-delete">🗑️
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
                         </div>
                     </Panel>
                 </PanelGroup>
             </div>
-
 
 
             {showManualInput && (
@@ -316,5 +323,4 @@ const HabitsPage = () => {
             </div>
             );
 };
-
-            export default HabitsPage;
+export default HabitsPage;

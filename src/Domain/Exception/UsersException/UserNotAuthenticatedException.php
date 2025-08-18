@@ -2,7 +2,7 @@
 
 namespace App\Domain\Exception\UsersException;
 
-use App\Application\Dto\ExceptionDto\ActionResult;
+use App\Aplication\Dto\ExceptionDto\ActionResult;
 use App\Domain\Exception\BaseException\BusinessThrowableInterface;
 
 class UserNotAuthenticatedException extends \RuntimeException implements BusinessThrowableInterface

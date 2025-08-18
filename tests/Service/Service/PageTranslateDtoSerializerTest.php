@@ -4,7 +4,6 @@ namespace App\Tests\Service\Service;
 
 use App\Aplication\Dto\LangPageTranslate\LandingPageTranslateDto;
 use App\Aplication\Service\Serialaizer\PageTranslateDtoSerializer;
-use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Serializer\NameConverter\CamelCaseToSnakeCaseNameConverter;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
@@ -66,7 +65,7 @@ class PageTranslateDtoSerializerTest extends TestCase
 
     public function testDeserializeUnknownPageThrowsException(): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Unknown page: unknown');
 
         $service = new PageTranslateDtoSerializer($this->serializer);

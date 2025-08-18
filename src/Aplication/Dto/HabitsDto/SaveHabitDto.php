@@ -1,18 +1,19 @@
 <?php
 
-namespace App\Aplication\Dto\HabitsDtoUseCase;
+namespace App\Aplication\Dto\HabitsDto;
 
 class SaveHabitDto
 {
     public function __construct(
-        private string $titleHabit,
-        private string $quote,
-        private int $goalInDays,
-        private int $beginDate,
-        private string $notificationDate,
-        private string $iconUrl,
-        private int $userId,
-    ) {}
+        public readonly string $titleHabit,
+        public readonly string $quote,
+        public readonly string $goalInDays,
+        public readonly int $beginDate,
+        public readonly string $notificationDate,
+        public readonly string $iconUrl,
+        public readonly int $userId,
+    ) {
+    }
 
     public function getTitleHabit(): string
     {
@@ -24,7 +25,7 @@ class SaveHabitDto
         return $this->quote;
     }
 
-    public function getGoalInDays(): int
+    public function getGoalInDays(): string
     {
         return $this->goalInDays;
     }

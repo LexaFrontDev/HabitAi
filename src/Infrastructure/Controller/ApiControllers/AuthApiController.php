@@ -9,7 +9,6 @@ use App\Aplication\Dto\UsersDto\UsersForRegister;
 use App\Aplication\UseCase\AuthUseCase\UsersAuth;
 use App\Aplication\UseCase\Service\JwtTokens\JwtUseCase;
 use App\Domain\Port\TokenResponseSetterInterface;
-use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,13 +21,14 @@ class AuthApiController extends AbstractController
     public function __construct(
         private TokenResponseSetterInterface $tokenResponseSetter,
         private readonly UsersAuth $usersAuth,
-        private JwtUseCase $jwtAuth
-    ) {}
+        private JwtUseCase $jwtAuth,
+    ) {
+    }
 
     #[Route('/api/auth/register', name: 'api_register', methods: ['POST'])]
     public function register(
         #[MapRequestPayload]
-        UsersForRegister $dto
+        UsersForRegister $dto,
     ): JsonResponse {
         $tokens = $this->usersAuth->register($dto);
         $response = new JsonResponse(['message' => 'Registered']);
@@ -37,6 +37,7 @@ class AuthApiController extends AbstractController
             refreshToken: $tokens->getRefreshToken()
         );
         $this->tokenResponseSetter->attachTokens($dto);
+
         return $response;
     }
 
@@ -60,7 +61,6 @@ class AuthApiController extends AbstractController
         return new JsonResponse(['message' => 'not authenticated'], 401);
     }
 
-
     #[Route('/api/logout', name: 'api_logout', methods: ['GET'])]
     public function logout(): RedirectResponse
     {
@@ -72,17 +72,16 @@ class AuthApiController extends AbstractController
         return $response;
     }
 
-
     #[Route('/api/auth/login', name: 'api_login', methods: ['POST'])]
     public function login(
         #[MapRequestPayload]
-        UsersForLogin $dto
+        UsersForLogin $dto,
     ): JsonResponse {
         $tokens = $this->usersAuth->login($dto);
         $response = new JsonResponse([
             'message' => 'Logged in',
             'access_token' => $tokens->getAccessToken(),
-            'refresh_token' => $tokens->getRefreshToken()
+            'refresh_token' => $tokens->getRefreshToken(),
         ], 200);
         $dto = new JwtTokenDto(
             accessToken: $tokens->getAccessToken(),

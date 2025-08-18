@@ -5,7 +5,6 @@ namespace App\Domain\Service;
 use App\Aplication\Dto\JwtDto\JwtCheckDto;
 use App\Aplication\Dto\UsersDto\UsersInfoForToken;
 use App\Aplication\Dto\JwtDto\JwtTokenDto;
-use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
 interface JwtServicesInterface
 {
@@ -17,21 +16,12 @@ interface JwtServicesInterface
 
     public function refreshToken(string $refreshToken): JwtTokenDto;
 
-
-    /**
-     * @return JwtTokenDto|bool
-     * @throws AuthenticationException
-     */
     public function validateToken(JwtCheckDto $tokens): JwtTokenDto|bool;
 
     public function getUserInfoFromToken(string $token): UsersInfoForToken;
 
-
     /**
-     * @param string $accessToken
-     * @param string $refreshToken
      * @return string статус токенов
      */
     public function handleTokens(string $accessToken, string $refreshToken): string;
-
 }

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Infrastructure\Repository\Tasks;
@@ -8,7 +9,6 @@ use App\Domain\Repository\Tasks\TasksHistoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Psr\Log\LoggerInterface;
-use function PHPUnit\Framework\returnArgument;
 
 // Импорт логгера
 
@@ -26,14 +26,9 @@ class TasksHistoryRepository extends ServiceEntityRepository implements TasksHis
     }
 
     /**
-     * @param int $userID
-     * @param int $tasksId
-     * @param string|null $monthly
-     * @param string|null $date
-     * @return int|bool
      * @throws \DateMalformedStringException
      */
-    public function tasksToDoSave(int $userID, int $tasksId, string $monthly = null, string $date = null): int|bool
+    public function tasksToDoSave(int $userID, int $tasksId, ?string $monthly = null, ?string $date = null): int|bool
     {
         try {
             $entityManager = $this->getEntityManager();
@@ -48,6 +43,7 @@ class TasksHistoryRepository extends ServiceEntityRepository implements TasksHis
             if (!empty($isCheck)) {
                 $entityManager->remove($isCheck);
                 $entityManager->flush();
+
                 return true;
             }
 
@@ -62,7 +58,8 @@ class TasksHistoryRepository extends ServiceEntityRepository implements TasksHis
                     $beginDate = new \DateTime($date);
                     $entity->setTimeClose($beginDate);
                 } catch (\Exception $e) {
-                    $this->logger->error("tasksToDoSave: Некорректная дата", ['date' => $date, 'exception' => $e]);
+                    $this->logger->error('tasksToDoSave: Некорректная дата', ['date' => $date, 'exception' => $e]);
+
                     return false;
                 }
             }
@@ -71,18 +68,17 @@ class TasksHistoryRepository extends ServiceEntityRepository implements TasksHis
             $em = $this->getEntityManager();
             $em->persist($entity);
             $em->flush();
+
             return $entity->getId();
         } catch (\Throwable $e) {
             $this->logger->error('tasksToDoSave: Ошибка при сохранении задачи', ['exception' => $e]);
+
             return false;
         }
     }
 
     /**
-     *
-     * @param int $userID
-     * @param int $tasksId
-     * @return bool Возвращает true, если удаление прошло успешно, false если записи не найдено.
+     * @return bool возвращает true, если удаление прошло успешно, false если записи не найдено
      */
     public function tasksWontDo(int $userID, int $tasksId): bool
     {
@@ -100,7 +96,7 @@ class TasksHistoryRepository extends ServiceEntityRepository implements TasksHis
         }
         $entityManager->remove($record);
         $entityManager->flush();
+
         return true;
     }
-
 }

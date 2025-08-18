@@ -1,36 +1,33 @@
 <?php
 
-namespace App\Aplication\Dto\HabitsDtoUseCase;
+namespace App\Aplication\Dto\HabitsDto;
 
-class  ReqHabitsDto
+class ReqHabitsDto
 {
-
-    public function __construct(
-        private string $titleHabit,
-        private string $quote,
-        private string $goalInDays,
-        private string $datesType,
-        private array $date,
-        private int $beginDate,
-        private string $notificationDate,
-        private string $purposeType,
-        private int $purposeCount,
-        private bool $checkManually = false,
-        private int $autoCount = 0,
-        private bool $checkAuto = false,
-        private bool $checkClose = false,
-    ){}
-
-
     /**
-     * @return string
+     * @param array<int, mixed> $date
      */
+    public function __construct(
+        public readonly string $titleHabit,
+        public readonly string $quote,
+        public readonly string $goalInDays,
+        public readonly string $datesType,
+        public readonly array $date,
+        public readonly int $beginDate,
+        public readonly string $notificationDate,
+        public readonly string $purposeType,
+        public readonly int $purposeCount,
+        public readonly bool $checkManually = false,
+        public readonly int $autoCount = 0,
+        public readonly bool $checkAuto = false,
+        public readonly bool $checkClose = false,
+    ) {
+    }
+
     public function getTitleHabit(): string
     {
         return $this->titleHabit;
     }
-
-
 
     public function getQuote(): string
     {
@@ -42,11 +39,13 @@ class  ReqHabitsDto
         return $this->datesType;
     }
 
+    /**
+     * @return array<int, mixed>
+     */
     public function getDate(): array
     {
         return $this->date;
     }
-
 
     public function getBeginDate(): int
     {
@@ -58,59 +57,38 @@ class  ReqHabitsDto
         return $this->notificationDate;
     }
 
-
-    /**
-     * @return string
-     */
     public function getGoalInDays(): string
     {
         return $this->goalInDays;
     }
 
-
-    /**
-     * @return string
-     */
     public function getPurposeType(): string
     {
         return $this->purposeType;
     }
 
-
-    /**
-     * @return int
-     */
     public function getPurposeCount(): int
     {
         return $this->purposeCount;
     }
 
-
-    /**
-     * @return bool
-     */
     public function isCheckManually(): bool
     {
         return $this->checkManually;
     }
-
 
     public function isCheckAuto(): bool
     {
         return $this->checkAuto;
     }
 
-
     public function isCheckClose(): bool
     {
         return $this->checkClose;
     }
 
-
     public function getautoCount(): int
     {
         return $this->autoCount;
     }
-
-
 }

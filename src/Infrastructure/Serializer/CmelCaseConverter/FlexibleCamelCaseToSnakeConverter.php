@@ -2,7 +2,6 @@
 
 namespace App\Infrastructure\Serializer\CmelCaseConverter;
 
-
 use Symfony\Component\Serializer\NameConverter\NameConverterInterface;
 
 class FlexibleCamelCaseToSnakeConverter implements NameConverterInterface

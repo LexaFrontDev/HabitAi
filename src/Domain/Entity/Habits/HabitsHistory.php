@@ -2,7 +2,6 @@
 
 namespace App\Domain\Entity\Habits;
 
-use App\Domain\Repository\Habits\HabitsHistoryRepositoryInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
@@ -18,22 +17,22 @@ class HabitsHistory
     private ?int $id = null;
 
     #[ORM\Column]
-    private ?int $count = null;
+    private int $count;
 
     #[ORM\Column]
-    private ?int $habits_id = null;
+    private int $habits_id;
 
     #[ORM\Column]
-    private ?int $count_end = null;
+    private int $count_end;
 
 
     #[ORM\Column]
-    private ?bool $isDone = false;
+    private bool $isDone = false;
 
     #[ORM\Column(name: 'user_id')]
-    private ?int $userId = null;
+    private int $userId;
 
-    #[ORM\Column(name: 'recorded_at', type: 'datetime')]
+    #[ORM\Column(name: 'recorded_at', type: 'datetime', nullable: true)]
     private ?\DateTimeInterface $recordedAt = null;
 
     #[ORM\Column(type: 'datetime_immutable')]
@@ -61,7 +60,7 @@ class HabitsHistory
         return $this->id;
     }
 
-    public function getCount(): ?int
+    public function getCount(): int
     {
         return $this->count;
     }
@@ -73,7 +72,7 @@ class HabitsHistory
         return $this;
     }
 
-    public function getHabitsId(): ?int
+    public function getHabitsId(): int
     {
         return $this->habits_id;
     }
@@ -85,7 +84,7 @@ class HabitsHistory
         return $this;
     }
 
-    public function getCountEnd(): ?int
+    public function getCountEnd(): int
     {
         return $this->count_end;
     }
@@ -119,57 +118,33 @@ class HabitsHistory
         return $this;
     }
 
-
-    /**
-     * @param bool|null $isDone
-     */
     public function setIsDone(?bool $isDone): void
     {
         $this->isDone = $isDone;
     }
 
-    /**
-     * @return bool|null
-     */
-    public function getIsDone(): ?bool
+    public function getIsDone(): bool
     {
         return $this->isDone;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getUserId(): ?int
+    public function getUserId(): int
     {
         return $this->userId;
     }
 
-    /**
-     * @param int|null $userId
-     */
-    public function setUserId(?int $userId): void
+    public function setUserId(int $userId): void
     {
         $this->userId = $userId;
     }
 
-    /**
-     * @return \DateTimeInterface|null
-     */
     public function getRecordedAt(): ?\DateTimeInterface
     {
         return $this->recordedAt;
     }
 
-    /**
-     * @param \DateTimeInterface|null $recordedAt
-     */
     public function setRecordedAt(?\DateTimeInterface $recordedAt): void
     {
         $this->recordedAt = $recordedAt;
     }
-
-
-
-
-
 }

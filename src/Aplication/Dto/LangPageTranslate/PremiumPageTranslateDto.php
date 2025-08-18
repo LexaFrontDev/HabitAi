@@ -17,5 +17,6 @@ class PremiumPageTranslateDto
         public readonly string $faqTitle,
         public readonly string $readyButton,
         public readonly string $selectPlanText,
-    ) {}
+    ) {
+    }
 }

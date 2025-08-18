@@ -2,7 +2,7 @@
 
 namespace App\Infrastructure\EventListener\Exceptions;
 
-use App\Application\Dto\ExceptionDto\ActionResult;
+use App\Aplication\Dto\ExceptionDto\ActionResult;
 use App\Domain\Exception\BaseException\BusinessThrowableInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -12,7 +12,9 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ExceptionListener
 {
-    public function __construct(private LoggerInterface $logger) {}
+    public function __construct(private LoggerInterface $logger)
+    {
+    }
 
     public function onKernelException(ExceptionEvent $event): void
     {
@@ -50,16 +52,14 @@ class ExceptionListener
     {
         $status = ($result->status >= 100 && $result->status <= 599) ? $result->status : 500;
 
-        if ($result->redirectUrl !== null) {
+        if (null !== $result->redirectUrl) {
             return new RedirectResponse($result->redirectUrl, $status);
         }
 
-        if ($result->json !== null) {
+        if (null !== $result->json) {
             return new JsonResponse($result->json, $status);
         }
 
         return new JsonResponse(['message' => 'Unhandled error'], $status);
     }
-
 }
-

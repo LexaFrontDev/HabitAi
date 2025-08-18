@@ -2,6 +2,8 @@
 
 namespace App\Aplication\Dto\UsersDto;
 
+use App\Domain\ValueObject\Settings\SettingsUsersValueObject;
+
 class UsersForUpdate
 {
     public function __construct(
@@ -10,8 +12,9 @@ class UsersForUpdate
         private readonly ?string $password = null,
         private readonly ?int $premium = null,
         private readonly ?string $role = null,
-        private readonly ?array $settings = null,
-    ) {}
+        private readonly ?SettingsUsersValueObject $settings = null,
+    ) {
+    }
 
     public function getName(): ?string
     {
@@ -38,7 +41,7 @@ class UsersForUpdate
         return $this->role;
     }
 
-    public function getSettings(): ?array
+    public function getSettings(): ?SettingsUsersValueObject
     {
         return $this->settings;
     }

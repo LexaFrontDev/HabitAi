@@ -4,16 +4,15 @@ namespace App\Aplication\Dto\PomodorDto;
 
 class ReqPomodorDto
 {
-
     public function __construct(
         public readonly string $title,
-        private int $userId,
-        private int $timeFocus,
-        private int $timeStart,
-        private int $timeEnd,
-        private int $created_date
-    ){}
-
+        public readonly int $userId,
+        public readonly int $timeFocus,
+        public readonly int $timeStart,
+        public readonly int $timeEnd,
+        public readonly int $created_date,
+    ) {
+    }
 
     public function getUserId(): int
     {

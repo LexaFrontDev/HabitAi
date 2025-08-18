@@ -6,13 +6,14 @@ use App\Aplication\UseCase\UsersUseCase\UsersQueryUseCase;
 use App\Infrastructure\Attribute\RequiresJwt;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
 class UsersController extends AbstractController
 {
-    public function __construct(private UsersQueryUseCase $usersQueryUseCase) {}
+    public function __construct(private UsersQueryUseCase $usersQueryUseCase)
+    {
+    }
 
     #[Route('/api/web/user/id', name: 'get_users_id', methods: ['GET'])]
     #[RequiresJwt]
@@ -22,15 +23,10 @@ class UsersController extends AbstractController
             $userInfo = $this->usersQueryUseCase->getUsersInfoByToken();
 
             return new JsonResponse([
-                'userId' => $userInfo->getUserId()
+                'userId' => $userInfo->getUserId(),
             ], 200);
         } catch (AuthenticationException $e) {
             return new JsonResponse(['error' => 'Вы не авторизованы'], 401);
         }
     }
-
-
-
-
-
 }

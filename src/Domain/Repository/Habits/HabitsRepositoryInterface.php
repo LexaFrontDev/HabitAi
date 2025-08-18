@@ -2,26 +2,15 @@
 
 namespace App\Domain\Repository\Habits;
 
-use App\Aplication\Dto\HabitsDtoUseCase\ReqHabitsDto;
-use App\Aplication\Dto\HabitsDtoUseCase\SaveHabitDto;
+use App\Aplication\Dto\HabitsDto\SaveHabitDto;
+use App\Domain\Entity\Habits\Habit;
+use Doctrine\DBAL\Exception;
 
 interface HabitsRepositoryInterface
 {
-
-
-    /**
-     * @param int $userId
-     * @return mixed
-     */
-    public function getByUserId(int $userId);
-
-    /**
-     * @param SaveHabitDto $reqHabitsDto
-     * @return int|bool
-     */
+    public function getByUserId(int $userId): Habit;
 
     public function saveHabits(SaveHabitDto $reqHabitsDto): int|bool;
-
 
     /**
      * Возвращает привычки пользователя, которые активны на сегодня.
@@ -32,47 +21,25 @@ interface HabitsRepositoryInterface
      * - Повторяющиеся в месяц (repeat): проверяет, совпадает ли день месяца
      *
      * Параметры:
-     * @param int $day
-     * @param int $week
-     * @param int $month
-     * @param int $userId
-     * @return array
+     *
+     * @return array<int, array<string, mixed>>|false
+     *
+     * @throws Exception
      */
-    public function getHabitsForToday(int $day, int $week, int $month,  int $userId): array;
+    public function getHabitsForToday(int $day, int $week, int $month, int $userId): array|bool;
 
-
-    /**
-     * @param int $day
-     * @param int $week
-     * @param int $month
-     * @param int $userId
-     * @return int
-     */
     public function getCountHabitsToday(int $day, int $week, int $month, int $userId): int;
 
-    /**
-     * @param int $habitId
-     * @param int $userId
-     * @param SaveHabitDto $dto
-     * @return bool
-     */
     public function updateHabitById(int $habitId, int $userId, SaveHabitDto $dto): bool;
 
     /**
-     * Возвращает все привычки пользователя с пагинацией, без фильтра по дате.
+     * Возвращает все привычки пользователя с пагинацией, в формате getHabitsForToday.
      *
-     * @param int $userId
-     * @param int $limit
-     * @param int $offset
-     * @return array
+     * @return array<int, array<string, mixed>>
+     *
+     * @throws Exception
      */
     public function getAllHabitsWithLimit(int $userId, int $limit = 50, int $offset = 0): array;
 
-
-    /**
-     * @param int $habitId
-     * @param int $userId
-     * @return bool
-     */
     public function deleteHabitById(int $habitId, int $userId): bool;
 }

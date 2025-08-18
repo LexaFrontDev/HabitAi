@@ -6,10 +6,12 @@ use App\Aplication\Dto\TasksDto\TasksDay;
 
 class MatricWithTasks
 {
-
+    /**
+     * @param TasksDay[] $tasks
+     */
     public function __construct(
         public readonly int $tasksNumber,
-        /*** @var TasksDay[] */
         public readonly array $tasks,
-    ){}
+    ) {
+    }
 }

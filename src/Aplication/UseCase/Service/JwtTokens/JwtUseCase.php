@@ -9,12 +9,10 @@ use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
 class JwtUseCase
 {
-
     public function __construct(
         private JwtServicesInterface $jwtServices,
-    ){}
-
-
+    ) {
+    }
 
     public function checkJwtToken(JwtCheckDto $jwtCheckDto): JwtTokenDto|bool
     {
@@ -29,7 +27,4 @@ class JwtUseCase
             return false;
         }
     }
-
-
-
 }

@@ -2,8 +2,6 @@
 
 namespace App\Tests\Repository\Language;
 
-use App\Aplication\Dto\LangPageTranslate\LangPageReturn;
-use App\Aplication\Dto\LangPageTranslate\TranslateNames;
 use App\Domain\Repository\Language\LanguageInterface;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 
@@ -34,8 +32,6 @@ class LanguageRepositoryTest extends KernelTestCase
         $this->assertIsString($result->prefix);
     }
 
-
-
     public function testGetPagesTranslationsInvalid(): void
     {
 
@@ -50,8 +46,4 @@ class LanguageRepositoryTest extends KernelTestCase
         // assert
         $this->assertNull($result);
     }
-
-
-
-
 }

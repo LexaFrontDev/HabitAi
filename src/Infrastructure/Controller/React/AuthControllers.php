@@ -5,6 +5,7 @@ namespace App\Infrastructure\Controller\React;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+
 class AuthControllers extends AbstractController
 {
     #[Route('/Users/login', name: 'login')]

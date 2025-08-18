@@ -11,12 +11,12 @@ class ImageServise implements ImagesServiceInterface
 {
     public function __construct(
         private StorageInterface $storage,
-        private SaveStorageDto $saveStorageDto,
-    ) {}
+    ) {
+    }
 
     public function saveImage(string $image64): bool
     {
-        $uploadDir = __DIR__ . '/../../../../public/Upload/Images/';
+        $uploadDir = __DIR__.'/../../../../public/Upload/Images/';
         if (!is_dir($uploadDir)) {
             mkdir($uploadDir, 0777, true);
         }
@@ -28,15 +28,20 @@ class ImageServise implements ImagesServiceInterface
             return false;
         }
 
-        $filename = uniqid('img_', true) . '.' . $extension;
-        $fullPath = $uploadDir . $filename;
-        $imageData = base64_decode($image64);
-        if ($imageData === false || file_put_contents($fullPath, $imageData) === false) {
+        $filename = uniqid('img_', true).'.'.$extension;
+        $fullPath = $uploadDir.$filename;
+        $imageData = base64_decode($image64, true);
+        if (false === $imageData) {
             return false;
         }
 
+        if (false === file_put_contents($fullPath, $imageData)) {
+            return false;
+        }
+
+
         $dto = new SaveStorageDto(
-            fullPath: 'Upload/Images/' . $filename,
+            fullPath: 'Upload/Images/'.$filename,
             type: 'image',
             fileType: $extension
         );
@@ -46,26 +51,26 @@ class ImageServise implements ImagesServiceInterface
 
     public function deleteImage(string|int $imageId): bool
     {
-        return $this->storage->deletePathById((int)$imageId);
+        return $this->storage->deletePathById((int) $imageId);
     }
 
     public function moveImage(string|int $imageId, string $targetFolder): bool
     {
-        $storage = $this->storage->find((int)$imageId);
+        $storage = $this->storage->fineByFileId((int) $imageId);
         if (!$storage) {
             return false;
         }
 
-        $sourcePath = __DIR__ . '/../../../../public/' . $storage->getFullPath();
-        $targetDir = __DIR__ . '/../../../../public/' . $targetFolder;
+        $sourcePath = __DIR__.'/../../../../public/'.$storage->getFullPath();
+        $targetDir = __DIR__.'/../../../../public/'.$targetFolder;
 
         if (!is_dir($targetDir)) {
             mkdir($targetDir, 0777, true);
         }
 
         $filename = basename($storage->getFullPath());
-        $newRelativePath = trim($targetFolder, '/') . '/' . $filename;
-        $newFullPath = $targetDir . '/' . $filename;
+        $newRelativePath = trim($targetFolder, '/').'/'.$filename;
+        $newFullPath = $targetDir.'/'.$filename;
 
         if (!file_exists($sourcePath)) {
             return false;

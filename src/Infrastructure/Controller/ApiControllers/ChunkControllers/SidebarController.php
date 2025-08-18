@@ -10,9 +10,9 @@ use Symfony\Component\Routing\Attribute\Route;
 class SidebarController extends AbstractController
 {
     public function __construct(
-        private SidebarService $sidebarService
-    ){}
-
+        private SidebarService $sidebarService,
+    ) {
+    }
 
     #[Route('/api/sidebar', name: 'sidebar_list', methods: ['GET'])]
     public function sideBarUlList(): Response

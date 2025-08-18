@@ -6,8 +6,6 @@ use App\Aplication\Dto\LangPageTranslate\ReturnPrefiixs;
 
 interface LanguagePrefixInterface
 {
-
-
     /**
      * @return ReturnPrefiixs[]
      */

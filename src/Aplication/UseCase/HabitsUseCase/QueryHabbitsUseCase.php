@@ -2,40 +2,35 @@
 
 namespace App\Aplication\UseCase\HabitsUseCase;
 
-use App\Domain\Entity\Habits\Habit;
-use App\Domain\Entity\Purpose\Purpose;
 use App\Domain\Exception\Message\MessageException;
 use App\Domain\Exception\NotFoundException\NotFoundException;
 use App\Domain\Port\TokenProviderInterface;
 use App\Domain\Repository\Habits\HabitsRepositoryInterface;
 use App\Domain\Service\JwtServicesInterface;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\HttpFoundation\Request;
 
 class QueryHabbitsUseCase
 {
-
-
-
     public function __construct(
         private TokenProviderInterface $tokenProvider,
         private HabitsRepositoryInterface $habitsRepository,
         private JwtServicesInterface $jwtServices,
-        private LoggerInterface $logger
-    ){}
+        private LoggerInterface $logger,
+    ) {
+    }
 
-
-
-
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     public function getHabitsForDate(string $dateString): array
     {
         try {
             $token = $this->tokenProvider->getTokens();
             $userId = $this->jwtServices->getUserInfoFromToken($token->getAccessToken())->getUserId();
             $targetDate = new \DateTimeImmutable($dateString);
-            $dayOfWeekNumber = $targetDate->format('N');
-            $dayOfMonth = $targetDate->format('d');
-            $month = $targetDate->format('m');
+            $dayOfMonth = (int) $targetDate->format('d');
+            $month = (int) $targetDate->format('m');
+            $dayOfWeekNumber = (int) $targetDate->format('N');
             $results = $this->habitsRepository->getHabitsForToday($dayOfMonth, $dayOfWeekNumber, $month, $userId);
             if (empty($results)) {
                 throw new NotFoundException('Привычки отсутствует');
@@ -46,20 +41,21 @@ class QueryHabbitsUseCase
                 $row['period'] = $getTestMorgning;
 
                 $row['date'] = [
-                    'mon' => (bool)$row['mon'],
-                    'tue' => (bool)$row['tue'],
-                    'wed' => (bool)$row['wed'],
-                    'thu' => (bool)$row['thu'],
-                    'fri' => (bool)$row['fri'],
-                    'sat' => (bool)$row['sat'],
-                    'sun' => (bool)$row['sun'],
+                    'mon' => (bool) $row['mon'],
+                    'tue' => (bool) $row['tue'],
+                    'wed' => (bool) $row['wed'],
+                    'thu' => (bool) $row['thu'],
+                    'fri' => (bool) $row['fri'],
+                    'sat' => (bool) $row['sat'],
+                    'sun' => (bool) $row['sun'],
                 ];
 
                 $data[] = $row;
             }
+
             return $data;
         } catch (\Exception $e) {
-            $this->logger->error('Error in getHabitsForToday: ' . $e->getMessage(), [
+            $this->logger->error('Error in getHabitsForToday: '.$e->getMessage(), [
                 'exception' => $e,
                 'trace' => $e->getTraceAsString(),
             ]);
@@ -68,10 +64,12 @@ class QueryHabbitsUseCase
         }
     }
 
-
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     public function getHabitsWidthLimit(int $limit, int $offset): array
     {
-        try{
+        try {
             $token = $this->tokenProvider->getTokens();
             $userId = $this->jwtServices->getUserInfoFromToken($token->getAccessToken())->getUserId();
             $results = $this->habitsRepository->getAllHabitsWithLimit($userId, $limit, $offset);
@@ -87,13 +85,13 @@ class QueryHabbitsUseCase
                 $row['period'] = $getTestMorgning;
 
                 $row['date'] = [
-                    'mon' => (bool)$row['mon'],
-                    'tue' => (bool)$row['tue'],
-                    'wed' => (bool)$row['wed'],
-                    'thu' => (bool)$row['thu'],
-                    'fri' => (bool)$row['fri'],
-                    'sat' => (bool)$row['sat'],
-                    'sun' => (bool)$row['sun'],
+                    'mon' => (bool) $row['mon'],
+                    'tue' => (bool) $row['tue'],
+                    'wed' => (bool) $row['wed'],
+                    'thu' => (bool) $row['thu'],
+                    'fri' => (bool) $row['fri'],
+                    'sat' => (bool) $row['sat'],
+                    'sun' => (bool) $row['sun'],
                 ];
 
                 $data[] = $row;
@@ -101,7 +99,7 @@ class QueryHabbitsUseCase
 
             return $data;
         } catch (\Exception $e) {
-            $this->logger->error('Error in getHabitsForToday: ' . $e->getMessage(), [
+            $this->logger->error('Error in getHabitsForToday: '.$e->getMessage(), [
                 'exception' => $e,
                 'trace' => $e->getTraceAsString(),
             ]);
@@ -110,16 +108,18 @@ class QueryHabbitsUseCase
         }
     }
 
-
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     public function getHabitsForToday(): array
     {
         try {
             $token = $this->tokenProvider->getTokens();
             $userId = $this->jwtServices->getUserInfoFromToken($token->getAccessToken())->getUserId();
 
-            $dayOfWeekNumber = date('N');
-            $dayOfMonth = date('d');
-            $month = date('m');
+            $dayOfWeekNumber = (int) date('N');
+            $dayOfMonth = (int) date('d');
+            $month = (int) date('m');
 
             $results = $this->habitsRepository->getHabitsForToday($dayOfMonth, $dayOfWeekNumber, $month, $userId);
 
@@ -133,13 +133,13 @@ class QueryHabbitsUseCase
                 $row['period'] = $getTestMorgning;
 
                 $row['date'] = [
-                    'mon' => (bool)$row['mon'],
-                    'tue' => (bool)$row['tue'],
-                    'wed' => (bool)$row['wed'],
-                    'thu' => (bool)$row['thu'],
-                    'fri' => (bool)$row['fri'],
-                    'sat' => (bool)$row['sat'],
-                    'sun' => (bool)$row['sun'],
+                    'mon' => (bool) $row['mon'],
+                    'tue' => (bool) $row['tue'],
+                    'wed' => (bool) $row['wed'],
+                    'thu' => (bool) $row['thu'],
+                    'fri' => (bool) $row['fri'],
+                    'sat' => (bool) $row['sat'],
+                    'sun' => (bool) $row['sun'],
                 ];
 
                 $data[] = $row;
@@ -147,7 +147,7 @@ class QueryHabbitsUseCase
 
             return $data;
         } catch (\Exception $e) {
-            $this->logger->error('Error in getHabitsForToday: ' . $e->getMessage(), [
+            $this->logger->error('Error in getHabitsForToday: '.$e->getMessage(), [
                 'exception' => $e,
                 'trace' => $e->getTraceAsString(),
             ]);
@@ -156,18 +156,14 @@ class QueryHabbitsUseCase
         }
     }
 
-
-
-
-
     public function getCountHabitsToDay(): int
     {
         $token = $this->tokenProvider->getTokens();
         $userId = $this->jwtServices->getUserInfoFromToken($token->getAccessToken())->getUserId();
 
-        $dayOfWeekNumber = date('N');
-        $dayOfMonth = date('d');
-        $month = date('m');
+        $dayOfWeekNumber = (int) date('N');
+        $dayOfMonth = (int) date('d');
+        $month = (int) date('m');
 
         $result = $this->habitsRepository->getCountHabitsToday($dayOfMonth, $dayOfWeekNumber, $month, $userId);
         if (empty($result)) {
@@ -177,27 +173,26 @@ class QueryHabbitsUseCase
         return $result;
     }
 
-
-
     /**
-     * @return "morning"|"afternoon"|"evening"|"night"|false
-     * @param "08:30"
+     * @return "morning"|"afternoon"|"evening"|"night"
      */
-    public function determineTimePeriod(string $date): string|bool
+    public function determineTimePeriod(string $date): string
     {
         [$hour, $minutes] = explode(':', $date);
-        $hour = (int)$hour;
+        $hour = (int) $hour;
 
         if ($hour >= 5 && $hour < 12) {
             return 'morning';
-        } elseif ($hour >= 12 && $hour < 17) {
-            return 'afternoon';
-        } elseif ($hour >= 17 && $hour < 21) {
-            return 'evening';
-        } elseif ($hour >= 21 || $hour < 5) {
-            return 'night';
         }
 
-        return false;
+        if ($hour >= 12 && $hour < 17) {
+            return 'afternoon';
+        }
+
+        if ($hour >= 17 && $hour < 21) {
+            return 'evening';
+        }
+
+        return 'night';
     }
 }

@@ -9,11 +9,9 @@ class RepPomodoroHistory
         private ?string $startTime,
         private ?string $endTime,
         private ?string $title = null,
-    ){}
+    ) {
+    }
 
-    /**
-     * @return string|null
-     */
     public function getEndTime(): ?string
     {
         return $this->endTime;
@@ -33,6 +31,4 @@ class RepPomodoroHistory
     {
         return $this->title;
     }
-
-
 }

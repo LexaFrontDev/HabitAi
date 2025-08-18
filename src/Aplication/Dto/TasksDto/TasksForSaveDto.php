@@ -6,9 +6,10 @@ class TasksForSaveDto
 {
     public function __construct(
         public readonly string $title,
-        public readonly ?string $description = null,
         public readonly TasksDateDto $timeData,
-    ) {}
+        public readonly ?string $description = null,
+    ) {
+    }
 
 
 }

@@ -4,39 +4,39 @@ namespace App\Domain\Entity\Purpose;
 
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity, ORM\Table(name: "purposes")]
+#[ORM\Entity, ORM\Table(name: 'purposes')]
 class Purpose
 {
-    #[ORM\Id, ORM\GeneratedValue, ORM\Column(type: "integer")]
+    #[ORM\Id, ORM\GeneratedValue, ORM\Column(type: 'integer')]
     private ?int $id = null;
 
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column(type: 'integer')]
     private int $habitsId;
 
-    #[ORM\Column(type: "string")]
+    #[ORM\Column(type: 'string')]
     private string $type;
 
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column(type: 'integer')]
     private int $count;
 
-    #[ORM\Column(type: "boolean")]
+    #[ORM\Column(type: 'boolean')]
     private bool $checkManually = false;
 
 
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column(type: 'integer')]
     private int $autoCount = 0;
 
-    #[ORM\Column(type: "boolean")]
+    #[ORM\Column(type: 'boolean')]
     private bool $checkAuto = false;
 
-    #[ORM\Column(type: "boolean")]
+    #[ORM\Column(type: 'boolean')]
     private bool $checkClose = false;
 
-#[ORM\Column(type: 'datetime', nullable: true)]
-private ?\DateTimeInterface $created_at = null;
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?\DateTimeInterface $created_at = null;
 
-   #[ORM\Column(type: 'datetime', nullable: true)]
-private ?\DateTimeInterface $updated_at = null;
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?\DateTimeInterface $updated_at = null;
 
     #[ORM\Column(type: 'boolean')]
     private bool $is_delete = false;
@@ -55,6 +55,7 @@ private ?\DateTimeInterface $updated_at = null;
     public function setType(string $type): self
     {
         $this->type = $type;
+
         return $this;
     }
 
@@ -66,6 +67,7 @@ private ?\DateTimeInterface $updated_at = null;
     public function setCount(int $count): self
     {
         $this->count = $count;
+
         return $this;
     }
 
@@ -77,6 +79,7 @@ private ?\DateTimeInterface $updated_at = null;
     public function setCheckManually(bool $checkManually): self
     {
         $this->checkManually = $checkManually;
+
         return $this;
     }
 
@@ -88,6 +91,7 @@ private ?\DateTimeInterface $updated_at = null;
     public function setCheckAuto(bool $checkAuto): self
     {
         $this->checkAuto = $checkAuto;
+
         return $this;
     }
 
@@ -99,39 +103,25 @@ private ?\DateTimeInterface $updated_at = null;
     public function setCheckClose(bool $checkClose): self
     {
         $this->checkClose = $checkClose;
+
         return $this;
     }
 
-    /**
-     * @param int $habitsId
-     */
     public function setHabitsId(int $habitsId): void
     {
         $this->habitsId = $habitsId;
     }
 
-
-    /**
-     * @return int
-     */
     public function getHabitsId(): int
     {
         return $this->habitsId;
     }
 
-
-    /**
-     * @param int $autoCount
-     */
     public function setautoCount(int $autoCount): void
     {
         $this->autoCount = $autoCount;
     }
 
-
-    /**
-     * @return int
-     */
     public function getautoCount(): int
     {
         return $this->autoCount;
@@ -145,6 +135,7 @@ private ?\DateTimeInterface $updated_at = null;
     public function setCreatedAt(?\DateTimeInterface $created_at): self
     {
         $this->created_at = $created_at;
+
         return $this;
     }
 
@@ -156,6 +147,7 @@ private ?\DateTimeInterface $updated_at = null;
     public function setUpdatedAt(?\DateTimeInterface $updated_at): self
     {
         $this->updated_at = $updated_at;
+
         return $this;
     }
 
@@ -167,6 +159,7 @@ private ?\DateTimeInterface $updated_at = null;
     public function setis_delete(bool $is_delete): self
     {
         $this->is_delete = $is_delete;
+
         return $this;
     }
 }

@@ -8,5 +8,6 @@ class ReplaceMatricColumn
         public readonly ?int $userId,
         public readonly ?int $taskId,
         public readonly ?int $columnNumber = null,
-    ){}
+    ) {
+    }
 }

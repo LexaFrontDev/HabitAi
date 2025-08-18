@@ -8,24 +8,22 @@ use App\Domain\Repository\Dates\DataJunctionRepositoryInterface;
 use App\Domain\Repository\Dates\DatesDailyRepositoryInterface;
 use App\Domain\Repository\DatesWeekly\DatesWeeklyRepositoryInterface;
 use App\Domain\Repository\DayesRepeat\DatesRepeatRepositoryInterface;
-use App\Domain\Repository\Habits\HabitsRepositoryInterface;
-use App\Domain\Repository\Purpose\PurposeRepositoryInterface;
-use App\Domain\Service\JwtServicesInterface;
-use Exception;
-
 
 class DatesCommandUseCase
 {
-
     public function __construct(
         private DatesWeeklyRepositoryInterface $datesWeeklyRepository,
         private DatesDailyRepositoryInterface $datesDailyRepository,
         private DatesRepeatRepositoryInterface $datesRepeatRepository,
         private DataJunctionRepositoryInterface $dataJunctionRepository,
-        private JwtServicesInterface $jwtServices,
-    ){}
+    ) {
+    }
 
-
+    /**
+     * @param array<int, mixed> $datesArray
+     *
+     * @return DatesDailyForSaveDto|array{count:int}|array{day:int}|false
+     */
     public function getDatesDto(string $datesType, array $datesArray): DatesDailyForSaveDto|array|bool
     {
         return match ($datesType) {
@@ -36,15 +34,17 @@ class DatesCommandUseCase
         };
     }
 
-
-
-
-
-
+    /**
+     * @param array<int, mixed> $datesArray
+     *
+     * @return int|false
+     */
     public function saveDataHabits(string $datesType, array $datesArray, int $habitsId): bool|int
     {
         $isDates = $this->getDatesDto($datesType, $datesArray);
-        if (empty($isDates)) return false;
+        if (empty($isDates)) {
+            return false;
+        }
         $isSucces = null;
 
         if ($isDates instanceof DatesDailyForSaveDto) {
@@ -57,14 +57,16 @@ class DatesCommandUseCase
             return false;
         }
 
-        if (empty($isSucces)) return false;
+        if (empty($isSucces) || !is_int($isSucces)) {
+            return false;
+        }
         $datesJunction = new ReqDataJunction($habitsId, $isSucces, $datesType);
+
         return $this->dataJunctionRepository->saveDateJunction($datesJunction);
     }
 
-
     /**
-     * @throws Exception
+     * @param array<int, mixed> $dates
      */
     public function saveOrUpdateDatesByHabitsId(int $habitsId, array $dates, string $types): bool
     {
@@ -90,7 +92,9 @@ class DatesCommandUseCase
                     default => null,
                 };
 
-
+                if (empty($newDataId) || !is_int($newDataId)) {
+                    return false;
+                }
 
                 $this->dataJunctionRepository->updateDataTypeAndId($junction->getId(), $habitsId, $types, $newDataId);
 
@@ -112,53 +116,60 @@ class DatesCommandUseCase
             default => null,
         };
 
-        if (!$newDataId) return false;
+        if (!$newDataId || !is_int($newDataId)) {
+            return false;
+        }
 
         $this->dataJunctionRepository->createJunction($habitsId, $types, $newDataId);
 
         return true;
     }
 
-
-
-
-
-
+    /**
+     * @param array<int, mixed> $datesArray
+     */
     public function dailyDatesDto(array $datesArray): DatesDailyForSaveDto
     {
         return new DatesDailyForSaveDto(
-            (bool)($datesArray['mon'] ?? false),
-            (bool)($datesArray['tue'] ?? false),
-            (bool)($datesArray['wed'] ?? false),
-            (bool)($datesArray['thu'] ?? false),
-            (bool)($datesArray['fri'] ?? false),
-            (bool)($datesArray['sat'] ?? false),
-            (bool)($datesArray['sun'] ?? false),
+            (bool) ($datesArray['mon'] ?? false),
+            (bool) ($datesArray['tue'] ?? false),
+            (bool) ($datesArray['wed'] ?? false),
+            (bool) ($datesArray['thu'] ?? false),
+            (bool) ($datesArray['fri'] ?? false),
+            (bool) ($datesArray['sat'] ?? false),
+            (bool) ($datesArray['sun'] ?? false),
         );
     }
 
-
-
+    /**
+     * @param array<int, mixed> $datesArray
+     *
+     * @return array{count:int}|false
+     */
     public function WeeklyDatesDto(array $datesArray): array|false
     {
         if (!isset($datesArray['count'])) {
             return false;
         }
+
         return [
-            'count' => (int)$datesArray['count']
+            'count' => (int) $datesArray['count'],
         ];
     }
 
-
+    /**
+     * @param array<int, mixed> $datesArray
+     *
+     * @return array{day:int}|false
+     */
     public function repeatDatesDto(array $datesArray): array|bool
     {
         if (!isset($datesArray['day'])) {
             return false;
         }
+
         return [
-            'day' => (int)$datesArray['day']
+            'day' => (int) $datesArray['day'],
         ];
     }
-
-
 }

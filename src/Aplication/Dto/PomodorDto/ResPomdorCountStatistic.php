@@ -2,15 +2,14 @@
 
 namespace App\Aplication\Dto\PomodorDto;
 
-
-
 class ResPomdorCountStatistic
 {
     public function __construct(
-        private ?string $target = 'Weak',
         private ?string $periodLabel,
         private ?int $count,
-    ){}
+        private ?string $target = 'Weak',
+    ) {
+    }
 
     public function getTarget(): ?string
     {

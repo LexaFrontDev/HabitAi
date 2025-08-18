@@ -49,6 +49,7 @@ class Storage
     public function setFullPath(string $fullPath): static
     {
         $this->fullPath = $fullPath;
+
         return $this;
     }
 
@@ -60,18 +61,19 @@ class Storage
     public function setType(string $type): static
     {
         $this->type = $type;
+
         return $this;
     }
 
-
-    public function getFileType(): int
+    public function getFileType(): string
     {
         return $this->fileType;
     }
 
-    public function setFileType(int $fileType): static
+    public function setFileType(string $fileType): static
     {
         $this->fileType = $fileType;
+
         return $this;
     }
 
@@ -88,6 +90,7 @@ class Storage
     public function setUpdatedAt(?\DateTimeImmutable $updated_at): self
     {
         $this->updated_at = $updated_at;
+
         return $this;
     }
 
@@ -99,6 +102,7 @@ class Storage
     public function setis_delete(bool $is_delete): self
     {
         $this->is_delete = $is_delete;
+
         return $this;
     }
 }

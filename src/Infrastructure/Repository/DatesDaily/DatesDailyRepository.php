@@ -2,16 +2,16 @@
 
 namespace App\Infrastructure\Repository\DatesDaily;
 
-
 use App\Aplication\Dto\DatesDto\DatesDailyForSaveDto;
 use App\Domain\Entity\Dates\DateDaily;
-use App\Domain\Exception\ExistException\ExistException;
 use App\Domain\Exception\NotFoundException\NotFoundException;
 use App\Domain\Repository\Dates\DatesDailyRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-
+/**
+ * @extends ServiceEntityRepository<DateDaily>
+ */
 class DatesDailyRepository extends ServiceEntityRepository implements DatesDailyRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
@@ -19,13 +19,6 @@ class DatesDailyRepository extends ServiceEntityRepository implements DatesDaily
         parent::__construct($registry, DateDaily::class);
     }
 
-
-
-
-    /**
-     * @param DatesDailyForSaveDto $dates
-     * @return int
-     */
     public function saveDates(DatesDailyForSaveDto $dates): int
     {
         $datesEntity = new DateDaily();
@@ -39,6 +32,7 @@ class DatesDailyRepository extends ServiceEntityRepository implements DatesDaily
         $em = $this->getEntityManager();
         $em->persist($datesEntity);
         $em->flush();
+
         return $datesEntity->getId();
     }
 
@@ -70,8 +64,6 @@ class DatesDailyRepository extends ServiceEntityRepository implements DatesDaily
     }
 
     /**
-     * @param int $id
-     * @return bool
      * @throws NotFoundException
      */
     public function deleteDatesDaily(int $id): bool
@@ -88,5 +80,4 @@ class DatesDailyRepository extends ServiceEntityRepository implements DatesDaily
 
         return true;
     }
-
 }

@@ -8,7 +8,9 @@ use App\Domain\Repository\DayesRepeat\DatesRepeatRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-
+/**
+ * @extends ServiceEntityRepository<DateRepeatPerMonth>
+ */
 class DatesRepeatRepository extends ServiceEntityRepository implements DatesRepeatRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
@@ -16,14 +18,14 @@ class DatesRepeatRepository extends ServiceEntityRepository implements DatesRepe
         parent::__construct($registry, DateRepeatPerMonth::class);
     }
 
-
-    public function saveDatesRepeat(int $day): int
+    public function saveDatesRepeat(int $day): int|bool
     {
         $repearEntity = new DateRepeatPerMonth();
         $repearEntity->setDay($day);
         $em = $this->getEntityManager();
         $em->persist($repearEntity);
         $em->flush();
+
         return $repearEntity->getId() ?? false;
     }
 
@@ -48,8 +50,6 @@ class DatesRepeatRepository extends ServiceEntityRepository implements DatesRepe
     }
 
     /**
-     * @param int $id
-     * @return bool
      * @throws NotFoundException
      */
     public function deleteDatesRepeat(int $id): bool

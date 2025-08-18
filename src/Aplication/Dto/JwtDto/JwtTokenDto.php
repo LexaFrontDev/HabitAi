@@ -7,7 +7,8 @@ class JwtTokenDto
     public function __construct(
         private string $accessToken,
         private string $refreshToken,
-    ) {}
+    ) {
+    }
 
     public function getAccessToken(): string
     {

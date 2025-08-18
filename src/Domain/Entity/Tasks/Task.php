@@ -2,64 +2,60 @@
 
 namespace App\Domain\Entity\Tasks;
 
-use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
-#[ORM\Table(name: "Tasks")]
+#[ORM\Table(name: 'Tasks')]
 class Task
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type: "integer")]
+    #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
-    #[ORM\Column(type: "string")]
+    #[ORM\Column(type: 'string')]
     private string $titleTask;
 
-    #[ORM\Column(type: "integer", nullable: true)]
+    #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $purposeId = null;
 
-    #[ORM\Column(type: "integer", nullable: false)]
+    #[ORM\Column(type: 'integer', nullable: false)]
     private int $userId;
 
 
-    #[ORM\Column(type: "text", nullable: true)]
+    #[ORM\Column(type: 'text', nullable: true)]
     private ?string $description = null;
 
 
-    #[ORM\Column(type: "string", nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $time = null;
 
-    #[ORM\Column(type: "string", nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $startDate = null;
 
-    #[ORM\Column(type: "string", nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $startTime = null;
 
-    #[ORM\Column(type: "string", nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $endDate = null;
 
-    #[ORM\Column(type: "string", nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $endTime = null;
 
-    #[ORM\Column(type: "string", nullable: true)]
+    #[ORM\Column(type: 'string', nullable: true)]
     private ?string $repeatMode  = null;
 
-    #[ORM\Column(type: "datetime", nullable: true)]
+    #[ORM\Column(type: 'datetime', nullable: true)]
     private ?\DateTimeInterface $beginDate = null;
 
     #[ORM\Column(name: 'created_at', type: 'datetime', nullable: true, options: ['comment' => 'Дата создания записи'])]
-    private ?DateTimeInterface $created_at = null;
+    private ?\DateTimeInterface $created_at = null;
 
     #[ORM\Column(name: 'updated_at', type: 'datetime', nullable: true, options: ['comment' => 'Дата обновления записи'])]
-    private ?DateTimeInterface $updated_at = null;
+    private ?\DateTimeInterface $updated_at = null;
 
     #[ORM\Column(name: 'is_delete', type: 'boolean', options: ['comment' => 'Флаг логического удаления'])]
     private bool $is_delete = false;
-
-
-
 
     public function getId(): ?int
     {
@@ -69,6 +65,7 @@ class Task
     public function setId(?int $id): self
     {
         $this->id = $id;
+
         return $this;
     }
 
@@ -80,10 +77,9 @@ class Task
     public function setPurposeId(?int $purposeId): self
     {
         $this->purposeId = $purposeId;
+
         return $this;
     }
-
-
 
     public function getTime(): ?string
     {
@@ -93,6 +89,7 @@ class Task
     public function setTime(?string $time): self
     {
         $this->time = $time;
+
         return $this;
     }
 
@@ -104,6 +101,7 @@ class Task
     public function setStartDate(?string $startDate): self
     {
         $this->startDate = $startDate;
+
         return $this;
     }
 
@@ -115,6 +113,7 @@ class Task
     public function setStartTime(?string $startTime): self
     {
         $this->startTime = $startTime;
+
         return $this;
     }
 
@@ -126,6 +125,7 @@ class Task
     public function setEndDate(?string $endDate): self
     {
         $this->endDate = $endDate;
+
         return $this;
     }
 
@@ -137,21 +137,15 @@ class Task
     public function setEndTime(?string $endTime): self
     {
         $this->endTime = $endTime;
+
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getRepeatMode(): ?string
     {
         return $this->repeatMode;
     }
 
-
-    /**
-     * @param string|null $repeatMode
-     */
     public function setRepeatMode(?string $repeatMode): void
     {
         $this->repeatMode = $repeatMode;
@@ -165,10 +159,9 @@ class Task
     public function setTitleTask(string $titleTask): self
     {
         $this->titleTask = $titleTask;
+
         return $this;
     }
-
-
 
     public function getBeginDate(): ?\DateTimeInterface
     {
@@ -178,38 +171,25 @@ class Task
     public function setBeginDate(?\DateTimeInterface $beginDate): self
     {
         $this->beginDate = $beginDate;
+
         return $this;
     }
 
-    /**
-     * @param int $userId
-     */
     public function setUserId(int $userId): void
     {
         $this->userId = $userId;
     }
 
-
-    /**
-     * @return int
-     */
     public function getUserId(): int
     {
         return $this->userId;
     }
 
-    /**
-     * @param string|null $description
-     */
     public function setDescription(?string $description): void
     {
         $this->description = $description;
     }
 
-
-    /**
-     * @return string|null
-     */
     public function getDescription(): ?string
     {
         return $this->description;
@@ -223,6 +203,7 @@ class Task
     public function setCreatedAt(?\DateTimeInterface $created_at): self
     {
         $this->created_at = $created_at;
+
         return $this;
     }
 
@@ -234,6 +215,7 @@ class Task
     public function setUpdatedAt(?\DateTimeInterface $updated_at): self
     {
         $this->updated_at = $updated_at;
+
         return $this;
     }
 
@@ -245,6 +227,7 @@ class Task
     public function setis_delete(bool $is_delete): self
     {
         $this->is_delete = $is_delete;
+
         return $this;
     }
 }

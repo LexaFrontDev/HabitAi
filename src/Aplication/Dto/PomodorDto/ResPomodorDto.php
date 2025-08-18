@@ -4,13 +4,13 @@ namespace App\Aplication\Dto\PomodorDto;
 
 class ResPomodorDto
 {
-
     public function __construct(
-        private int $time_label,
-        private int $timeFocus,
-        private int $timeStart,
-        private int $timeEnd,
-    ){}
+        public readonly int $time_label,
+        public readonly int $timeFocus,
+        public readonly int $timeStart,
+        public readonly int $timeEnd,
+    ) {
+    }
 
 
 }

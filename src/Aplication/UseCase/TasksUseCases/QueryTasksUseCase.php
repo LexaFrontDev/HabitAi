@@ -7,26 +7,20 @@ use App\Domain\Exception\NotFoundException\NotFoundException;
 use App\Domain\Port\TokenProviderInterface;
 use App\Domain\Repository\Tasks\TasksInterface;
 use App\Domain\Service\JwtServicesInterface;
-use phpDocumentor\Reflection\DocBlock\Tags\Throws;
-use phpDocumentor\Reflection\Types\False_;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\HttpFoundation\Request;
 
 class QueryTasksUseCase
 {
-
     public function __construct(
         private TokenProviderInterface $tokenProvider,
         private JwtServicesInterface $jwtServices,
         private TasksInterface $tasksRepository,
         private LoggerInterface $logger,
-
-    ){}
-
+    ) {
+    }
 
     /**
-     * @param int $day
-     * @return false Массив задач за день
+     * @return TasksDay[]|bool Массив задач за день
      */
     public function getTasksByDay(int $day): array|bool
     {
@@ -34,24 +28,23 @@ class QueryTasksUseCase
         $user = $this->jwtServices->getUserInfoFromToken($token->getAccessToken());
         $userId = $user->getUserId();
 
-        try{
+        try {
             $result = $this->tasksRepository->getTasksByDay($userId, $day);
-            if(!empty($result)){
+            if (!empty($result)) {
                 return $result;
             }
 
             return false;
-        }catch (\Exception $exception){
-            $this->logger->error($exception->getMessage(), $exception->getTrace(), ['className' => get_class($this)]);
+        } catch (\Exception $exception) {
+            $this->logger->error($exception->getMessage(), $exception->getTrace());
+
             return false;
         }
     }
 
-
     /**
-     * @param Request $request
      * @return TasksDay[]
-    */
+     */
     public function getTasksAll(): array
     {
         $token = $this->tokenProvider->getTokens();
@@ -60,11 +53,10 @@ class QueryTasksUseCase
 
         $isResult = $this->tasksRepository->getTasksAllByUserId($userId);
 
-        if(!empty($isResult)){
+        if (!empty($isResult)) {
             return $isResult;
         }
 
         return  throw new NotFoundException('Задачи не создано');
     }
-
 }

@@ -2,41 +2,40 @@
 
 namespace App\Domain\Entity\Dates;
 
-
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity, ORM\Table(name: "date_daily")]
+#[ORM\Entity, ORM\Table(name: 'date_daily')]
 class DateDaily
 {
-    #[ORM\Id, ORM\GeneratedValue, ORM\Column(type: "integer")]
+    #[ORM\Id, ORM\GeneratedValue, ORM\Column(type: 'integer')]
     private ?int $id = null;
 
-    #[ORM\Column(type: "boolean")]
+    #[ORM\Column(type: 'boolean')]
     private bool $mon;
 
-    #[ORM\Column(type: "boolean")]
+    #[ORM\Column(type: 'boolean')]
     private bool $tue;
 
-    #[ORM\Column(type: "boolean")]
+    #[ORM\Column(type: 'boolean')]
     private bool $wed;
 
-    #[ORM\Column(type: "boolean")]
+    #[ORM\Column(type: 'boolean')]
     private bool $thu;
 
-    #[ORM\Column(type: "boolean")]
+    #[ORM\Column(type: 'boolean')]
     private bool $fri;
 
-    #[ORM\Column(type: "boolean")]
+    #[ORM\Column(type: 'boolean')]
     private bool $sat;
 
-    #[ORM\Column(type: "boolean")]
+    #[ORM\Column(type: 'boolean')]
     private bool $sun;
 
-#[ORM\Column(type: 'datetime', nullable: true)]
-private ?\DateTimeInterface $created_at = null;
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?\DateTimeInterface $created_at = null;
 
-   #[ORM\Column(type: 'datetime', nullable: true)]
-private ?\DateTimeInterface $updated_at = null;
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    private ?\DateTimeInterface $updated_at = null;
 
     #[ORM\Column(type: 'boolean')]
     private bool $is_delete = false;
@@ -51,17 +50,7 @@ private ?\DateTimeInterface $updated_at = null;
     public function setId(?int $id): self
     {
         $this->id = $id;
-        return $this;
-    }
 
-    public function getHabitId(): int
-    {
-        return $this->habitId;
-    }
-
-    public function setHabitId(int $habitId): self
-    {
-        $this->habitId = $habitId;
         return $this;
     }
 
@@ -73,6 +62,7 @@ private ?\DateTimeInterface $updated_at = null;
     public function setMon(bool $mon): self
     {
         $this->mon = $mon;
+
         return $this;
     }
 
@@ -84,6 +74,7 @@ private ?\DateTimeInterface $updated_at = null;
     public function setTue(bool $tue): self
     {
         $this->tue = $tue;
+
         return $this;
     }
 
@@ -95,6 +86,7 @@ private ?\DateTimeInterface $updated_at = null;
     public function setWed(bool $wed): self
     {
         $this->wed = $wed;
+
         return $this;
     }
 
@@ -106,6 +98,7 @@ private ?\DateTimeInterface $updated_at = null;
     public function setThu(bool $thu): self
     {
         $this->thu = $thu;
+
         return $this;
     }
 
@@ -117,6 +110,7 @@ private ?\DateTimeInterface $updated_at = null;
     public function setFri(bool $fri): self
     {
         $this->fri = $fri;
+
         return $this;
     }
 
@@ -128,6 +122,7 @@ private ?\DateTimeInterface $updated_at = null;
     public function setSat(bool $sat): self
     {
         $this->sat = $sat;
+
         return $this;
     }
 
@@ -139,6 +134,7 @@ private ?\DateTimeInterface $updated_at = null;
     public function setSun(bool $sun): self
     {
         $this->sun = $sun;
+
         return $this;
     }
 
@@ -150,6 +146,7 @@ private ?\DateTimeInterface $updated_at = null;
     public function setCreatedAt(?\DateTimeInterface $created_at): self
     {
         $this->created_at = $created_at;
+
         return $this;
     }
 
@@ -161,6 +158,7 @@ private ?\DateTimeInterface $updated_at = null;
     public function setUpdatedAt(?\DateTimeInterface $updated_at): self
     {
         $this->updated_at = $updated_at;
+
         return $this;
     }
 
@@ -172,6 +170,7 @@ private ?\DateTimeInterface $updated_at = null;
     public function setis_delete(bool $is_delete): self
     {
         $this->is_delete = $is_delete;
+
         return $this;
     }
 }

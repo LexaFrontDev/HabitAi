@@ -2,9 +2,9 @@
 
 namespace App\Infrastructure\Controller\ApiControllers\HabitsController;
 
-use App\Aplication\Dto\HabitsDtoUseCase\ReqHabitsDto;
-use App\Aplication\Dto\HabitsDtoUseCase\ReqUpdateHabitsDto;
-use App\Aplication\Dto\HabitsDtoUseCase\SaveHabitsProgress;
+use App\Aplication\Dto\HabitsDto\ReqHabitsDto;
+use App\Aplication\Dto\HabitsDto\ReqUpdateHabitsDto;
+use App\Aplication\Dto\HabitsDto\SaveHabitsProgress;
 use App\Aplication\UseCase\HabitsUseCase\CommandHabitsHistoryUseCase;
 use App\Aplication\UseCase\HabitsUseCase\CommandHabitsUseCase;
 use App\Aplication\UseCase\HabitsUseCase\QueryHabbitsUseCase;
@@ -16,19 +16,19 @@ use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-
 class HabitsController extends AbstractController
 {
     public function __construct(
         private CommandHabitsUseCase $commandHabitsUseCase,
         private QueryHabbitsUseCase $queryHabitsUseCase,
         private QueryHabitsHistory $queryHabitsHistory,
-        private CommandHabitsHistoryUseCase  $commandHabitsHistoryUseCase,
-    ){}
+        private CommandHabitsHistoryUseCase $commandHabitsHistoryUseCase,
+    ) {
+    }
 
     #[Route('/api/Habits/save', name: 'save_habit', methods: ['POST'])]
     #[RequiresJwt]
-    public function saveHabits(#[MapRequestPayload] ReqHabitsDto $reqHabitsDto)
+    public function saveHabits(#[MapRequestPayload] ReqHabitsDto $reqHabitsDto): JsonResponse
     {
         $isResult = $this->commandHabitsUseCase->saveHabits($reqHabitsDto);
 
@@ -41,7 +41,7 @@ class HabitsController extends AbstractController
 
     #[Route('/api/Habits/update', name: 'update_habit', methods: ['PUT'])]
     #[RequiresJwt]
-    public function updateHabits(#[MapRequestPayload] ReqUpdateHabitsDto $reqHabitsDto)
+    public function updateHabits(#[MapRequestPayload] ReqUpdateHabitsDto $reqHabitsDto): JsonResponse
     {
         $isResult = $this->commandHabitsUseCase->updateHabits($reqHabitsDto);
 
@@ -61,15 +61,18 @@ class HabitsController extends AbstractController
         if (!$dateTime || $dateTime->format('Y-m-d') !== $date) {
             return $this->json([
                 'success' => false,
-                'message' => 'Неверный формат даты. Ожидается YYYY-MM-DD'
+                'message' => 'Неверный формат даты. Ожидается YYYY-MM-DD',
             ], 400);
         }
 
         $habits = $this->queryHabitsUseCase->getHabitsForDate($date);
-        if (!empty($habits)) return $this->json(['success' => true, 'data' => $habits]);
+        if (!empty($habits)) {
+            return $this->json(['success' => true, 'data' => $habits]);
+        }
+
         return $this->json([
             'success' => false,
-            'message' => 'Привычки не получены'
+            'message' => 'Привычки не получены',
         ], 404);
     }
 
@@ -77,14 +80,15 @@ class HabitsController extends AbstractController
     #[RequiresJwt]
     public function getHabitsAll(Request $request): JsonResponse
     {
-        $limit = (int) $request->query->get('limit', 50);
-        $offset = (int) $request->query->get('offset', 0);
+        $limit = (int) $request->query->get('limit', null) ?: 50;
+        $offset = (int) $request->query->get('offset', null) ?: 0;
+
 
         if ($limit < 1 || $offset < 0) {
             return $this->json([
                 'success' => false,
                 'message' => 'Параметры limit и offset должны быть положительными числами',
-                'code' => 400
+                'code' => 400,
             ], 400);
         }
 
@@ -92,18 +96,16 @@ class HabitsController extends AbstractController
             return $this->json([
                 'success' => false,
                 'message' => 'Больше 150 привычек получать нельзя',
-                'code' => 400
+                'code' => 400,
             ], 400);
         }
         $result = $this->queryHabitsUseCase->getHabitsWidthLimit($limit, $offset);
+
         return $this->json([
             'success' => true,
-            'data' => $result
+            'data' => $result,
         ]);
     }
-
-
-
 
     #[Route('/api/get/count/Habits/today', name: 'get_count_habits', methods: ['GET'])]
     #[RequiresJwt]
@@ -118,34 +120,33 @@ class HabitsController extends AbstractController
             'data' => [
                 'count_habits' => $countHabits,
                 'count_done_habits' => $countDoneHabits,
-                'progress_habits' => $progressHabits
-            ]
+                'progress_habits' => $progressHabits,
+            ],
         ]);
     }
 
-
     #[Route('/api/Habits/save/progress', name: 'save_habit_progress', methods: ['POST'])]
     #[RequiresJwt]
-    public function saveHabitsProgress(#[MapRequestPayload] SaveHabitsProgress $reqHabitsDto)
+    public function saveHabitsProgress(#[MapRequestPayload] SaveHabitsProgress $reqHabitsDto): JsonResponse
     {
         $isResult = $this->commandHabitsHistoryUseCase->saveHabitsProgress($reqHabitsDto);
 
-        if (isset($isResult['success']) && $isResult['success'] === true) {
+        if (isset($isResult['success']) && true === $isResult['success']) {
             return $this->json(['success' => true, 'data' => $isResult, 'message' => 'Прогресс добавлен']);
         }
 
         return $this->json(['success' => false, 'message' => 'Прогресс не добавлены'], 400);
     }
 
-
     #[Route('/api/Habits/delete/{habitId}', name: 'delete_habit', methods: ['DELETE'])]
     #[RequiresJwt]
-    public function deleteHabits(int $habitId)
+    public function deleteHabits(int $habitId): JsonResponse
     {
         $isResult = $this->commandHabitsUseCase->deleteHabitsById($habitId);
         if (empty($isResult)) {
             return $this->json(['success' => false, 'data' => 'Не удалось удалить привычку']);
         }
+
         return $this->json(['success' => true, 'message' => 'Привычка удаленно'], 200);
     }
 }

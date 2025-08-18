@@ -15,18 +15,19 @@ use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpFoundation\Request;
 
-
 #[AsEventListener(event: KernelEvents::CONTROLLER)]
 class JwtAuthListener
 {
     private ?JwtTokenDto $newTokens = null;
 
-    public function __construct(private JwtServicesInterface $jwtService) {}
+    public function __construct(private JwtServicesInterface $jwtService)
+    {
+    }
 
     public function __invoke(ControllerEvent $event): void
     {
         $controller = $event->getController();
-        if (!is_array($controller)) {
+        if (!is_array($controller) || 2 !== count($controller) || !is_object($controller[0]) || !is_string($controller[1])) {
             return;
         }
 
@@ -49,8 +50,14 @@ class JwtAuthListener
         $this->setAuthCookies($event);
     }
 
+    /**
+     * @param array{0: object, 1: string} $controller
+     *
+     * @throws \ReflectionException
+     */
     private function getRequiresJwtAttribute(array $controller): ?RequiresJwt
     {
+
         $reflection = new \ReflectionMethod($controller[0], $controller[1]);
         $attributes = $reflection->getAttributes(RequiresJwt::class);
 
@@ -68,8 +75,9 @@ class JwtAuthListener
             $result = $this->jwtService->validateToken($dto);
 
             if ($result instanceof JwtTokenDto) {
+                $this->newTokens = $result;
                 $request->attributes->set('newTokens', $result);
-            } elseif ($result === true) {
+            } elseif (true === $result) {
                 $request->attributes->set('jwtValid', true);
             }
         } catch (\Throwable) {
@@ -77,15 +85,14 @@ class JwtAuthListener
         }
     }
 
-
-    private function handleAuthError(\Symfony\Component\HttpFoundation\Request $request): void
+    private function handleAuthError(Request $request): void
     {
         if ($this->isApiRequest($request)) {
             throw new UnauthorizedHttpException('Bearer', 'JWT is invalid or expired');
         }
 
         $currentPath = $request->getPathInfo();
-        if ($currentPath === '/Users/login') {
+        if ('/Users/login' === $currentPath) {
             return;
         }
 
@@ -94,7 +101,7 @@ class JwtAuthListener
         exit;
     }
 
-    private function isApiRequest(\Symfony\Component\HttpFoundation\Request $request): bool
+    private function isApiRequest(Request $request): bool
     {
         return str_contains($request->headers->get('accept', ''), 'application/json')
             || str_starts_with($request->getPathInfo(), '/api');

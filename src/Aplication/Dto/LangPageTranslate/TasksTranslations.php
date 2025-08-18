@@ -7,5 +7,6 @@ class TasksTranslations
     public function __construct(
         public readonly string $headText,
         public readonly string $wantToDo,
-    ){}
+    ) {
+    }
 }

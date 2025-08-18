@@ -6,9 +6,11 @@ use App\Domain\Entity\Dates\DateWeekly;
 use App\Domain\Exception\NotFoundException\NotFoundException;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-
 use App\Domain\Repository\DatesWeekly\DatesWeeklyRepositoryInterface;
 
+/**
+ * @extends ServiceEntityRepository<DateWeekly>
+ */
 class DatesWeeklyRepository extends ServiceEntityRepository implements DatesWeeklyRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
@@ -23,6 +25,7 @@ class DatesWeeklyRepository extends ServiceEntityRepository implements DatesWeek
         $em = $this->getEntityManager();
         $em->persist($datesEntity);
         $em->flush();
+
         return $datesEntity->getId() ?? false;
     }
 
@@ -46,12 +49,7 @@ class DatesWeeklyRepository extends ServiceEntityRepository implements DatesWeek
         return true;
     }
 
-
-
-
     /**
-     * @param int $id
-     * @return bool
      * @throws NotFoundException
      */
     public function deleteDatesWeekly(int $id): bool
@@ -68,6 +66,4 @@ class DatesWeeklyRepository extends ServiceEntityRepository implements DatesWeek
 
         return true;
     }
-
-
 }

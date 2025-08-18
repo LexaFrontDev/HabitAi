@@ -10,7 +10,8 @@ class UsersForRegister
         private string $password,
         private string $role = 'user',
         private int $premium = 1,
-    ) {}
+    ) {
+    }
 
     public function getName(): string
     {

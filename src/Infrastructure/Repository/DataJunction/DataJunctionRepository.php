@@ -10,7 +10,9 @@ use App\Domain\Repository\Dates\DataJunctionRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-
+/**
+ * @extends ServiceEntityRepository<HabitsDataJuntion>
+ */
 class DataJunctionRepository extends ServiceEntityRepository implements DataJunctionRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
@@ -18,11 +20,7 @@ class DataJunctionRepository extends ServiceEntityRepository implements DataJunc
         parent::__construct($registry, HabitsDataJuntion::class);
     }
 
-
-
     /**
-     * @param ReqDataJunction $data
-     * @return int
      * @throws ExistException
      */
     public function saveDateJunction(ReqDataJunction $data): int
@@ -48,15 +46,11 @@ class DataJunctionRepository extends ServiceEntityRepository implements DataJunc
         $datesEntity->setDataId($data->getDataId());
         $em->persist($datesEntity);
         $em->flush();
+
         return $datesEntity->getId();
     }
 
-
-
     /**
-     * @param int $habitsId
-     * @param string $types
-     * @return int|bool
      * @throws NotFoundException
      */
     public function updateDateJunction(int $habitsId, string $types): int|bool
@@ -76,6 +70,7 @@ class DataJunctionRepository extends ServiceEntityRepository implements DataJunc
             $entity->setDataType($types);
             $entity->setUpdatedAt(new \DateTimeImmutable());
             $this->getEntityManager()->flush();
+
             return false;
         }
 
@@ -85,15 +80,9 @@ class DataJunctionRepository extends ServiceEntityRepository implements DataJunc
         return $entity->getDataId() ?? false;
     }
 
-
-
-
-
     /**
      * Получить сущность связи по ID привычки
      *
-     * @param int $habitsId
-     * @return HabitsDataJuntion
      * @throws NotFoundException
      */
     public function getDateJunctionByHabitsId(int $habitsId): HabitsDataJuntion
@@ -114,8 +103,7 @@ class DataJunctionRepository extends ServiceEntityRepository implements DataJunc
 
     /**
      * Получить тип привычки по ID
-     * @param int $habitsId
-     * @return string
+     *
      * @throws NotFoundException
      */
     public function getTypeByHabitsId(int $habitsId): string
@@ -130,14 +118,13 @@ class DataJunctionRepository extends ServiceEntityRepository implements DataJunc
         if (!$entity || !$entity->getType()) {
             throw new NotFoundException('Тип привычек не найден');
         }
+
         return $entity->getType();
     }
+
     /**
      * Обновить тип привычки по ID
      *
-     * @param int $habitsId
-     * @param string $types
-     * @return bool
      * @throws NotFoundException
      */
     public function updateType(int $habitsId, string $types): bool
@@ -160,10 +147,6 @@ class DataJunctionRepository extends ServiceEntityRepository implements DataJunc
     }
 
     /**
-     * @param int $habitsId
-     * @param string $types
-     * @param int $dataId
-     * @return int|bool
      * @throws ExistException
      */
     public function createJunction(int $habitsId, string $types, int $dataId): int|bool
@@ -192,14 +175,7 @@ class DataJunctionRepository extends ServiceEntityRepository implements DataJunc
         return $entity->getId();
     }
 
-
-
     /**
-     * @param int $id
-     * @param int $habitsId
-     * @param string $types
-     * @param int $newDataId
-     * @return int
      * @throws NotFoundException
      */
     public function updateDataTypeAndId(int $id, int $habitsId, string $types, int $newDataId): int
@@ -208,7 +184,7 @@ class DataJunctionRepository extends ServiceEntityRepository implements DataJunc
 
         $entity = $this->find($id);
 
-        if (!$entity || $entity->getHabitsId() !== $habitsId) {
+        if (empty($entity) || $entity->getHabitsId() !== $habitsId || !$entity instanceof HabitsDataJuntion) {
             throw new NotFoundException("Связь с ID $id и привычкой $habitsId не найдена.");
         }
 
@@ -220,7 +196,4 @@ class DataJunctionRepository extends ServiceEntityRepository implements DataJunc
 
         return $entity->getId();
     }
-
-
-
 }

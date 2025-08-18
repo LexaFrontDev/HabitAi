@@ -2,14 +2,13 @@
 
 namespace App\Domain\Entity;
 
-use App\Infrastructure\Repository\UsersRepository;
-use DateTimeInterface;
+use App\Domain\ValueObject\Settings\SettingsUsersValueObject;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\UX\Turbo\Attribute\Broadcast;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
-#[ORM\Entity(repositoryClass: UsersRepository::class)]
+#[ORM\Entity]
+#[ORM\Table(name: 'users')]
 class Users implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -17,14 +16,14 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255, unique: true)]
-    private ?string $name = null;
+    #[ORM\Column(length: 255, unique: true, nullable: false)]
+    private string $name;
 
-    #[ORM\Column(length: 255, unique: true)]
-    private ?string $email = null;
+    #[ORM\Column(length: 255, unique: true, nullable: false)]
+    private string $email;
 
-    #[ORM\Column(length: 255)]
-    private ?string $password = null;
+    #[ORM\Column(length: 255, nullable: false)]
+    private string $password;
 
     #[ORM\Column(type: 'integer')]
     private int $premium = 1;
@@ -32,6 +31,9 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 35)]
     private string $role = 'user';
 
+
+
+    /** @var SettingsUsersValueObject[]|null */
     #[ORM\Column(name: 'users_settings', type: 'json', nullable: true)]
     private ?array $settings = null;
 
@@ -48,15 +50,13 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     private int $is_lang = 0;
 
     #[ORM\Column(name: 'created_at', type: 'datetime', nullable: true, options: ['comment' => 'Дата создания записи'])]
-    private ?DateTimeInterface $created_at = null;
+    private ?\DateTimeInterface $created_at = null;
 
     #[ORM\Column(name: 'updated_at', type: 'datetime', nullable: true, options: ['comment' => 'Дата обновления записи'])]
-    private ?DateTimeInterface $updated_at = null;
+    private ?\DateTimeInterface $updated_at = null;
 
     #[ORM\Column(name: 'is_delete', type: 'boolean', options: ['comment' => 'Флаг логического удаления'])]
     private bool $is_delete = false;
-
-
 
     public function setId(int $id): void
     {
@@ -68,36 +68,39 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function setName(?string $name): self
+    public function setName(string $name): self
     {
         $this->name = $name;
+
         return $this;
     }
 
-    public function getEmail(): ?string
+    public function getEmail(): string
     {
         return $this->email;
     }
 
-    public function setEmail(?string $email): self
+    public function setEmail(string $email): self
     {
         $this->email = $email;
+
         return $this;
     }
 
-    public function getPassword(): ?string
+    public function getPassword(): string
     {
         return $this->password;
     }
 
-    public function setPassword(?string $password): self
+    public function setPassword(string $password): self
     {
         $this->password = $password;
+
         return $this;
     }
 
@@ -109,6 +112,7 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPremium(int $premium): self
     {
         $this->premium = $premium;
+
         return $this;
     }
 
@@ -120,17 +124,27 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     public function setRole(string $role): self
     {
         $this->role = $role;
+
         return $this;
     }
 
+    /**
+     * @return SettingsUsersValueObject[]|null
+     */
     public function getSettings(): ?array
     {
         return $this->settings;
     }
 
+    /**
+     * @param SettingsUsersValueObject[]|null $settings
+     *
+     * @return $this
+     */
     public function setSettings(?array $settings): self
     {
         $this->settings = $settings;
+
         return $this;
     }
 
@@ -142,6 +156,7 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     public function setIsNew(bool $is_new): self
     {
         $this->is_new = $is_new;
+
         return $this;
     }
 
@@ -153,6 +168,7 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     public function setEmailCheck(int $email_check): self
     {
         $this->email_check = $email_check;
+
         return $this;
     }
 
@@ -164,6 +180,7 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     public function setUserCountry(?string $user_country): self
     {
         $this->user_country = $user_country;
+
         return $this;
     }
 
@@ -175,6 +192,7 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     public function setIsLang(int $is_lang): self
     {
         $this->is_lang = $is_lang;
+
         return $this;
     }
 
@@ -183,7 +201,9 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
         return array_unique([$this->role, 'ROLE_USER']);
     }
 
-    public function eraseCredentials() {}
+    public function eraseCredentials()
+    {
+    }
 
     public function getUserIdentifier(): string
     {
@@ -198,6 +218,7 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     public function setCreatedAt(?\DateTimeInterface $created_at): self
     {
         $this->created_at = $created_at;
+
         return $this;
     }
 
@@ -209,18 +230,19 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     public function setUpdatedAt(?\DateTimeInterface $updated_at): self
     {
         $this->updated_at = $updated_at;
+
         return $this;
     }
 
-    public function getis_delete(): bool
+    public function isDeleted(): bool
     {
         return $this->is_delete;
     }
 
-    public function setis_delete(bool $is_delete): self
+    public function setIsDeleted(bool $is_delete): self
     {
         $this->is_delete = $is_delete;
+
         return $this;
     }
 }
-

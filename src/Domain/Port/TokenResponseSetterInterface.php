@@ -2,7 +2,6 @@
 
 namespace App\Domain\Port;
 
-
 use App\Aplication\Dto\JwtDto\JwtTokenDto;
 
 interface TokenResponseSetterInterface

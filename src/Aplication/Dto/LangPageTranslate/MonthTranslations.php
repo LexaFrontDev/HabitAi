@@ -16,6 +16,7 @@ class MonthTranslations
         public readonly string $September,
         public readonly string $October,
         public readonly string $November,
-        public readonly string $December
-    ) {}
+        public readonly string $December,
+    ) {
+    }
 }

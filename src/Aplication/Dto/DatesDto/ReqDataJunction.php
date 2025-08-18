@@ -4,17 +4,13 @@ namespace App\Aplication\Dto\DatesDto;
 
 class ReqDataJunction
 {
-
     public function __construct(
         private int $habitsId,
         private int $dataId,
         private string $dataType,
-    ){}
+    ) {
+    }
 
-
-    /**
-     * @return int
-     */
     public function getHabitsId(): int
     {
         return $this->habitsId;
@@ -25,10 +21,6 @@ class ReqDataJunction
         return $this->dataId;
     }
 
-
-    /**
-     * @return string
-     */
     public function getDataType(): string
     {
         return $this->dataType;

@@ -4,78 +4,49 @@ namespace App\Aplication\Dto\PurposeDto;
 
 class PurposeDto
 {
-    
-    
     public function __construct(
-        
         private int $habitsId,
-        
         private string $type,
-        
         private int $count,
-        
         private bool $checkManually = false,
-
         private int $autoCount = 0,
-        
         private bool $checkAuto = false,
-        
         private bool $checkClose = false,
-    ){}
+    ) {
+    }
 
-
-    /**
-     * @return int
-     */
     public function getHabitsId(): int
     {
         return $this->habitsId;
     }
 
-
-    /**
-     * @return string
-     */
     public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * @return int
-     */
     public function getCount(): int
     {
         return $this->count;
     }
 
-    /**
-     * @return bool
-     */
     public function isCheckManually(): bool
     {
         return $this->checkManually;
     }
-
 
     public function isCheckAuto(): bool
     {
         return $this->checkAuto;
     }
 
-
     public function isCheckClose(): bool
     {
         return $this->checkClose;
     }
 
-    /**
-     * @return int
-     */
     public function getautoCount(): int
     {
         return $this->autoCount;
     }
-
-
 }
