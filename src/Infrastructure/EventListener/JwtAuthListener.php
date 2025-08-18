@@ -6,11 +6,11 @@ use App\Aplication\Dto\JwtDto\JwtCheckDto;
 use App\Aplication\Dto\JwtDto\JwtTokenDto;
 use App\Infrastructure\Attribute\RequiresJwt;
 use App\Domain\Service\JwtServicesInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
-use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpFoundation\Request;
@@ -88,7 +88,12 @@ class JwtAuthListener
     private function handleAuthError(Request $request): void
     {
         if ($this->isApiRequest($request)) {
-            throw new UnauthorizedHttpException('Bearer', 'JWT is invalid or expired');
+            $response = new JsonResponse(
+                ['error' => 'JWT is invalid or expired'],
+                401
+            );
+            $response->send();
+            exit;
         }
 
         $currentPath = $request->getPathInfo();

@@ -57,8 +57,8 @@ final class Version20250623032051_updated_habits_tables_structure extends Abstra
             $this->addSql('ALTER TABLE Habits DROP date_type');
         }
 
-        if ($sm->tablesExist('pomodor_history') && $sm->introspectTable('pomodor_history')->hasColumn('target_type')) {
-            $this->addSql('ALTER TABLE pomodor_history DROP target_type, DROP target_id');
+        if ($sm->tablesExist('pomodoro_history') && $sm->introspectTable('pomodoro_history')->hasColumn('target_type')) {
+            $this->addSql('ALTER TABLE pomodoro_history DROP target_type, DROP target_id');
         }
 
         if ($sm->tablesExist('purposes') && $sm->introspectTable('purposes')->hasColumn('target_type')) {
@@ -119,8 +119,8 @@ final class Version20250623032051_updated_habits_tables_structure extends Abstra
             $this->addSql('ALTER TABLE Habits ADD date_type VARCHAR(255) NOT NULL');
         }
 
-        if ($sm->tablesExist('pomodor_history')) {
-            $this->addSql('ALTER TABLE pomodor_history ADD target_type VARCHAR(255) NOT NULL, ADD target_id INT DEFAULT NULL');
+        if ($sm->tablesExist('pomodoro_history')) {
+            $this->addSql('ALTER TABLE pomodoro_history ADD target_type VARCHAR(255) NOT NULL, ADD target_id INT DEFAULT NULL');
         }
     }
 }

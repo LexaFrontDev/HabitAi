@@ -9,10 +9,10 @@ use App\Domain\Entity\Users;
 use App\Domain\Port\TokenResponseSetterInterface;
 use App\Domain\Repository\Users\UsersRepositoryInterface;
 use App\Domain\Service\JwtServicesInterface;
+use App\Domain\Service\Provider\UserProvidersInterfaceDomain;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
 class JwtServices implements JwtServicesInterface
@@ -22,8 +22,7 @@ class JwtServices implements JwtServicesInterface
         private LoggerInterface $logger,
         private JWTTokenManagerInterface $jwtManager,
         private JWTEncoderInterface $jwtEncoder,
-        /** @var UserProviderInterface<Users> */
-        private UserProviderInterface $userProvider,
+        private UserProvidersInterfaceDomain $userProvider,
         private UsersRepositoryInterface $user,
         private string $refreshTokenTtl = '+7 days',
     ) {
@@ -107,12 +106,7 @@ class JwtServices implements JwtServicesInterface
                 ) {
                     throw new AuthenticationException('Refresh token invalid');
                 }
-                /** @var Users $user */
                 $user = $this->userProvider->loadUserByIdentifier($refreshPayload['email']);
-
-                if (!$user instanceof Users) {
-                    throw new \LogicException('UserProvider returned invalid type');
-                }
 
                 return new JwtTokenDto(
                     $this->jwtManager->create($user),

@@ -11,16 +11,16 @@ final class Version20250622052239_created_table_pomodoro_history extends Abstrac
 {
     public function getDescription(): string
     {
-        return 'Создание таблицы pomodor_history с проверкой существования';
+        return 'Создание таблицы pomodoro_history с проверкой существования';
     }
 
     public function up(Schema $schema): void
     {
         $schemaManager = $this->connection->createSchemaManager();
 
-        if (!$schemaManager->tablesExist(['pomodor_history'])) {
+        if (!$schemaManager->tablesExist(['pomodoro_history'])) {
             $this->addSql(<<<'SQL'
-                CREATE TABLE pomodor_history (
+                CREATE TABLE pomodoro_history (
                     id INT AUTO_INCREMENT NOT NULL,
                     user_id INT NOT NULL,
                     time_focus INT NOT NULL,
@@ -40,8 +40,8 @@ final class Version20250622052239_created_table_pomodoro_history extends Abstrac
     {
         $schemaManager = $this->connection->createSchemaManager();
 
-        if ($schemaManager->tablesExist(['pomodor_history'])) {
-            $this->addSql('DROP TABLE pomodor_history');
+        if ($schemaManager->tablesExist(['pomodoro_history'])) {
+            $this->addSql('DROP TABLE pomodoro_history');
         }
     }
 }

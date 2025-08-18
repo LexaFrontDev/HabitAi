@@ -11,7 +11,7 @@ final class Version20250622074210_create_habits_related_tables extends AbstractM
 {
     public function getDescription(): string
     {
-        return 'Создание таблиц для системы привычек и задач + изменение pomodor_history';
+        return 'Создание таблиц для системы привычек и задач + изменение pomodoro_history';
     }
 
     public function up(Schema $schema): void
@@ -124,13 +124,13 @@ final class Version20250622074210_create_habits_related_tables extends AbstractM
             SQL);
         }
 
-        if ($sm->tablesExist(['pomodor_history'])) {
-            $columns = $sm->listTableColumns('pomodor_history');
+        if ($sm->tablesExist(['pomodoro_history'])) {
+            $columns = $sm->listTableColumns('pomodoro_history');
             if (!isset($columns['target_type'])) {
-                $this->addSql('ALTER TABLE pomodor_history ADD target_type VARCHAR(255) NOT NULL');
+                $this->addSql('ALTER TABLE pomodoro_history ADD target_type VARCHAR(255) NOT NULL');
             }
             if (!isset($columns['target_id'])) {
-                $this->addSql('ALTER TABLE pomodor_history ADD target_id INT NOT NULL');
+                $this->addSql('ALTER TABLE pomodoro_history ADD target_id INT NOT NULL');
             }
         }
     }
@@ -153,13 +153,13 @@ final class Version20250622074210_create_habits_related_tables extends AbstractM
             }
         }
 
-        if ($sm->tablesExist(['pomodor_history'])) {
-            $columns = $sm->listTableColumns('pomodor_history');
+        if ($sm->tablesExist(['pomodoro_history'])) {
+            $columns = $sm->listTableColumns('pomodoro_history');
             if (isset($columns['target_type'])) {
-                $this->addSql('ALTER TABLE pomodor_history DROP target_type');
+                $this->addSql('ALTER TABLE pomodoro_history DROP target_type');
             }
             if (isset($columns['target_id'])) {
-                $this->addSql('ALTER TABLE pomodor_history DROP target_id');
+                $this->addSql('ALTER TABLE pomodoro_history DROP target_id');
             }
         }
     }
