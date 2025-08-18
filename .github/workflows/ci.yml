@@ -18,7 +18,7 @@ jobs:
       - name: Install dependencies
         run: composer install
       - name: Run PHPStan
-        run: vendor/bin/phpstan analyse
+        run: vendor/bin/phpstan analyse src
 
   csfixer:
     runs-on: ubuntu-latest
