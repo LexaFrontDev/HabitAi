@@ -78,8 +78,8 @@ final class Version20250625041914Edithabitsandpurpose extends AbstractMigration
 
         if ($sm->tablesExist(['Habits'])) {
             $this->addSql(<<<'SQL'
-            ALTER TABLE Habits 
-                DROP notification_date, 
+            ALTER TABLE Habits
+                DROP notification_date,
                 CHANGE user_id notification_id INT DEFAULT NULL
         SQL);
         }

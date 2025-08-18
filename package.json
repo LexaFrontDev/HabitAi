@@ -1,0 +1,53 @@
+{
+  "name": "timer",
+  "version": "1.0.0",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "clean:modules": "rmdir /s /q node_modules && rmdir /s /q node_modules\\.vite && npm install",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LexaFrontDev/TaskFlow.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/LexaFrontDev/TaskFlow/issues"
+  },
+  "homepage": "https://github.com/LexaFrontDev/TaskFlow#readme",
+  "description": "",
+  "devDependencies": {
+    "@babel/core": "^7.27.7",
+    "@babel/preset-react": "^7.27.1",
+    "@rollup/plugin-babel": "^6.0.4",
+    "@tailwindcss/postcss": "^4.1.11",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "@vitejs/plugin-react": "^4.6.0",
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.6",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "tailwindcss": "^4.1.11",
+    "typescript": "^5.8.3",
+    "vite": "^7.0.0"
+  },
+  "dependencies": {
+    "bootstrap": "^5.3.7",
+    "date-fns": "^4.1.0",
+    "i18next": "^25.3.1",
+    "react-i18next": "^15.6.0",
+    "react-icons": "^5.5.0",
+    "react-resizable-panels": "^3.0.3",
+    "react-router-dom": "^7.6.2",
+    "react-toastify": "^11.0.5"
+  }
+}
