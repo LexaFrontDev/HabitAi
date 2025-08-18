@@ -17,6 +17,8 @@ jobs:
           php-version: 8.1
       - name: Install dependencies
         run: composer install
+      - name: Warmup Symfony cache
+        run: php bin/console cache:warmup
       - name: Run PHPStan
         run: vendor/bin/phpstan analyse src
 
