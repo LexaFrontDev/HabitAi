@@ -16,11 +16,13 @@ jobs:
         with:
           php-version: 8.1
       - name: Install dependencies
-        run: composer install
-      - name: Warmup Symfony cache
-        run: php bin/console cache:warmup
+        run: composer install --no-interaction --prefer-dist
+      - name: Clear & warmup dev cache
+        run: |
+          php bin/console cache:clear --env=dev
+          php bin/console cache:warmup --env=dev
       - name: Run PHPStan
-        run: vendor/bin/phpstan analyse src
+        run: APP_ENV=dev vendor/bin/phpstan analyse src
 
   csfixer:
     runs-on: ubuntu-latest
@@ -32,6 +34,6 @@ jobs:
         with:
           php-version: 8.1
       - name: Install dependencies
-        run: composer install
+        run: composer install --no-interaction --prefer-dist
       - name: Run PHP CS Fixer
         run: vendor/bin/php-cs-fixer fix --dry-run --diff
