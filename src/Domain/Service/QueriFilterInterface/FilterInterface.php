@@ -13,6 +13,7 @@ interface FilterInterface
 
     /**
      * @return mixed[]
+     *
      * @throws Exception
      */
     public function getList(): array;

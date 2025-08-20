@@ -5,7 +5,6 @@ namespace App\Aplication\CriteriaFilters;
 final class EntityFindById
 {
     /**
-     * @param int|null $id
      * @param int[] $in
      * @param int[] $notIn
      */
