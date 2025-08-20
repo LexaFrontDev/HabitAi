@@ -6,7 +6,7 @@ final class EntityFindById
 {
     /**
      * @param int|null $id
-     * @param array $in
+     * @param int[] $in
      * @param int[] $notIn
      */
     public function __construct(
