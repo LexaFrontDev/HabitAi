@@ -7,27 +7,31 @@ import {useTranslation} from "react-i18next";
 import Loading from "../chunk/LoadingChunk/Loading";
 
 
-const currentPage = 'register';
 const langStorage = new LangStorage();
 const langUseCase = new LangStorageUseCase(langStorage);
-const languageApi = new LanguageRequestUseCase(currentPage, new LanguageApi());
+const languageApi = new LanguageRequestUseCase(new LanguageApi());
 
 
 const RegisterPage = () => {
     const [form, setForm] = useState({ name: '', email: '', password: '' });
     const [langCode, setLangCode] = useState('en');
-
-    const { t, i18n } = useTranslation(currentPage);
+    const [translationsLoaded, setTranslationsLoaded] = useState<boolean>(false);
+    const { t, i18n } = useTranslation('translation');
 
     useEffect(() => {
         const detectLang = async () => {
-            const lang = await langUseCase.getLang();
-            if (lang) {
-                setLangCode(lang);
-                await languageApi.getTranslations(lang);
+            try {
+                const lang = await langUseCase.getLang();
+                if (lang) {
+                    setLangCode(lang);
+                    await languageApi.getTranslations(lang);
+                }
+            } catch (err) {
+                console.error(err);
+            } finally {
+                setTranslationsLoaded(true);
             }
         };
-
         detectLang();
     }, []);
 
@@ -40,9 +44,9 @@ const RegisterPage = () => {
             });
     }, []);
 
-    const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value });
+    const handleChange = (e: { target: { name: any; value: any; }; })  => setForm({ ...form, [e.target.name]: e.target.value });
 
-    const handleSubmit = async e => {
+    const handleSubmit = async (e: { preventDefault: () => void; }) => {
         e.preventDefault();
         try {
             const res = await fetch('/api/auth/register', {
@@ -58,7 +62,7 @@ const RegisterPage = () => {
         }
     };
 
-    if (!i18n.hasResourceBundle(langCode, currentPage)) return <Loading />;
+    if (!translationsLoaded) return <Loading />;
 
 
     return (
@@ -66,25 +70,25 @@ const RegisterPage = () => {
             <div className="register-image d-none d-lg-block" style={{ background: '#a4ac86 url(/StorageImages/Icons/focused.svg) no-repeat center center', backgroundSize: 'cover' }}></div>
             <div className="register-form-wrapper">
                 <form onSubmit={handleSubmit} className="register-form">
-                    <h2 className="mb-4 text-center fw-bold">{t('registerHeadText')}</h2>
-                    <p className="text-muted text-center mb-4">{t('headDescRegister')}</p>
+                    <h2 className="mb-4 text-center fw-bold">{t('register.registerHeadText')}</h2>
+                    <p className="text-muted text-center mb-4">{t('register.headDescRegister')}</p>
                     <div className="mb-3">
-                        <label className="form-label text-start d-block">{t('nameInputLabel')}</label>
+                        <label className="form-label text-start d-block">{t('register.nameInputLabel')}</label>
                         <input type="text" className="form-control" name="name" value={form.name} onChange={handleChange} required />
                     </div>
                     <div className="mb-3">
-                        <label className="form-label text-start d-block">{t('emailInputLabel')}</label>
+                        <label className="form-label text-start d-block">{t('register.emailInputLabel')}</label>
                         <input type="email" className="form-control" name="email" value={form.email} onChange={handleChange} required />
                     </div>
                     <div className="mb-3">
-                        <label className="form-label text-start d-block">{t('passwordInputLabel')}</label>
+                        <label className="form-label text-start d-block">{t('register.passwordInputLabel')}</label>
                         <input type="password" className="form-control" name="password" value={form.password} onChange={handleChange} required />
                     </div>
-                    <button type="submit" className="btn btn-primary">{t('registerButton')}</button>
+                    <button type="submit" className="btn btn-primary">{t('register.registerButton')}</button>
                     <button type="button" className="btn-google">
-                        <img src="https://www.svgrepo.com/show/355037/google.svg" alt="Google" style={{ width: '20px', height: '20px' }} />{t('login:notHaveAccount')}
+                        <img src="https://www.svgrepo.com/show/355037/google.svg" alt="Google" style={{ width: '20px', height: '20px' }} />{t('login.loginWithGoogleButton')}
                     </button>
-                    <a href="/users/login">{t('haveAccount')}</a>
+                    <a href="/users/login">{t('register.haveAccount')}</a>
                 </form>
             </div>
         </div>

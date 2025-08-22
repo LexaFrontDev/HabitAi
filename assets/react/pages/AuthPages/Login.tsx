@@ -1,17 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import Loading from '../chunk/LoadingChunk/Loading';
-import { loadPageTranslation } from '../../utils/loadPageTranslation';
 import {LangStorage} from "../../Infrastructure/languageStorage/LangStorage";
 import {LangStorageUseCase} from "../../Aplication/UseCases/language/LangStorageUseCase";
 import {LanguageRequestUseCase} from "../../Aplication/UseCases/language/LanguageRequestUseCase";
 import {LanguageApi} from "../../Infrastructure/request/Language/LanguageApi";
 
-
-const currentPage = 'login';
 const langStorage = new LangStorage();
 const langUseCase = new LangStorageUseCase(langStorage);
-const languageApi = new LanguageRequestUseCase(currentPage, new LanguageApi());
+const languageApi = new LanguageRequestUseCase(new LanguageApi());
 
 const LoginPage = () => {
     const [email, setEmail] = useState('');
@@ -19,19 +16,24 @@ const LoginPage = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [langCode, setLangCode] = useState('en');
-
-    const { t, i18n } = useTranslation(currentPage);
+    const [translationsLoaded, setTranslationsLoaded] = useState<boolean>(false);
+    const { t, i18n } = useTranslation('translation');
 
 
     useEffect(() => {
         const detectLang = async () => {
-            const lang = await langUseCase.getLang();
-            if (lang) {
-                setLangCode(lang);
-                await languageApi.getTranslations(lang);
+            try {
+                const lang = await langUseCase.getLang();
+                if (lang) {
+                    setLangCode(lang);
+                    await languageApi.getTranslations(lang);
+                }
+            } catch (err) {
+                console.error(err);
+            } finally {
+                setTranslationsLoaded(true);
             }
         };
-
         detectLang();
     }, []);
 
@@ -46,7 +48,7 @@ const LoginPage = () => {
             });
     }, []);
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e: any) => {
         e.preventDefault();
         setError('');
         setLoading(true);
@@ -79,20 +81,20 @@ const LoginPage = () => {
                 const errorMsg =
                     result?.message ||
                     (response.status === 401
-                        ? t('invalidCredentials')
-                        : t('unknownError'));
+                        ? t('login.invalidCredentials')
+                        : t('login.unknownError'));
                 setError(errorMsg);
             }
         } catch (err) {
             console.error('Ошибка при логине:', err);
             setLoading(false);
-            setError(t('serverConnectionError'));
+            setError(t('login.serverConnectionError'));
         }
     };
 
 
 
-    if (!i18n.hasResourceBundle(langCode, currentPage)) return <Loading />;
+    if (!translationsLoaded) return <Loading />;
 
     return (
         <div className="login-container">
@@ -100,28 +102,28 @@ const LoginPage = () => {
 
             <div className="login-form-wrapper">
                 <form onSubmit={handleSubmit} className="login-form">
-                    <h2 className="mb-4 text-center fw-bold">{t('headText')}</h2>
-                    <p className="text-muted text-center mb-4">{t('headPText')}</p>
+                    <h2 className="mb-4 text-center fw-bold">{t('login.headText')}</h2>
+                    <p className="text-muted text-center mb-4">{t('login.headPText')}</p>
 
                     <div className="mb-3">
-                        <label className="form-label text-start d-block">{t('emailLabelText')}</label>
+                        <label className="form-label text-start d-block">{t('login.emailLabelText')}</label>
                         <input type="email" className="form-control" value={email} onChange={e => setEmail(e.target.value)} required />
                     </div>
                     <div className="mb-3">
-                        <label className="form-label text-start d-block">{t('passwordLabelText')}</label>
+                        <label className="form-label text-start d-block">{t('login.passwordLabelText')}</label>
                         <input type="password" className="form-control" value={password} onChange={e => setPassword(e.target.value)} required />
                     </div>
 
                     {error && <div className="error-message" style={{ display: 'block' }}>{error}</div>}
 
-                    <button type="submit" className="btn btn-primary">{t('loginButton')}</button>
+                    <button type="submit" className="btn btn-primary">{t('login.loginButton')}</button>
                     <button type="button" className="btn-google">
-                        <img src="https://www.svgrepo.com/show/355037/google.svg" alt="Google" style={{ width: '20px', height: '20px' }} /> {t('loginWithGoogleButton')}
+                        <img src="https://www.svgrepo.com/show/355037/google.svg" alt="Google" style={{ width: '20px', height: '20px' }} /> {t('login.loginWithGoogleButton')}
                     </button>
 
                     {loading && <div className="loading-gift"><img src="/StorageImages/Animations/Load.gif" alt="Загрузка..." /></div>}
 
-                    <a href="/Users/register">{t('notHaveAccount')}</a>
+                    <a href="/Users/register">{t('login.notHaveAccount')}</a>
                 </form>
             </div>
         </div>

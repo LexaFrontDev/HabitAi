@@ -71,7 +71,7 @@ class QueryPomodorUseCase
         $result = $this->pomodorHistoryRepository->getAllCountPomodorByUserId($this->userId);
 
         if (empty($result) || !is_int($result)) {
-            throw new MessageException('Не удалось получить количество помодоро');
+            return 0;
         }
 
         return $result;
@@ -122,7 +122,7 @@ class QueryPomodorUseCase
         $result = $this->pomodorHistoryRepository->getHistoryByUserId($this->userId, $limit);
 
         if (empty($result)) {
-            throw new MessageException('Не удалось получить историю помодоро');
+            return [];
         }
 
         return $result;

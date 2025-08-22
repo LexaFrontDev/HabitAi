@@ -1,11 +1,7 @@
 import React from 'react';
+import {FeatureCardProps} from "../../props/CardProps/Feature/FeatureCardProps";
 
-interface FeatureCardProps {
-    icon: string;
-    title: string;
-    desc: string;
-    url: string;
-}
+
 
 const FeatureCard: React.FC<FeatureCardProps> = ({ icon, title, desc, url }) => (
     <a href={url} className="text-decoration-none text-reset">

@@ -5,7 +5,8 @@ namespace App\Aplication\Dto\HabitsDto;
 class HabitsDayInfo
 {
     public function __construct(
-        public readonly int $total,
+        public int $day,
+        public readonly int $total_tracking,
     ) {
     }
 }

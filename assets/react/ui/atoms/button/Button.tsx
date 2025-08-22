@@ -1,34 +1,9 @@
 import React, { useState } from 'react';
 import clsx from 'clsx';
 import { Link, LinkProps } from 'react-router-dom';
-
-type ButtonVariants =
-    | 'primary'
-    | 'secondary'
-    | 'danger'
-    | 'login'
-    | 'register'
-    | 'big'
-    | 'big-orange'
-    | 'big-green'
-    | 'subscribe'
-    | 'listButton'
-    | 'imgButton';
-
-interface BaseProps {
-    children: React.ReactNode;
-    variant?: ButtonVariants;
-    className?: string;
-    isActive?: boolean;
-    onToggle?: (active: boolean) => void;
-}
-
-
-type ButtonAsButton = BaseProps & React.ButtonHTMLAttributes<HTMLButtonElement> & { as?: 'button' };
-type ButtonAsLink = BaseProps & LinkProps & { as: 'link' };
-type ButtonAsAnchor = BaseProps & React.AnchorHTMLAttributes<HTMLAnchorElement> & { as: 'anchor' };
-
-type ButtonProps = ButtonAsButton | ButtonAsLink | ButtonAsAnchor;
+import {ButtonProps} from "../../props/Buttons/ButtonProps";
+import {BaseProps} from "../../props/Buttons/BaseProps";
+import {ButtonVariants} from "../../props/Buttons/ButtonVariants";
 
 export const Button: React.FC<ButtonProps> = ({
                                                   isActive: propActive = false,

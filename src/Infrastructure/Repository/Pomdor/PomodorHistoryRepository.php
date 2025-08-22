@@ -22,8 +22,6 @@ class PomodorHistoryRepository extends ServiceEntityRepository implements Pomodo
     public function cretePomodorHistory(RepPomodorDto $reqPomodorDto): PomodorHistory
     {
         $history = new PomodorHistory();
-
-
         $history->setTitle($reqPomodorDto->title);
         $history->setUserId($reqPomodorDto->getUserId());
         $history->setTimeFocus($reqPomodorDto->getTimeFocus());

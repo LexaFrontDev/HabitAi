@@ -8,7 +8,7 @@ const Copyright: React.FC = () => {
         <small className="text-muted">
             © {new Date().getFullYear()} TaskFlow —{' '}
             <a href="/privacy" className="text-decoration-none text-primary">
-                {t('privacyPolicyText')}
+                {t('landing.privacyPolicyText')}
             </a>
         </small>
     );

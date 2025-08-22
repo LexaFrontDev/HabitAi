@@ -2,15 +2,20 @@
 
 namespace App\Aplication\UseCase\PomodorUseCases\Commands;
 
-use App\Aplication\Dto\PomodorDto\RepPomodorDto;
 use App\Aplication\Dto\PomodorDto\ReqPomodorDto;
+use App\Aplication\Mapper\UseCaseMappers\PomodoroMapper\RepPomodoroDtoMapper;
 use App\Domain\Entity\Pomdoro\PomodorHistory;
+use App\Domain\Port\TokenProviderInterface;
 use App\Domain\Repository\Pomodor\PomodorHistoryRepositoryInterface;
+use App\Domain\Service\JwtServicesInterface;
 
 class PomodorCommandUseCase
 {
     public function __construct(
         private PomodorHistoryRepositoryInterface $pomodorHistoryRepository,
+        private TokenProviderInterface $tokenProvider,
+        private JwtServicesInterface $jwtServices,
+        private RepPomodoroDtoMapper $repPomodoroDtoMapper,
     ) {
     }
 
@@ -35,17 +40,10 @@ class PomodorCommandUseCase
     public function savePomdor(ReqPomodorDto $reqPomodorDto): PomodorHistory
     {
         $periodLabel = $this->calculatePeriodLabel($reqPomodorDto->getTimeFocus());
+        $token = $this->tokenProvider->getTokens();
+        $userId = $this->jwtServices->getUserInfoFromToken($token->getAccessToken())->getUserId();
+        $dto = $this->repPomodoroDtoMapper->ReqPomodorToRepPomodorDto(userId: $userId, reqPomodorDto: $reqPomodorDto, periodLabel: $periodLabel);
 
-        $data = new RepPomodorDto(
-            $reqPomodorDto->title,
-            $reqPomodorDto->getUserId(),
-            $reqPomodorDto->getTimeFocus(),
-            $reqPomodorDto->getTimeStart(),
-            $reqPomodorDto->getTimeEnd(),
-            $reqPomodorDto->getCreatedDate(),
-            $periodLabel
-        );
-
-        return $this->pomodorHistoryRepository->cretePomodorHistory($data);
+        return $this->pomodorHistoryRepository->cretePomodorHistory($dto);
     }
 }

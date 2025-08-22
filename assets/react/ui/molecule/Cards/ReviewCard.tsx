@@ -1,9 +1,7 @@
 import React from 'react';
+import {ReviewCardProps} from "../../props/CardProps/Review/ReviewCardProps";
 
-interface ReviewCardProps {
-    comment: string;
-    name: string;
-}
+
 
 const ReviewCard: React.FC<ReviewCardProps> = ({ comment, name }) => (
     <div className="card p-4 h-100 shadow-sm border-0 rounded-4">
