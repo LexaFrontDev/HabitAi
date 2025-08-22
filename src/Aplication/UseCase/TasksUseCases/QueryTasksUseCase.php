@@ -3,7 +3,6 @@
 namespace App\Aplication\UseCase\TasksUseCases;
 
 use App\Aplication\Dto\TasksDto\TasksDay;
-use App\Domain\Exception\NotFoundException\NotFoundException;
 use App\Domain\Port\TokenProviderInterface;
 use App\Domain\Repository\Tasks\TasksInterface;
 use App\Domain\Service\JwtServicesInterface;
@@ -57,6 +56,6 @@ class QueryTasksUseCase
             return $isResult;
         }
 
-        return  throw new NotFoundException('Задачи не создано');
+        return [];
     }
 }

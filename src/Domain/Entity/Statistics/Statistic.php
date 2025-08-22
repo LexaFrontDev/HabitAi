@@ -2,7 +2,6 @@
 
 namespace App\Domain\Entity\Statistics;
 
-use App\Aplication\Dto\StatisticDto\StatisticYearStatisticDto;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
@@ -23,10 +22,12 @@ class Statistic
     #[ORM\Column(options: ['comment' => 'ID сущности, к которой относится статистика'])]
     private int $static_id;
 
-    /** @var StatisticYearStatisticDto[] $year */
-    #[ORM\Column(name: 'year', type: 'json')]
-    private array $year = [];
+    #[ORM\Column(name: 'year', type: 'string')]
+    private string $year;
 
+    /** @var mixed[] $statistic */
+    #[ORM\Column(name: 'statistic', type: 'json')]
+    private array $statistic = [];
 
     #[ORM\Column(name: 'created_at', type: 'datetime', nullable: true, options: ['comment' => 'Дата создания записи'])]
     private ?\DateTimeInterface $created_at = null;
@@ -54,16 +55,28 @@ class Statistic
         return $this;
     }
 
-    /** @return StatisticYearStatisticDto[] */
-    public function getYear(): array
+    /**
+     * @return mixed[]
+     */
+    public function getStatistic(): array
+    {
+        return $this->statistic;
+    }
+
+    /**
+     * @param mixed[] $statistic
+     */
+    public function setStatistic(array $statistic): void
+    {
+        $this->statistic = $statistic;
+    }
+
+    public function getYear(): string
     {
         return $this->year;
     }
 
-    /**
-     * @param StatisticYearStatisticDto[] $year
-     */
-    public function setYear(array $year): static
+    public function setYear(string $year): static
     {
         $this->year = $year;
 

@@ -6,17 +6,11 @@ class ReqPomodorDto
 {
     public function __construct(
         public readonly string $title,
-        public readonly int $userId,
         public readonly int $timeFocus,
         public readonly int $timeStart,
         public readonly int $timeEnd,
         public readonly int $created_date,
     ) {
-    }
-
-    public function getUserId(): int
-    {
-        return $this->userId;
     }
 
     public function getTimeFocus(): int

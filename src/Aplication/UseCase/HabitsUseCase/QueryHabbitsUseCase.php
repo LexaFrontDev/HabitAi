@@ -124,7 +124,7 @@ class QueryHabbitsUseCase
             $results = $this->habitsRepository->getHabitsForToday($dayOfMonth, $dayOfWeekNumber, $month, $userId);
 
             if (empty($results)) {
-                throw new NotFoundException('Привычки отсутствует', true);
+                return [];
             }
 
             $data = [];

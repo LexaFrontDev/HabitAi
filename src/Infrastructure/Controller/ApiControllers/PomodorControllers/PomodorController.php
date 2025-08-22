@@ -11,6 +11,7 @@ use App\Infrastructure\Attribute\RequiresJwt;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 
 class PomodorController extends AbstractController
@@ -25,24 +26,11 @@ class PomodorController extends AbstractController
 
     #[Route('/api/pomodor/create', name: 'save_pomodor', methods: ['POST'])]
     #[RequiresJwt]
-    public function createPomdor(Request $request): JsonResponse
+    public function createPomdor(#[MapRequestPayload] ReqPomodorDto $dto): JsonResponse
     {
-        try {
-            $data = json_decode($request->getContent(), true);
-            $reqPomodorDto = new ReqPomodorDto(
-                (string) $data['title'],
-                (int) $data['userId'],
-                (int) $data['timeFocus'],
-                (int) $data['timeStart'],
-                (int) $data['timeEnd'],
-                (int) $data['createdDate']
-            );
-            $this->commandUseCase->savePomdor($reqPomodorDto);
+        $result = $this->commandUseCase->savePomdor($dto);
 
-            return new JsonResponse(['success' => true], 200);
-        } catch (\Throwable $e) {
-            return new JsonResponse(['success' => false, 'error' => $e->getMessage()], 500);
-        }
+        return new JsonResponse(['success' => true], 200);
     }
 
     #[Route('/api/pomodor/summary', name: 'api_pomodor_summary', methods: ['GET'])]

@@ -2,23 +2,28 @@
 
 namespace App\Infrastructure\Service\FilterCriteriaApply;
 
+use App\Aplication\CriteriaFilters\EntityFindByDate;
 use App\Aplication\CriteriaFilters\EntityFindById;
 use App\Aplication\CriteriaFilters\EntityFindByLike;
 use App\Aplication\CriteriaFilters\EntityFindByString;
 use App\Aplication\CriteriaFilters\EntityJoinCriteria;
+use App\Aplication\CriteriaFilters\PaginationDto;
 use App\Aplication\Dto\ConditionsDto\OnConditionDto;
 use App\Domain\Service\QueriFilterInterface\FilterInterface;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Query\Expression\CompositeExpression;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 
 class ApplyFilter implements FilterInterface
 {
     private QueryBuilder $qb;
 
-    public function __construct(private EntityManagerInterface $entityManager)
-    {
+    public function __construct(
+        private EntityManagerInterface $entityManager,
+        private LoggerInterface $logger,
+    ) {
     }
 
     /**
@@ -127,6 +132,52 @@ class ApplyFilter implements FilterInterface
             }
 
         }
+
+
+        if ($criterion instanceof  EntityFindByDate) {
+            if (!empty($criterion->YmdDate)) {
+                try {
+                    $date = new \DateTimeImmutable($criterion->YmdDate);
+                    $this->addCondition("$alias.$field = :{$field}_date", "{$field}_date", $date->format('Y-m-d'), $countWhere);
+                    ++$countWhere;
+                } catch (\Exception $e) {
+                    $this->logger->error($e->getMessage());
+                }
+            }
+
+            if (!empty($criterion->YmdTime)) {
+                try {
+                    $dateTime = new \DateTimeImmutable($criterion->YmdTime);
+                    $this->addCondition("$alias.$field = :{$field}_datetime", "{$field}_datetime", $dateTime->format('Y-m-d H:i:s'), $countWhere);
+                    ++$countWhere;
+                } catch (\Exception $e) {
+                    $this->logger->error($e->getMessage());
+                }
+            }
+
+            if (!empty($criterion->YmdTimeStamp)) {
+                try {
+                    $dateFromTs = (new \DateTimeImmutable())->setTimestamp((int) $criterion->YmdTimeStamp);
+                    $this->addCondition("$alias.$field = :{$field}_ts", "{$field}_ts", $dateFromTs->format('Y-m-d H:i:s'), $countWhere);
+                    ++$countWhere;
+                } catch (\Exception $e) {
+                    $this->logger->error($e->getMessage());
+                }
+            }
+        }
+
+
+        if ($criterion instanceof PaginationDto) {
+            if ($criterion->paginationEnabled) {
+                if (null !== $criterion->offset) {
+                    $this->qb->setFirstResult($criterion->offset);
+                }
+                if (null !== $criterion->limit) {
+                    $this->qb->setMaxResults($criterion->limit);
+                }
+            }
+        }
+
 
         return $countWhere;
     }

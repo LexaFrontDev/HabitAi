@@ -14,7 +14,7 @@ import {HabitsApi} from "../../Infrastructure/request/habits/HabitsApi";
 import {Messages} from "../chunk/MessageAlertChunk";
 
 const habitsService = new HabitsService(new HabitsApi());
-const LangUseCase = new LanguageRequestUseCase('pomodoro', new LanguageApi());
+const LangUseCase = new LanguageRequestUseCase(new LanguageApi());
 const langStorage = new LangStorage();
 const langUseCase = new LangStorageUseCase(langStorage);
 

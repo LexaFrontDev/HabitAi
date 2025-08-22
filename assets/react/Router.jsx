@@ -5,14 +5,14 @@ import Loading from './pages/chunk/LoadingChunk/Loading';
 import Profile from './pages/Profile';
 import Pomodoro from "./pages/Pomodor/Pomodoro_page";
 import Habits_page from "./pages/Habits/Habits_page";
-import Lending from "./pages/main/Main";
-import LoginPage from "./pages/AuthPages/Login";
-import RegisterPage from "./pages/AuthPages/Register";
 import TasksPage from "./pages/Tasks/TasksPage";
 import MatricPage from "./pages/MatricPage/MatricPage";
 import Premium from "./pages/main/pages/Premium";
 import PremiumPage from "./pages/main/pages/Premium";
 import Static from "./pages/Static/StaticPage";
+import Lending from "./pages/main/pages/Main";
+import LoginPage from "./pages/AuthPages/Login";
+import RegisterPage from "./pages/AuthPages/Register";
 
 const RouterDom = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(null);

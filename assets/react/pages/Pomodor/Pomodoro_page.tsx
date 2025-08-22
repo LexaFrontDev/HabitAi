@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import Sidebar from '../chunk/SideBar';
 import { Messages, ErrorAlert, SuccessAlert, IsDoneAlert } from '../chunk/MessageAlertChunk';
 import {ImperativePanelGroupHandle, Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
-import {Button} from "../../ui/atoms/button/Button";
 import {LanguageRequestUseCase} from "../../Aplication/UseCases/language/LanguageRequestUseCase";
 import {LanguageApi} from "../../Infrastructure/request/Language/LanguageApi";
 import {LangStorage} from "../../Infrastructure/languageStorage/LangStorage";
@@ -12,68 +11,56 @@ import Loading from "../chunk/LoadingChunk/Loading";
 import { PomodoroData } from "../../ui/props/Habits/PomodoroData";
 import {formatTaskDateTime} from "../../Domain/Services/Tasks/taskDateFormatter";
 import {Task} from "../../ui/props/Tasks/Task";
+import {PomodoroAPi} from "../../Infrastructure/request/Pomodoro/PomodoroAPi";
+import {PomodoroService} from "../../Aplication/UseCases/Pomodoro/PomodoroService";
+import {usePomodoroTimer} from "../../Aplication/UseCases/Pomodoro/PomodoroTimer";
+import {ToastContainer} from "react-toastify";
 
-const LangUseCase = new LanguageRequestUseCase('pomodoro', new LanguageApi());
+
+const PomodoroUseCase = new PomodoroService(new PomodoroAPi());
+const LangUseCase = new LanguageRequestUseCase(new LanguageApi());
 const langStorage = new LangStorage();
 const langUseCase = new LangStorageUseCase(langStorage);
 
 
 const Pomodoro = () => {
     const [userId, setUserId] = useState(null);
-    const [totalTime, setTotalTime] = useState<number>(() => parseInt(localStorage.getItem('pomodoroTotalTime') || '1500', 10));
-    const [timeLeft, setTimeLeft] = useState<number>(() => parseInt(localStorage.getItem('pomodoroTimeLeft') || '1500', 10));
-    const [isRunning, setIsRunning] = useState(false);
-    const [isPaused, setIsPaused] = useState(false);
-    const [showModal, setShowModal] = useState(false);
-    const [showTasksModal, setTasksModal] = useState(false);
-    const [completedTime, setCompletedTime] = useState(0);
-    const [showCompleteButton, setShowCompleteButton] = useState(false);
-    const [sessionActive, setSessionActive] = useState(false);
     const [dataPomodoro, setDataPomodoro] = useState<PomodoroData | null>(null);
-    const [focusMinutes, setFocusMinutes] = useState('25');
-    const [TasksTitle, setTasksTitle] = useState('');
-    const [breakMinutes, setBreakMinutes] = useState('5');
-    const [isBreak, setIsBreak] = useState(false);
-    const startTimeRef = useRef<string | null>(localStorage.getItem('pomodoroStartTime') || null);
-    const intervalRef = useRef<number | undefined>(undefined);
-    const [data, setDataTasks] = useState<any | null>(null);
     const [activeTab, setActiveTab] = useState('Pomodoro');
-
-
-    const radius = 196;
-    const circumference = 2 * Math.PI * radius;
     const [langCode, setLangCode] = useState('en');
-    const { t, i18n } = useTranslation('pomodoro');
-
+    const { t, i18n } = useTranslation('translation');
+    const [translationsLoaded, setTranslationsLoaded] = useState<boolean>(false);
+    const {
+        totalTime, timeLeft, isRunning, handleStartPause, handleCompleteSession, setTasksTitle, TasksTitle, setTotalTime, setTimeLeft,  isPaused, sessionActive, isBreak,
+        showCompleteButton, breakMinutes, focusMinutes, setBreakMinutes, setFocusMinutes, setShowModal, showModal, handleSetTime, calculateProgress, formatTime, radius, circumference,
+    } = usePomodoroTimer(PomodoroUseCase, userId);
 
     useEffect(() => {
-        fetch('/api/pomodor/summary')
-            .then(res => res.json())
-            .then(data => {
-                console.log('Полученные данные:', data); // выведет данные в консоль
-                setDataPomodoro(data);
-            })
-            .catch(err => console.error('Ошибка загрузки:', err));
+        const fetchPomodoro = async () => {
+            const result = await PomodoroUseCase.getPomdoroSummary();
+
+            if (result) {
+                setDataPomodoro(result);
+            }
+        };
+        fetchPomodoro();
     }, []);
-
-
 
     useEffect(() => {
         const detectLang = async () => {
-            const lang = await langUseCase.getLang();
-            if (lang) {
-                setLangCode(lang);
-                await LangUseCase.getTranslations(lang);
+            try {
+                const lang = await langUseCase.getLang();
+                if (lang) {
+                    setLangCode(lang);
+                    await LangUseCase.getTranslations(lang);
+                }
+            } catch (err) {
+                console.error(err);
+            } finally {
+                setTranslationsLoaded(true);
             }
         };
-
         detectLang();
-    }, []);
-
-    useEffect(() => {
-        fetch('/api/web/user/id')
-            .then(res => res.json())
-            .then(data => setUserId(data?.userId || null));
     }, []);
 
     useEffect(() => {
@@ -81,164 +68,10 @@ const Pomodoro = () => {
         localStorage.setItem('pomodoroTimeLeft', String(timeLeft));
     }, [totalTime, timeLeft]);
 
-    useEffect(() => {
-        fetch('/api/get/habits/today')
-            .then(res => res.json())
-            .then(data => setDataTasks({title: data?.data.title, habit_id: data?.data.habit_id || null}));
-    }, []);
-
-    const formatTime = (seconds: number) => {
-        const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
-        const secs = (seconds % 60).toString().padStart(2, '0');
-        return `${mins}:${secs}`;
-    };
-
-    const calculateProgress = () => {
-        if (totalTime <= 0) return circumference;
-        return ((totalTime - timeLeft) / totalTime) * circumference;
-    };
-
-    const resetProgress = () => {
-        setTimeLeft(totalTime);
-        setIsRunning(false);
-        setIsPaused(false);
-        setShowCompleteButton(false);
-        setSessionActive(false);
-        clearInterval(intervalRef.current);
-    };
-
-    const handleStartPause = () => {
-        if (!isRunning) {
-            if (timeLeft <= 0) {
-                resetProgress();
-                return;
-            }
-
-            startTimeRef.current = new Date().toISOString();
-            localStorage.setItem('pomodoroStartTime', startTimeRef.current);
-            setSessionActive(true);
-
-            intervalRef.current = setInterval(() => {
-                setTimeLeft(prev => {
-                    if (prev > 0) {
-                        return prev - 1;
-                    } else {
-                        clearInterval(intervalRef.current);
-                        handleEndCycle(new Date());
-                        return 0;
-                    }
-                });
-            }, 1000);
-            setIsRunning(true);
-            setIsPaused(false);
-            setShowCompleteButton(true);
-        } else {
-            clearInterval(intervalRef.current);
-            setIsRunning(false);
-            setIsPaused(true);
-        }
-    };
-
-    const handleCompleteSession = async () => {
-        clearInterval(intervalRef.current);
-        const timeCompleted = totalTime - timeLeft;
-        setCompletedTime(timeCompleted);
-
-
-        if (timeCompleted < 60) {
-            Messages("Помидор не должен быть меньше 1 минуты!")
-            resetProgress();
-            return;
-        }
-
-        if (userId && timeCompleted > 0 && startTimeRef.current) {
-            await fetch("/api/pomodor/create", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    userId,
-                    timeFocus: timeCompleted,
-                    timeStart: Math.floor(new Date(startTimeRef.current).getTime() / 1000),
-                    timeEnd: Math.floor(Date.now() / 1000),
-                    createdDate: Math.floor(Date.now() / 1000),
-                }),
-            });
-        }
-
-        resetProgress();
-    };
-
-    const handleEndCycle = async (finishTime: any) => {
-        const timeCompleted = totalTime;
-        setCompletedTime(timeCompleted);
-
-        if (!isBreak && timeCompleted < 60) {
-            Messages("Помидор не должен быть меньше 1 минуты!")
-            resetProgress();
-            return;
-        }
-
-        if (!isBreak && userId && startTimeRef.current) {
-            await fetch("/api/pomodor/create", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    title: TasksTitle,
-                    userId,
-                    timeFocus: timeCompleted,
-                    timeStart: Math.floor(new Date(startTimeRef.current).getTime() / 1000),
-                    timeEnd: Math.floor(finishTime.getTime() / 1000),
-                    createdDate: Math.floor(Date.now() / 1000),
-                }),
-            });
-        }
-
-        if (!isBreak) {
-            IsDoneAlert("Фокус завершён! Время отдыха.");
-            startTimeRef.current = new Date().toISOString();
-            const breakTime = parseInt(breakMinutes) * 60 || 300;
-            setTotalTime(breakTime);
-            setTimeLeft(breakTime);
-            setIsBreak(true);
-            setIsRunning(true);
-            setIsPaused(false);
-            setShowCompleteButton(true);
-            intervalRef.current = setInterval(() => {
-                setTimeLeft(prev => {
-                    if (prev > 0) {
-                        return prev - 1;
-                    } else {
-                        clearInterval(intervalRef.current);
-                        IsDoneAlert("Отдых завершён!");
-                        setIsBreak(false);
-                        setIsRunning(false);
-                        setIsPaused(false);
-                        setShowCompleteButton(false);
-                        setSessionActive(false);
-                        return 0;
-                    }
-                });
-            }, 1000);
-        }
-    };
-
-    const handleSetTime = () => {
-        if (sessionActive) {
-            Messages("Завершите текущую сессию перед изменением времени");
-            return;
-        }
-
-        const focus = parseInt(focusMinutes) || 25;
-        const rest = parseInt(breakMinutes) || 5;
-        setTotalTime(focus * 60);
-        setTimeLeft(focus * 60);
-        setShowModal(false);
-        setIsBreak(false);
-    };
 
     const openSettings = () => {
         if (sessionActive) {
-            Messages("Завершите текущую сессию перед изменением времени");
+            Messages("Завершите  сессию перед изменением времени");
             return;
         }
         setShowModal(true);
@@ -258,7 +91,7 @@ const Pomodoro = () => {
     };
 
 
-    if (!i18n.hasResourceBundle(langCode, 'pomodoro') || !dataPomodoro) return <Loading />;
+    if (!translationsLoaded || !dataPomodoro) return <Loading />;
 
 
     const { todayPomos, todayFocusTime, totalPomodorCount, habitsList, tasksList, pomodorHistory } = dataPomodoro;
@@ -266,6 +99,8 @@ const Pomodoro = () => {
     return (
         <div id="pomodor-page">
             <Sidebar/>
+
+            <ToastContainer position="top-right" autoClose={3000} />
             <div style={{marginLeft: '50px'}}>
                 <PanelGroup direction="horizontal">
                     <Panel  defaultSize={30} minSize={20}>
@@ -279,7 +114,7 @@ const Pomodoro = () => {
                                 <div className="pomodoro-section">
                                     <div className="pomodoro-wrapper">
                                         <div className="header">
-                                            <h4 onClick={() => setTasksModal(true)}>{TasksTitle || 'Фокус'}</h4>
+                                            <h4>{TasksTitle || 'Фокус'}</h4>
                                         </div>
                                         <svg width="360" height="360" viewBox="0 0 400 400">
                                             <circle
@@ -415,7 +250,6 @@ const Pomodoro = () => {
                                             {pomodorHistory && pomodorHistory.length > 0 ? (
                                                 <div className="pomodoro-cards">
                                                     {pomodorHistory.map((record, i) => {
-                                                        console.log(pomodorHistory);
                                                         return (
                                                             <div key={i} className="pomodoro-card">
                                                                 <div className="left">

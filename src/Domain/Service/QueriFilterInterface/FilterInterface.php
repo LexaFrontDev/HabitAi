@@ -2,8 +2,6 @@
 
 namespace App\Domain\Service\QueriFilterInterface;
 
-use Doctrine\DBAL\Exception;
-
 interface FilterInterface
 {
     /**
@@ -13,15 +11,11 @@ interface FilterInterface
 
     /**
      * @return mixed[]
-     *
-     * @throws Exception
      */
     public function getList(): array;
 
     /**
      * @return mixed[]|null
-     *
-     * @throws Exception
      */
     public function getOne(): ?array;
 

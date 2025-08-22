@@ -26,7 +26,7 @@ import {LanguageApi} from "../../Infrastructure/request/Language/LanguageApi";
 import {formatTaskDateTime} from "../../Domain/Services/Tasks/taskDateFormatter";
 
 const tasksService = new TasksService(new TasksApi());
-const LangUseCase = new LanguageRequestUseCase('tasks', new LanguageApi());
+const LangUseCase = new LanguageRequestUseCase(new LanguageApi());
 const langStorage = new LangStorage();
 const langUseCase = new LangStorageUseCase(langStorage);
 
@@ -64,19 +64,25 @@ const TasksPage: React.FC = () => {
     const [shouldIndent, setShouldIndent] = useState<boolean>(false);
     const [activeId, setActiveId] = useState<number | null>(1);
     const [langCode, setLangCode] = useState('en');
-    const { t, i18n } = useTranslation('tasks');
+    const { t, i18n } = useTranslation('translation');
+    const [translationsLoaded, setTranslationsLoaded] = useState<boolean>(false);
 
 
 
     useEffect(() => {
         const detectLang = async () => {
-            const lang = await langUseCase.getLang();
-            if (lang) {
-                  setLangCode(lang);
-                  await LangUseCase.getTranslations(lang);
+            try {
+                const lang = await langUseCase.getLang();
+                if (lang) {
+                    setLangCode(lang);
+                    await LangUseCase.getTranslations(lang);
+                }
+            } catch (err) {
+                console.error(err);
+            } finally {
+                setTranslationsLoaded(true);
             }
         };
-
         detectLang();
     }, []);
 
@@ -146,7 +152,7 @@ const TasksPage: React.FC = () => {
             setTasks(allTasks);
             setActivePeriod(period);
         } catch (err: any) {
-            setError(err.message || t('tasks:mistakeGetAllTasks'));
+            setError(err.message || t('tasks.mistakeGetAllTasks'));
             setTasks([]);
         } finally {
             setLoading(false);
@@ -180,7 +186,7 @@ const TasksPage: React.FC = () => {
             setTitle('');
             setDescription('');
             setSelectedDate('');
-            Messages(t('tasks:createTasksSuccss'));
+            Messages(t('tasks.createTasksSuccss'));
         } else if (result.front) {
             ErrorAlert(result.message);
         } else {
@@ -205,7 +211,7 @@ const TasksPage: React.FC = () => {
             setDescription('');
             setSelectedDate('');
             setTasksInput(false);
-            Messages(t('tasks:deleteTasksSuccss'))
+            Messages(t('tasks.deleteTasksSuccss'))
         } else if (result.front) {
             ErrorAlert(result.message);
         } else {
@@ -258,9 +264,9 @@ const TasksPage: React.FC = () => {
 
     const handleWontDo = async (taskId: number | string, status: boolean) => {
         if (status) {
-            Messages(t('tasks:confirmTasks'));
+            Messages(t('tasks.confirmTasks'));
         } else {
-            Messages(t('tasks:unConfirmTasks'));
+            Messages(t('tasks.unConfirmTasks'));
         }
         const task = tasks.find(t => t.id === taskId);
         if (!task) return;
@@ -352,7 +358,7 @@ const TasksPage: React.FC = () => {
         );
     };
 
-    if (!i18n.hasResourceBundle(langCode, 'tasks')) return <Loading />;
+    if (!translationsLoaded) return <Loading />;
 
 
     return (
@@ -366,11 +372,11 @@ const TasksPage: React.FC = () => {
                         <div className="content-panel">
                             <div className="lists-buttons">
                                 <div className="handlers">
-                                    <Button key={1} variant="listButton"  isActive={activeId === 1}  onClick={() => handlePeriodChange('all', 1)} className="all handl">{t('buttons:AllButton')}</Button>
-                                    <Button key={2} variant="listButton"  isActive={activeId === 2}  onClick={() => handlePeriodChange('today', 2)} className="day handl">{t('buttons:TodayButton')}</Button>
-                                    <Button key={3} variant="listButton"  isActive={activeId === 3}  onClick={() => handlePeriodChange('tomorrow', 3)} className="day handl">{t('buttons:TomorowButton')}</Button>
-                                    <Button key={4} variant="listButton"  isActive={activeId === 4}  onClick={() => handlePeriodChange('nextWeek', 4)} className="day handl">{t('buttons:WeekButton')}</Button>
-                                    <Button key={5} variant="listButton"  isActive={activeId === 5}  onClick={() => handlePeriodChange('nextMonth', 5)} className="day handl">{t('buttons:MonthButton')}</Button>
+                                    <Button key={1} variant="listButton"  isActive={activeId === 1}  onClick={() => handlePeriodChange('all', 1)} className="all handl">{t('buttons.AllButton')}</Button>
+                                    <Button key={2} variant="listButton"  isActive={activeId === 2}  onClick={() => handlePeriodChange('today', 2)} className="day handl">{t('buttons.TodayButton')}</Button>
+                                    <Button key={3} variant="listButton"  isActive={activeId === 3}  onClick={() => handlePeriodChange('tomorrow', 3)} className="day handl">{t('buttons.TomorowButton')}</Button>
+                                    <Button key={4} variant="listButton"  isActive={activeId === 4}  onClick={() => handlePeriodChange('nextWeek', 4)} className="day handl">{t('buttons.WeekButton')}</Button>
+                                    <Button key={5} variant="listButton"  isActive={activeId === 5}  onClick={() => handlePeriodChange('nextMonth', 5)} className="day handl">{t('buttons.MonthButton')}</Button>
                                 </div>
                             </div>
                         </div>
@@ -397,29 +403,33 @@ const TasksPage: React.FC = () => {
                                 </div>
 
                                 <div className="header-text mt-xl-1">
-                                    <h4 className="header-title">{t('tasks:tasksHeadText')}</h4>
+                                    <h4 className="header-title">{t('tasks.tasksHeadText')}</h4>
                                 </div>
                             </div>
+
+                            {showDataModal && (
+                                <DataChunk onClose={() => setDataModal(false)} onSave={handleSave}/>
+                            )}
 
 
                             <div className="add-tasks-input triger">
                                 {!showTasksInput && (
                                     <div className="add-head" onClick={() => setTasksInput(true)}>
-                                        {t('tasks:questionWantDoTasks')}
+                                        {t('tasks.questionWantDoTasks')}
                                     </div>
                                 )}
                                 {showTasksInput && (
                                     <div className="block-add-tasks">
                                         {!showTasksInput ? (
                                             <div onClick={() => setTasksInput(true)} className="button-add-tasks">
-                                                <p>{t('tasks:questionWantDoTasks')}</p>
+                                                <p>{t('tasks.questionWantDoTasks')}</p>
                                             </div>
                                         ) : (
                                             <div className="input-tasks">
                                                 <input
                                                     className="input-tasks-title"
                                                     type="text"
-                                                    placeholder={t('tasks:wantToDo')}
+                                                    placeholder={t('tasks.wantToDo')}
                                                     value={title}
                                                     onChange={handleChange}
                                                     onKeyDown={(e) => {
@@ -431,16 +441,13 @@ const TasksPage: React.FC = () => {
                                                 />
                                                 <div className="actions">
                                                 <span className="triger" onClick={() => setDataModal(true)}>
-                                                    {selectedDate ? ` ${selectedDate}` : t('buttons:ChooseTime')}
+                                                    {selectedDate ? ` ${selectedDate}` : t('buttons.ChooseTime')}
                                                 </span>
-                                                    <button  className="triger" onClick={() => saveTasks()}>{t('buttons:addButton')}</button>
+                                                    <button  className="triger" onClick={() => saveTasks()}>{t('buttons.addButton')}</button>
                                                 </div>
                                             </div>
                                         )}
 
-                                        {showDataModal && (
-                                            <DataChunk onClose={() => setDataModal(false)} onSave={handleSave}/>
-                                        )}
 
                                         {loading && <Loading/>}
                                     </div>
@@ -487,7 +494,7 @@ const TasksPage: React.FC = () => {
                                                 <div className="dots-menu">
                                                     <span  className="dots">...</span>
                                                     <div className="dropdown-menu">
-                                                        <button  onClick={() => handleDelete(task.id)}>{t('buttons:deleteButton')}</button>
+                                                        <button  onClick={() => handleDelete(task.id)}>{t('buttons.deleteButton')}</button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -526,7 +533,7 @@ const TasksPage: React.FC = () => {
 
                                     <div className="header-text mt-xl-1">
                                          <span className="triger" onClick={() => setShowEditDateModal(true)}>
-                                            {editingTask.timeData?.time ? `${editingTask.timeData.time}` : t('buttons:ChooseTime')}
+                                            {editingTask.timeData?.time ? `${editingTask.timeData.time}` : t('buttons.ChooseTime')}
                                          </span>
                                     </div>
                                 </div>
@@ -536,7 +543,7 @@ const TasksPage: React.FC = () => {
                                             className="tasks-text-input"
                                             type="text"
                                             value={editingTask.title || ''}
-                                            placeholder={t('tasks:wantToDo')}
+                                            placeholder={t('tasks.wantToDo')}
                                             onChange={(e) => {
                                                 const updatedTask = {...editingTask, title: e.target.value};
                                                 setEditingTask(updatedTask);
@@ -551,7 +558,7 @@ const TasksPage: React.FC = () => {
                                             variant="default"
                                             className="tasks-text-input"
                                             value={editingTask.description || ''}
-                                            placeholder={t('buttons:Description')}
+                                            placeholder={t('buttons.Description')}
                                             onChange={(e) => {
                                                 const updatedTask = { ...editingTask, description: e.target.value };
                                                 setEditingTask(updatedTask);
