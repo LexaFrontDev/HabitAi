@@ -6,16 +6,17 @@ import Profile from './pages/Profile';
 import Pomodoro from "./pages/Pomodor/Pomodoro_page";
 import Habits_page from "./pages/Habits/Habits_page";
 import TasksPage from "./pages/Tasks/TasksPage";
+//@ts-ignore
 import MatricPage from "./pages/MatricPage/MatricPage";
 import Premium from "./pages/main/pages/Premium";
 import PremiumPage from "./pages/main/pages/Premium";
-import Static from "./pages/Static/StaticPage";
 import Lending from "./pages/main/pages/Main";
 import LoginPage from "./pages/AuthPages/Login";
 import RegisterPage from "./pages/AuthPages/Register";
+import {AuthCheck} from "./ui/props/Auth/AuthCheck";
 
 const RouterDom = () => {
-    const [isAuthenticated, setIsAuthenticated] = useState(null);
+    const [isAuthenticated, setIsAuthenticated] = useState<boolean|null>(null);
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -57,15 +58,61 @@ const RouterDom = () => {
     return (
         <Routes>
             <Route path="/" element={<Lending />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/pomodoro" element={<Pomodoro />} />
-            <Route path="/habits" element={<Habits_page />} />
+
+            <Route
+                path="/profile"
+                element={
+                    <AuthCheck isAuthenticated={isAuthenticated}>
+                        <Profile />
+                    </AuthCheck>
+                }
+            />
+
+            <Route
+                path="/pomodoro"
+                element={
+                    <AuthCheck isAuthenticated={isAuthenticated}>
+                        <Pomodoro />
+                    </AuthCheck>
+                }
+            />
+
+            <Route
+                path="/habits"
+                element={
+                    <AuthCheck isAuthenticated={isAuthenticated}>
+                        <Habits_page />
+                    </AuthCheck>
+                }
+            />
+
             <Route path="/users/register" element={<RegisterPage />} />
             <Route path="/users/login" element={<LoginPage />} />
-            <Route path="/tasks" element={<TasksPage />} />
-            <Route path="/matric" element={<MatricPage />} />
-            <Route path="/profile/statistics" element={<Static />} />
-            <Route path="/premium" element={<PremiumPage isAuthenticated={isAuthenticated} />} />
+
+            <Route
+                path="/tasks"
+                element={
+                    <AuthCheck isAuthenticated={isAuthenticated}>
+                        <TasksPage />
+                    </AuthCheck>
+                }
+            />
+
+            <Route
+                path="/matric"
+                element={
+                    <AuthCheck isAuthenticated={isAuthenticated}>
+                        <MatricPage />
+                    </AuthCheck>
+                }
+            />
+
+            <Route
+                path="/premium"
+                element={
+                        <PremiumPage isAuthenticated={isAuthenticated} />
+                }
+            />
         </Routes>
     );
 };

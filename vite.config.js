@@ -11,7 +11,7 @@ export default defineConfig({
         manifest: true,
         rollupOptions: {
             input: {
-                main: path.resolve(__dirname, 'assets/react/main.jsx'),
+                main: path.resolve(__dirname, 'assets/react/main.tsx'),
             },
         },
     },

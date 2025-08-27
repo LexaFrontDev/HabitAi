@@ -167,56 +167,6 @@ class HabitsRepository extends ServiceEntityRepository implements HabitsReposito
     }
 
     /**
-     * Возвращает все привычки пользователя с пагинацией, в формате getHabitsForToday.
-     *
-     * @return array<int, array<string, mixed>>
-     *
-     * @throws Exception
-     */
-    public function getAllHabitsWithLimit(int $userId, int $limit = 50, int $offset = 0): array
-    {
-        $sql = "
-        SELECT 
-            h.id AS habit_id,
-            h.*, 
-            p.*,
-            p.count AS count_purposes, 
-            hh.id AS habit_history_id,
-            hh.*, 
-            hdj.data_type,
-            dd.*, dw.*, dr.*
-        FROM Habits h
-        INNER JOIN habits_data_juntion hdj ON hdj.habits_id = h.id
-        LEFT JOIN date_daily dd ON hdj.data_id = dd.id AND hdj.data_type = 'daily'
-        LEFT JOIN date_weekly dw ON hdj.data_id = dw.id AND hdj.data_type = 'weekly'
-        LEFT JOIN date_repeat_per_month dr ON hdj.data_id = dr.id AND hdj.data_type = 'repeat'
-        LEFT JOIN purposes p ON p.habits_id = h.id
-        LEFT JOIN habits_history hh 
-               ON hh.habits_id = h.id 
-              AND hh.user_id = :userId
-        WHERE h.user_id = :userId
-          AND h.is_delete = 0
-        LIMIT :limit OFFSET :offset
-    ";
-
-        $conn = $this->getEntityManager()->getConnection();
-
-        $params = [
-            'userId' => $userId,
-            'limit' => $limit,
-            'offset' => $offset,
-        ];
-
-        $types = [
-            'userId' => \PDO::PARAM_INT,
-            'limit' => \PDO::PARAM_INT,
-            'offset' => \PDO::PARAM_INT,
-        ];
-
-        return $conn->executeQuery($sql, $params, $types)->fetchAllAssociative();
-    }
-
-    /**
      * Возвращает количество привычек пользователя, которые активны на сегодня.
      *
      * Использует три типа расписаний:

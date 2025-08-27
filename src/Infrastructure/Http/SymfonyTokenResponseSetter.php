@@ -3,21 +3,13 @@
 namespace App\Infrastructure\Http;
 
 use App\Aplication\Dto\JwtDto\JwtTokenDto;
-use App\Domain\Port\TokenResponseSetterInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
-final class SymfonyTokenResponseSetter implements TokenResponseSetterInterface, EventSubscriberInterface
+final class SymfonyTokenResponseSetter implements EventSubscriberInterface
 {
-    private ?JwtTokenDto $tokens = null;
-
-    public function attachTokens(JwtTokenDto $tokens): void
-    {
-        $this->tokens = $tokens;
-    }
-
     public static function getSubscribedEvents(): array
     {
         return [
@@ -27,37 +19,46 @@ final class SymfonyTokenResponseSetter implements TokenResponseSetterInterface, 
 
     public function onKernelResponse(ResponseEvent $event): void
     {
-        if (!$this->tokens) {
+        $request  = $event->getRequest();
+        $response = $event->getResponse();
+
+
+        if (true === $request->attributes->get('logout')) {
+            $response->headers->clearCookie('accessToken', '/', null, false, true, Cookie::SAMESITE_STRICT);
+            $response->headers->clearCookie('refreshToken', '/', null, false, true, Cookie::SAMESITE_STRICT);
+
             return;
         }
 
-        $response = $event->getResponse();
 
-        $accessCookie = Cookie::create(
-            'accessToken',
-            $this->tokens->getAccessToken(),
-            strtotime('+7 days'),
-            '/',
-            null,
-            false,
-            true,
-            false,
-            Cookie::SAMESITE_STRICT
-        );
+        $tokens = $request->attributes->get('tokens');
+        if ($tokens instanceof JwtTokenDto) {
+            $accessCookie = Cookie::create(
+                'accessToken',
+                $tokens->getAccessToken(),
+                strtotime('+7 days'),
+                '/',
+                null,
+                false,
+                true,
+                false,
+                Cookie::SAMESITE_STRICT
+            );
 
-        $refreshCookie = Cookie::create(
-            'refreshToken',
-            $this->tokens->getRefreshToken(),
-            strtotime('+7 days'),
-            '/',
-            null,
-            false,
-            true,
-            false,
-            Cookie::SAMESITE_STRICT
-        );
+            $refreshCookie = Cookie::create(
+                'refreshToken',
+                $tokens->getRefreshToken(),
+                strtotime('+7 days'),
+                '/',
+                null,
+                false,
+                true,
+                false,
+                Cookie::SAMESITE_STRICT
+            );
 
-        $response->headers->setCookie($accessCookie);
-        $response->headers->setCookie($refreshCookie);
+            $response->headers->setCookie($accessCookie);
+            $response->headers->setCookie($refreshCookie);
+        }
     }
 }

@@ -12,7 +12,7 @@ $line-color: #66666e;
   width: 100%;
   padding: 3px;
   background-color: $card-bg;
-  justify-items: center;
+  justify-items: stretch;
   margin-bottom: 15px;
 
   .stat-box {
@@ -65,10 +65,10 @@ $line-color: #66666e;
   }
 
 
-  .stat-box:nth-child(3) {
-    grid-column: span 2;
-    justify-self: center;
-  }
+  //.stat-box:nth-child(3) {
+  //  grid-column: span 2;
+  //  justify-self: center;
+  //}
 }
 
 

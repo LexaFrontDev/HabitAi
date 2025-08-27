@@ -498,7 +498,7 @@ footer {
   width: 100%;
   padding: 3px;
   background-color: #344e41;
-  justify-items: center;
+  justify-items: stretch;
   margin-bottom: 15px;
 }
 .stats .stat-box {
@@ -534,10 +534,6 @@ footer {
 .stats .stat-box:active {
   transform: translateY(2px);
   box-shadow: 0 3px 0 #2a3d18, 0 6px 10px rgba(0, 0, 0, 0.4);
-}
-.stats .stat-box:nth-child(3) {
-  grid-column: span 2;
-  justify-self: center;
 }
 
 .tabs {
@@ -761,6 +757,7 @@ footer {
   flex-direction: row;
   flex-wrap: nowrap;
   gap: 10px;
+  margin-top: 15px;
 }
 
 .habits-container .habits-list {
@@ -1189,10 +1186,8 @@ footer {
   }
 }
 .habit-progress {
-  position: relative;
   width: 40px;
   height: 40px;
-  margin-left: auto;
   cursor: pointer;
 }
 
@@ -1208,14 +1203,17 @@ footer {
   transition: stroke-dashoffset 0.3s ease;
 }
 
-.progress-text {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 10px;
-  font-weight: bold;
-  color: #333;
+.header-toggle {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+.header-toggle .toggle-wrapper img {
+  filter: brightness(0) invert(1);
+}
+.header-toggle .toggle-text {
+  font-size: 12px;
+  cursor: pointer;
 }
 
 #manual-input-modal {
@@ -1868,7 +1866,7 @@ a:hover {
   display: flex;
   flex-direction: column;
   flex-wrap: nowrap;
-  align-items: flex-start;
+  align-items: center;
   justify-content: flex-start;
   align-content: flex-start;
   margin-top: 5%;

@@ -2,7 +2,7 @@ import {DateType} from "./DateType";
 import {DatesType} from "./DatesType";
 
 export type DataType = {
-    titleHabit: string;
+    title: string;
     quote: string;
     goalInDays: string;
     datesType: DatesType;

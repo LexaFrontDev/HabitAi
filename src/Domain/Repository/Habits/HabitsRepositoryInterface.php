@@ -32,14 +32,5 @@ interface HabitsRepositoryInterface
 
     public function updateHabitById(int $habitId, int $userId, SaveHabitDto $dto): bool;
 
-    /**
-     * Возвращает все привычки пользователя с пагинацией, в формате getHabitsForToday.
-     *
-     * @return array<int, array<string, mixed>>
-     *
-     * @throws Exception
-     */
-    public function getAllHabitsWithLimit(int $userId, int $limit = 50, int $offset = 0): array;
-
     public function deleteHabitById(int $habitId, int $userId): bool;
 }

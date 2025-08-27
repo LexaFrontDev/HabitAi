@@ -4,6 +4,7 @@ namespace App\Aplication\UseCase\Service\JwtTokens;
 
 use App\Aplication\Dto\JwtDto\JwtCheckDto;
 use App\Aplication\Dto\JwtDto\JwtTokenDto;
+use App\Domain\Exception\UsersException\UserNotAuthenticatedException;
 use App\Domain\Service\JwtServicesInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
@@ -22,7 +23,11 @@ class JwtUseCase
                 return $result;
             }
 
-            return true;
+            if (empty($result)) {
+                throw new UserNotAuthenticatedException('Вы не авторизованны');
+            } else {
+                return true;
+            }
         } catch (AuthenticationException $e) {
             return false;
         }

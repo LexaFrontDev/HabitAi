@@ -7,6 +7,7 @@ import i18n from './Infrastructure/Library/i18n';
 import 'react-toastify/dist/ReactToastify.css';
 
 
+// @ts-ignore
 const root = ReactDOM.createRoot(document.getElementById('react-root'));
 
 root.render(

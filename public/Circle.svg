@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300">
+    <ellipse
+            rx="25" ry="25"
+            transform="translate(98.919237 120.576756)"
+            fill="none"
+            stroke="#34cc2c"
+            stroke-width="2"
+            stroke-dasharray="160"
+            stroke-dashoffset="160">
+        <animate
+                attributeName="stroke-dashoffset"
+                values="160;120;80;40;0"
+                keyTimes="0;0.25;0.5;0.75;1"
+                dur="4s"
+                fill="freeze"
+                calcMode="discrete"/>
+    </ellipse>
+</svg>

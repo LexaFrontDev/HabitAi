@@ -8,7 +8,6 @@ use App\Aplication\Dto\UsersDto\UsersForLogin;
 use App\Aplication\Dto\UsersDto\UsersForRegister;
 use App\Aplication\UseCase\AuthUseCase\UsersAuth;
 use App\Aplication\UseCase\Service\JwtTokens\JwtUseCase;
-use App\Domain\Port\TokenResponseSetterInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,7 +18,6 @@ use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 class AuthApiController extends AbstractController
 {
     public function __construct(
-        private TokenResponseSetterInterface $tokenResponseSetter,
         private readonly UsersAuth $usersAuth,
         private JwtUseCase $jwtAuth,
     ) {
@@ -29,6 +27,7 @@ class AuthApiController extends AbstractController
     public function register(
         #[MapRequestPayload]
         UsersForRegister $dto,
+        Request $request,
     ): JsonResponse {
         $tokens = $this->usersAuth->register($dto);
         $response = new JsonResponse(['message' => 'Registered']);
@@ -36,7 +35,7 @@ class AuthApiController extends AbstractController
             accessToken: $tokens->getAccessToken(),
             refreshToken: $tokens->getRefreshToken()
         );
-        $this->tokenResponseSetter->attachTokens($dto);
+        $request->attributes->set('tokens', $dto);
 
         return $response;
     }
@@ -76,10 +75,11 @@ class AuthApiController extends AbstractController
     public function login(
         #[MapRequestPayload]
         UsersForLogin $dto,
+        Request $request,
     ): JsonResponse {
         $tokens = $this->usersAuth->login($dto);
         $response = new JsonResponse([
-            'message' => 'Logged in',
+            'message' => 'login',
             'access_token' => $tokens->getAccessToken(),
             'refresh_token' => $tokens->getRefreshToken(),
         ], 200);
@@ -87,7 +87,7 @@ class AuthApiController extends AbstractController
             accessToken: $tokens->getAccessToken(),
             refreshToken:  $tokens->getRefreshToken()
         );
-        $this->tokenResponseSetter->attachTokens($dto);
+        $request->attributes->set('tokens', $dto);
 
         return $response;
     }

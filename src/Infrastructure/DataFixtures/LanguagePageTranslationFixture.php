@@ -495,6 +495,169 @@ class LanguagePageTranslationFixture extends Fixture implements DependentFixture
                     'ja' => 'ポモドーロ/集中',
                 ],
             ],
+
+
+            'habits' => [
+                'habitsHeadText' => [
+                    'ru' => 'Привычки',
+                    'en' => 'Habits',
+                    'kz' => 'Әдеттер',
+                    'de' => 'Gewohnheiten',
+                    'kg' => 'Адатар',
+                    'uz' => 'Odatlar',
+                    'ko' => '습관',
+                    'ja' => '習慣',
+                ],
+            ],
+
+
+            'week_short' => [
+                'mon' => [
+                    'ru' => 'Пн',
+                    'en' => 'Mo',
+                    'kz' => 'Дс',
+                    'de' => 'Mo',
+                    'kg' => 'Дш',
+                    'uz' => 'Du',
+                    'ko' => '월',
+                    'ja' => '月',
+                ],
+                'tue' => [
+                    'ru' => 'Вт',
+                    'en' => 'Tu',
+                    'kz' => 'Сс',
+                    'de' => 'Di',
+                    'kg' => 'Шш',
+                    'uz' => 'Se',
+                    'ko' => '화',
+                    'ja' => '火',
+                ],
+                'wed' => [
+                    'ru' => 'Ср',
+                    'en' => 'We',
+                    'kz' => 'Ср',
+                    'de' => 'Mi',
+                    'kg' => 'Шр',
+                    'uz' => 'Ch',
+                    'ko' => '수',
+                    'ja' => '水',
+                ],
+                'thu' => [
+                    'ru' => 'Чт',
+                    'en' => 'Th',
+                    'kz' => 'Бс',
+                    'de' => 'Do',
+                    'kg' => 'Бш',
+                    'uz' => 'Pa',
+                    'ko' => '목',
+                    'ja' => '木',
+                ],
+                'fri' => [
+                    'ru' => 'Пт',
+                    'en' => 'Fr',
+                    'kz' => 'Жм',
+                    'de' => 'Fr',
+                    'kg' => 'Жм',
+                    'uz' => 'Ju',
+                    'ko' => '금',
+                    'ja' => '金',
+                ],
+                'sat' => [
+                    'ru' => 'Сб',
+                    'en' => 'Sa',
+                    'kz' => 'Сн',
+                    'de' => 'Sa',
+                    'kg' => 'Иш',
+                    'uz' => 'Sh',
+                    'ko' => '토',
+                    'ja' => '土',
+                ],
+                'sun' => [
+                    'ru' => 'Вс',
+                    'en' => 'Su',
+                    'kz' => 'Жс',
+                    'de' => 'So',
+                    'kg' => 'Жк',
+                    'uz' => 'Ya',
+                    'ko' => '일',
+                    'ja' => '日',
+                ],
+            ],
+
+
+            'week' => [
+                'mon' => [
+                    'ru' => 'Понедельник',
+                    'en' => 'Monday',
+                    'kz' => 'Дүйсенбі',
+                    'de' => 'Montag',
+                    'kg' => 'Дүйшөмбү',
+                    'uz' => 'Dushanba',
+                    'ko' => '월요일',
+                    'ja' => '月曜日',
+                ],
+                'tue' => [
+                    'ru' => 'Вторник',
+                    'en' => 'Tuesday',
+                    'kz' => 'Сейсенбі',
+                    'de' => 'Dienstag',
+                    'kg' => 'Шейшемби',
+                    'uz' => 'Seshanba',
+                    'ko' => '화요일',
+                    'ja' => '火曜日',
+                ],
+                'wed' => [
+                    'ru' => 'Среда',
+                    'en' => 'Wednesday',
+                    'kz' => 'Сәрсенбі',
+                    'de' => 'Mittwoch',
+                    'kg' => 'Шаршемби',
+                    'uz' => 'Chorshanba',
+                    'ko' => '수요일',
+                    'ja' => '水曜日',
+                ],
+                'thu' => [
+                    'ru' => 'Четверг',
+                    'en' => 'Thursday',
+                    'kz' => 'Бейсенбі',
+                    'de' => 'Donnerstag',
+                    'kg' => 'Бейшемби',
+                    'uz' => 'Payshanba',
+                    'ko' => '목요일',
+                    'ja' => '木曜日',
+                ],
+                'fri' => [
+                    'ru' => 'Пятница',
+                    'en' => 'Friday',
+                    'kz' => 'Жұма',
+                    'de' => 'Freitag',
+                    'kg' => 'Жума',
+                    'uz' => 'Juma',
+                    'ko' => '금요일',
+                    'ja' => '金曜日',
+                ],
+                'sat' => [
+                    'ru' => 'Суббота',
+                    'en' => 'Saturday',
+                    'kz' => 'Сенбі',
+                    'de' => 'Samstag',
+                    'kg' => 'Ишемби',
+                    'uz' => 'Shanba',
+                    'ko' => '토요일',
+                    'ja' => '土曜日',
+                ],
+                'sun' => [
+                    'ru' => 'Воскресенье',
+                    'en' => 'Sunday',
+                    'kz' => 'Жексенбі',
+                    'de' => 'Sonntag',
+                    'kg' => 'Жекшемби',
+                    'uz' => 'Yakshanba',
+                    'ko' => '일요일',
+                    'ja' => '日曜日',
+                ],
+            ],
+
         ];
 
 
@@ -519,6 +682,12 @@ class LanguagePageTranslationFixture extends Fixture implements DependentFixture
             }
 
             $pageTranslate = $this->extractTranslationsForLanguage($translations, $prefix);
+            $existing = $manager->getRepository(LanguagePageTranslation::class)
+                ->findOneBy(['pageName' => $pageName]);
+
+            if ($existing) {
+                continue;
+            }
 
             $translation = new LanguagePageTranslation();
             $translation->setPageName($pageName);

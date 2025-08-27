@@ -21,6 +21,8 @@ interface FilterInterface
 
     public function getSql(): string;
 
+    public function getCount(): int;
+
     /**
      * @return mixed[]
      */

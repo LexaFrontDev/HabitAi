@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-// @ts-ignore
-import { loadPageTranslation } from '../../../utils/loadPageTranslation';
 import { NavLink, Link } from 'react-router-dom';
 import { LangStorage } from '../../../Infrastructure/languageStorage/LangStorage';
 import { LangStorageUseCase } from '../../../Aplication/UseCases/language/LangStorageUseCase';
@@ -12,46 +10,35 @@ import FAQCard from '../../../ui/molecule/Cards/FAQCard';
 import Copyright from '../../../ui/atoms/TextBlock/Copyright';
 import { Button } from '../../../ui/atoms/button/Button';
 import { TextBlock } from '../../../ui/atoms/TextBlock/TextBlock';
+import {LanguageRequestUseCase} from "../../../Aplication/UseCases/language/LanguageRequestUseCase";
+import {LanguageApi} from "../../../Infrastructure/request/Language/LanguageApi";
+import Loading from "../../chunk/LoadingChunk/Loading";
+import {PremiumPageProps} from "../../../ui/props/Premium/PremiumPageProps";
+import {Plan} from "../../../ui/props/Premium/PlanType";
+import {Benefit} from "../../../ui/props/Premium/BenefitType";
+import {FAQ} from "../../../ui/props/Premium/FAQType";
 
-
-type Plan = {
-    name: string;
-    desc: string;
-    price: string;
-    features: string[];
-    highlight: boolean;
-};
-
-type Benefit = {
-    title: string;
-    desc: string;
-    icon: string;
-};
-
-type FAQ = {
-    question: string;
-    answer: string;
-};
-
-type PremiumPageProps = {
-    isAuthenticated: boolean;
-};
-
-const currentPage = 'premium';
-
+const LangUseCase = new LanguageRequestUseCase(new LanguageApi());
 const langStorage = new LangStorage();
 const langUseCase = new LangStorageUseCase(langStorage);
 
 const PremiumPage: React.FC<PremiumPageProps> = ({ isAuthenticated }) => {
     const [langCode, setLangCode] = useState<string>('en');
-    const { t } = useTranslation(currentPage);
+    const { t, i18n } = useTranslation('translation');
+    const [translationsLoaded, setTranslationsLoaded] = useState<boolean>(false);
 
     useEffect(() => {
         const detectLang = async () => {
-            const lang = await langUseCase.getLang();
-            if (lang) {
-                setLangCode(lang);
-                await loadPageTranslation(currentPage, lang);
+            try {
+                const lang = await langUseCase.getLang();
+                if (lang) {
+                    setLangCode(lang);
+                    await LangUseCase.getTranslations(lang);
+                }
+            } catch (err) {
+                console.error(err);
+            } finally {
+                setTranslationsLoaded(true);
             }
         };
         detectLang();
@@ -144,6 +131,10 @@ const PremiumPage: React.FC<PremiumPageProps> = ({ isAuthenticated }) => {
                 'Напишите нам в поддержку через приложение или на почту support@taskflow.app. Мы всегда готовы помочь!',
         },
     ];
+
+
+
+    if (!translationsLoaded) return <Loading />;
 
     return (
         <div className="premium-page">

@@ -3,8 +3,7 @@ import {DataType} from "../../../ui/props/Habits/DataType";
 import {Days} from "../../../ui/props/Habits/Days";
 import {HabitsResponse} from "../../../ui/props/Habits/HabitsResponse";
 import {EditDataType} from "../../../ui/props/Habits/EditHabitsDataType";
-import {Messages} from "../../../pages/chunk/MessageAlertChunk";
-
+import {HabitsDatasWithStatistic} from "../../../ui/props/Habits/HabitsDatasWithStatistic";
 
 
 export class HabitsService {
@@ -12,6 +11,11 @@ export class HabitsService {
 
     async getHabitsFor(date: string): Promise<DataType[]> {
         return await this.habitsApi.getHabitsByDate(date);
+    }
+
+
+    async getHabitsStatistic(habitId: number): Promise<any>{
+        return await this.habitsApi.getHabitsStatisticByHabitsId(habitId);
     }
 
     async getHabitsForDay(day: Days): Promise<DataType[]> {
@@ -41,8 +45,8 @@ export class HabitsService {
     }
 
 
-    async getHabitsAll(): Promise<DataType[] | false> {
-        return await this.habitsApi.getHabitsAll(50, 0);
+    async getHabitsAll(): Promise<HabitsDatasWithStatistic | false> {
+        return await this.habitsApi.getHabitsAll(50, 0)
     }
 
 
@@ -122,18 +126,18 @@ export class HabitsService {
     }
 
      toggleBlock = (blockName: string) => {
-        const list = document.getElementById(blockName);
-        const icon = document.getElementById(`icon-${blockName}`);
+         const list = document.getElementById(blockName);
+         const icon = document.getElementById(`icon-${blockName}`) as HTMLImageElement | null;
 
-        if (!list || !icon) return;
+         if (!list || !icon) return;
 
-        if (list.style.display === 'none') {
-            list.style.display = 'block';
-            icon.textContent = '▼';
-        } else {
-            list.style.display = 'none';
-            icon.textContent = '▶';
-        }
+         if (list.style.display === 'none') {
+             list.style.display = 'block';
+             icon.src = '/Upload/Images/AppIcons/arrow-down.svg'; // раскрыто
+         } else {
+             list.style.display = 'none';
+             icon.src = '/Upload/Images/AppIcons/arrow-right.svg'; // свернуто
+         }
     };
 
 

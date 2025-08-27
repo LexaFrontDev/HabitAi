@@ -71,6 +71,16 @@ class ApplyFilter implements FilterInterface
     }
 
     /**
+     * @throws Exception
+     */
+    public function getCount(): int
+    {
+        $rows = $this->qb->executeQuery()->fetchAllAssociative();
+
+        return \count($rows);
+    }
+
+    /**
      * @return mixed[]
      */
     public function getParameter(): array

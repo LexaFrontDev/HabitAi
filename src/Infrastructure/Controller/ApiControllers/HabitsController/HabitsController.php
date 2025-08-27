@@ -100,10 +100,12 @@ class HabitsController extends AbstractController
             ], 400);
         }
         $result = $this->queryHabitsUseCase->getHabitsWidthLimit($limit, $offset);
+        $statistic = $this->queryHabitsHistory->getAllProgressWithHabitsTitleAll();
 
         return $this->json([
             'success' => true,
             'data' => $result,
+            'statistic' => $statistic,
         ]);
     }
 
@@ -148,5 +150,15 @@ class HabitsController extends AbstractController
         }
 
         return $this->json(['success' => true, 'message' => 'Привычка удаленно'], 200);
+    }
+
+    /**
+     * @throws \DateMalformedStringException
+     */
+    #[Route('/api/Habits/statistic/all/{habitsId}', name: 'get_habit_statistic', methods: ['GET'])]
+    #[RequiresJwt]
+    public function getHabitsStatisticAll(int $habitsId): JsonResponse
+    {
+        return $this->json(['success' => true, 'result' => $this->queryHabitsHistory->getAllProgressWithHabitsTitleByHabitsId($habitsId)]);
     }
 }
