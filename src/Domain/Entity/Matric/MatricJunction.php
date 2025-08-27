@@ -13,11 +13,16 @@ class MatricJunction
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column]
-    private int $columnNumber;
 
     #[ORM\Column]
-    private int $taskNumber;
+    private int $user_id;
+
+
+    #[ORM\Column]
+    private int $column_number;
+
+    #[ORM\Column]
+    private int $task_id;
 
     #[ORM\Column(type: 'datetime', nullable: true)]
     private ?\DateTimeInterface $created_at = null;
@@ -35,26 +40,36 @@ class MatricJunction
 
     public function getColumnNumber(): int
     {
-        return $this->columnNumber;
+        return $this->column_number;
     }
 
     public function setColumnNumber(int $number): static
     {
-        $this->columnNumber = $number;
+        $this->column_number = $number;
 
         return $this;
     }
 
     public function getTaskNumber(): int
     {
-        return $this->taskNumber;
+        return $this->task_id;
     }
 
     public function setTaskNumber(int $number): static
     {
-        $this->taskNumber = $number;
+        $this->task_id = $number;
 
         return $this;
+    }
+
+    public function getUserId(): int
+    {
+        return $this->user_id;
+    }
+
+    public function setUserId(int $user_id): void
+    {
+        $this->user_id = $user_id;
     }
 
     public function getCreatedAt(): ?\DateTimeInterface

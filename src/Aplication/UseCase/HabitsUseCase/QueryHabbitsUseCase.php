@@ -2,11 +2,14 @@
 
 namespace App\Aplication\UseCase\HabitsUseCase;
 
+use App\Aplication\Mapper\FilterCriteriaMappers\Habits\SelectAllHabitsWithLimitMapper;
 use App\Domain\Exception\Message\MessageException;
 use App\Domain\Exception\NotFoundException\NotFoundException;
 use App\Domain\Port\TokenProviderInterface;
 use App\Domain\Repository\Habits\HabitsRepositoryInterface;
 use App\Domain\Service\JwtServicesInterface;
+use App\Domain\Service\QueriFilterInterface\FilterInterface;
+use Doctrine\DBAL\Exception;
 use Psr\Log\LoggerInterface;
 
 class QueryHabbitsUseCase
@@ -16,6 +19,8 @@ class QueryHabbitsUseCase
         private HabitsRepositoryInterface $habitsRepository,
         private JwtServicesInterface $jwtServices,
         private LoggerInterface $logger,
+        private SelectAllHabitsWithLimitMapper $selectAllHabitsWithLimit,
+        private FilterInterface $filter,
     ) {
     }
 
@@ -66,46 +71,41 @@ class QueryHabbitsUseCase
 
     /**
      * @return array<int, array<string, mixed>>
+     *
+     * @throws Exception
      */
     public function getHabitsWidthLimit(int $limit, int $offset): array
     {
-        try {
-            $token = $this->tokenProvider->getTokens();
-            $userId = $this->jwtServices->getUserInfoFromToken($token->getAccessToken())->getUserId();
-            $results = $this->habitsRepository->getAllHabitsWithLimit($userId, $limit, $offset);
+        $token = $this->tokenProvider->getTokens();
+        $userId = $this->jwtServices->getUserInfoFromToken($token->getAccessToken())->getUserId();
+        $dto = $this->selectAllHabitsWithLimit->toDto($userId, $limit, $offset);
+        $obj = $this->filter->initFilter(criteriasDto: $dto, tableName: 'Habits', alias: 'h', select: '*, h.id AS habit_id');
+        $results = $obj->getList();
 
-            if (empty($results)) {
-                throw new NotFoundException('Привычки отсутствует', true);
-            }
-
-
-            $data = [];
-            foreach ($results as $row) {
-                $getTestMorgning = $this->determineTimePeriod($row['notification_date']);
-                $row['period'] = $getTestMorgning;
-
-                $row['date'] = [
-                    'mon' => (bool) $row['mon'],
-                    'tue' => (bool) $row['tue'],
-                    'wed' => (bool) $row['wed'],
-                    'thu' => (bool) $row['thu'],
-                    'fri' => (bool) $row['fri'],
-                    'sat' => (bool) $row['sat'],
-                    'sun' => (bool) $row['sun'],
-                ];
-
-                $data[] = $row;
-            }
-
-            return $data;
-        } catch (\Exception $e) {
-            $this->logger->error('Error in getHabitsForToday: '.$e->getMessage(), [
-                'exception' => $e,
-                'trace' => $e->getTraceAsString(),
-            ]);
-
-            throw new MessageException('Ошибка сервере');
+        if (empty($results)) {
+            throw new NotFoundException('Привычки отсутствует', true);
         }
+
+
+        $data = [];
+        foreach ($results as $row) {
+            $getTestMorgning = $this->determineTimePeriod($row['notification_date']);
+            $row['period'] = $getTestMorgning;
+
+            $row['date'] = [
+                'mon' => (bool) $row['mon'],
+                'tue' => (bool) $row['tue'],
+                'wed' => (bool) $row['wed'],
+                'thu' => (bool) $row['thu'],
+                'fri' => (bool) $row['fri'],
+                'sat' => (bool) $row['sat'],
+                'sun' => (bool) $row['sun'],
+            ];
+
+            $data[] = $row;
+        }
+
+        return $data;
     }
 
     /**

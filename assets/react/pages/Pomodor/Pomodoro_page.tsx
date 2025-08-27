@@ -24,7 +24,6 @@ const langUseCase = new LangStorageUseCase(langStorage);
 
 
 const Pomodoro = () => {
-    const [userId, setUserId] = useState(null);
     const [dataPomodoro, setDataPomodoro] = useState<PomodoroData | null>(null);
     const [activeTab, setActiveTab] = useState('Pomodoro');
     const [langCode, setLangCode] = useState('en');
@@ -33,7 +32,7 @@ const Pomodoro = () => {
     const {
         totalTime, timeLeft, isRunning, handleStartPause, handleCompleteSession, setTasksTitle, TasksTitle, setTotalTime, setTimeLeft,  isPaused, sessionActive, isBreak,
         showCompleteButton, breakMinutes, focusMinutes, setBreakMinutes, setFocusMinutes, setShowModal, showModal, handleSetTime, calculateProgress, formatTime, radius, circumference,
-    } = usePomodoroTimer(PomodoroUseCase, userId);
+    } = usePomodoroTimer(PomodoroUseCase);
 
     useEffect(() => {
         const fetchPomodoro = async () => {
@@ -108,7 +107,7 @@ const Pomodoro = () => {
                             <div className="content-panel">
                                 <div className="header-panel-center">
                                     <div className="header-text mt-xl-1">
-                                        <h4 className="header-title">{t('pomodoro:pomodoroHeadText')}</h4>
+                                        <h4 className="header-title">{t('pomodoro.pomodoroHeadText')}</h4>
                                     </div>
                                 </div>
                                 <div className="pomodoro-section">

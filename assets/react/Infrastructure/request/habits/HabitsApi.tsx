@@ -1,6 +1,7 @@
 import {HabitsApiInterface} from "../../../Domain/request/Habits/HabitsApiInterface";
 import {DataType} from "../../../ui/props/Habits/DataType";
 import {EditDataType} from "../../../ui/props/Habits/EditHabitsDataType";
+import {HabitsDatasWithStatistic} from "../../../ui/props/Habits/HabitsDatasWithStatistic";
 
 export class HabitsApi implements HabitsApiInterface
 {
@@ -14,7 +15,17 @@ export class HabitsApi implements HabitsApiInterface
         return data.data;
     }
 
-    async getHabitsAll(limit: number, offset: number): Promise<DataType[] | false> {
+
+    async  getHabitsStatisticByHabitsId(habitId: number): Promise<any>{
+        const response = await fetch(`/api/Habits/statistic/all/${habitId}`, {
+            method: 'GET',
+            headers: {'Content-Type': 'application/json'},
+        });
+
+        return await response.json();
+    }
+
+    async getHabitsAll(limit: number, offset: number): Promise<HabitsDatasWithStatistic | false> {
         const response = await fetch(`/api/get/Habits/all?limit=${limit}&offset=${offset}`, {
             method: 'GET',
             headers: {'Content-Type': 'application/json'},
@@ -26,7 +37,7 @@ export class HabitsApi implements HabitsApiInterface
         if (!response.ok){
             return false;
         }
-        return data.data;
+        return data;
     }
 
 

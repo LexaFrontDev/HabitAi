@@ -11,7 +11,7 @@ export class PomodoroAPi implements PomodoroInterfaceRequest
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(data),
             });
-
+            console.log(response)
             return response.ok;
         } catch (error) {
             console.error('Ошибка при запросе:', error);

@@ -31,6 +31,8 @@ class UsersRepository extends ServiceEntityRepository implements UsersRepository
             ->getQuery()
             ->getOneOrNullResult();
 
+
+
         return $user ?? false;
     }
 

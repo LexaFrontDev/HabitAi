@@ -3,16 +3,13 @@ import {DateType} from "../../../ui/props/Habits/DateType";
 import {DatesType} from "../../../ui/props/Habits/DatesType";
 import {DataType} from "../../../ui/props/Habits/DataType";
 import {EditDataType} from "../../../ui/props/Habits/EditHabitsDataType";
-import {Days} from "../../../ui/props/Habits/Days";
+import {Days, getAllTranslatedDays, getTranslatedDaysArray} from "../../../ui/props/Habits/Days";
 
 type SettingKey = 'goal' | 'startDate' | 'duration' | 'reminder';
 
 
 
-const daysList = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
-
-const daysMap: Days[] = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
-
+const daysList = getAllTranslatedDays();
 
 
 
@@ -38,7 +35,7 @@ const HabitModal: React.FC<HabitModalProps> = ({ onClose, onSave, edit = false ,
     const [step, setStep] = useState(1);
 
     const [data, setData] = useState<DataType>({
-        titleHabit: '',
+        title: '',
         quote: '',
         goalInDays: '30',
         datesType: 'daily',
@@ -77,7 +74,7 @@ const HabitModal: React.FC<HabitModalProps> = ({ onClose, onSave, edit = false ,
 
             setData({
                 ...data,
-                titleHabit: editData.titleHabit,
+                title: editData.titleHabit,
                 quote: editData.quote,
                 notificationDate: timeOnly,
                 datesType:  editData.datesType,
@@ -130,7 +127,7 @@ const HabitModal: React.FC<HabitModalProps> = ({ onClose, onSave, edit = false ,
 
     const renderFrequencyOptions = () => {
         if (data.datesType === 'daily') {
-            const daysList = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+            const daysList = getTranslatedDaysArray();
             const daysMap = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
             return (
                 <div className="date-block">
@@ -201,26 +198,12 @@ const HabitModal: React.FC<HabitModalProps> = ({ onClose, onSave, edit = false ,
         });
     };
 
-    // const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    //     const file = e.target.files?.[0];
-    //     if (file) {
-    //         const reader = new FileReader();
-    //         reader.onload = (event: ProgressEvent<FileReader>) => {
-    //             if (event.target && typeof event.target.result === 'string') {
-    //                 setData({
-    //                     ...data,
-    //                     iconBase64: event.target.result,
-    //                 });
-    //             }
-    //         };
-    //         reader.readAsDataURL(file);
-    //     }
-    // };
+
 
 
     const validateStep = (currentStep: number) => {
         if (currentStep === 2) {
-            if (!data.titleHabit.trim()) {
+            if (!data.title.trim()) {
                 setError('Введите название привычки');
                 return false;
             }
@@ -253,7 +236,7 @@ const HabitModal: React.FC<HabitModalProps> = ({ onClose, onSave, edit = false ,
         if (!validateStep(step)) return;
 
         const payload: DataType = {
-            titleHabit: data.titleHabit,
+            title: data.title,
             quote: data.quote,
             goalInDays: data.goalInDays,
             datesType: data.datesType,
@@ -311,7 +294,7 @@ const HabitModal: React.FC<HabitModalProps> = ({ onClose, onSave, edit = false ,
                                     onClick={() => {
                                         setData({
                                             ...data,
-                                            titleHabit: habit.title,
+                                            title: habit.title,
                                             quote: habit.quote,
                                             notificationDate: habit.notification,
                                             datesType: habit.datesType,
@@ -340,8 +323,8 @@ const HabitModal: React.FC<HabitModalProps> = ({ onClose, onSave, edit = false ,
                         <input
                             id="habit-title"
                             placeholder="Название привычки"
-                            value={data.titleHabit}
-                            onChange={(e) => setData({...data, titleHabit: e.target.value})}
+                            value={data.title}
+                            onChange={(e) => setData({...data, title: e.target.value})}
                         />
                         <input
                             id="habit-quote"

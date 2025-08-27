@@ -6,19 +6,19 @@ use App\Aplication\Dto\JwtDto\JwtCheckDto;
 use App\Aplication\Dto\UsersDto\UsersInfoForToken;
 use App\Aplication\Dto\JwtDto\JwtTokenDto;
 use App\Domain\Entity\Users;
-use App\Domain\Port\TokenResponseSetterInterface;
+use App\Domain\Exception\UsersException\UserNotAuthenticatedException;
+use App\Domain\Port\RequestTokenInterface;
 use App\Domain\Repository\Users\UsersRepositoryInterface;
 use App\Domain\Service\JwtServicesInterface;
 use App\Domain\Service\Provider\UserProvidersInterfaceDomain;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
 class JwtServices implements JwtServicesInterface
 {
     public function __construct(
-        private TokenResponseSetterInterface $tokenResponseSetter,
+        private RequestTokenInterface $tokenResponseSetter,
         private LoggerInterface $logger,
         private JWTTokenManagerInterface $jwtManager,
         private JWTEncoderInterface $jwtEncoder,
@@ -63,11 +63,11 @@ class JwtServices implements JwtServicesInterface
             $payload = $this->jwtEncoder->decode($refreshToken);
 
             if (!isset($payload['email'], $payload['exp'], $payload['type']) || 'refresh' !== $payload['type']) {
-                throw new AuthenticationException('Invalid refresh token payload.');
+                throw new UserNotAuthenticatedException('Invalid refresh token payload.');
             }
 
             if ($payload['exp'] < time()) {
-                throw new AuthenticationException('Refresh token has expired.');
+                throw new UserNotAuthenticatedException('Refresh token has expired.');
             }
 
             $user = $this->userProvider->loadUserByIdentifier($payload['email']);
@@ -81,7 +81,8 @@ class JwtServices implements JwtServicesInterface
 
             return new JwtTokenDto($accessToken, $newRefreshToken);
         } catch (\Exception $e) {
-            throw new AuthenticationException('Could not refresh token: '.$e->getMessage());
+            $this->tokenResponseSetter->clearTokens();
+            throw new UserNotAuthenticatedException('Could not refresh token: '.$e->getMessage());
         }
     }
 
@@ -104,7 +105,7 @@ class JwtServices implements JwtServicesInterface
                     || $refreshPayload['exp'] < time()
                     || ($refreshPayload['type'] ?? '') !== 'refresh'
                 ) {
-                    throw new AuthenticationException('Refresh token invalid');
+                    throw new UserNotAuthenticatedException('Refresh token invalid');
                 }
                 $user = $this->userProvider->loadUserByIdentifier($refreshPayload['email']);
 
@@ -118,7 +119,8 @@ class JwtServices implements JwtServicesInterface
                     ))
                 );
             } catch (\Throwable) {
-                throw new AuthenticationException('Both tokens are invalid or expired');
+                $this->tokenResponseSetter->clearTokens();
+                throw new UserNotAuthenticatedException('Both tokens are invalid or expired', 400);
             }
         }
     }
@@ -132,7 +134,8 @@ class JwtServices implements JwtServicesInterface
 
         $decoded = json_decode(base64_decode(strtr($payload, '-_', '+/')), true);
         if (!is_array($decoded)) {
-            throw new \RuntimeException('Invalid JWT structure');
+            $this->tokenResponseSetter->clearTokens();
+            throw new UserNotAuthenticatedException('Invalid JWT structure');
         }
 
         return $decoded;
@@ -143,13 +146,15 @@ class JwtServices implements JwtServicesInterface
         $payload = $this->decodeJwt($token);
 
         if (!isset($payload['username'])) {
-            throw new AuthenticationException('Invalid access token.');
+            $this->tokenResponseSetter->clearTokens();
+            throw new UserNotAuthenticatedException('Invalid access token.');
         }
 
         $result = $this->user->findByEmail($payload['username']);
 
-        if (!$result instanceof Users) {
-            throw new \LogicException('UserProvider returned invalid type');
+        if (empty($result) || !$result instanceof Users) {
+            $this->tokenResponseSetter->clearTokens();
+            throw new UserNotAuthenticatedException('UserProvider returned invalid type');
         }
 
         $role = $result->getRoles();
@@ -181,7 +186,7 @@ class JwtServices implements JwtServicesInterface
             $result = $this->validateToken($dto);
 
             if ($result instanceof JwtTokenDto) {
-                $this->tokenResponseSetter->attachTokens($result);
+                $this->tokenResponseSetter->storeTokens($result);
 
                 return 'new_tokens';
             }
@@ -194,6 +199,8 @@ class JwtServices implements JwtServicesInterface
                 'exception' => $e,
                 'message' => $e->getMessage(),
             ]);
+            $this->tokenResponseSetter->clearTokens();
+            throw new UserNotAuthenticatedException('UserProvider returned invalid type');
         }
 
         return 'invalid';

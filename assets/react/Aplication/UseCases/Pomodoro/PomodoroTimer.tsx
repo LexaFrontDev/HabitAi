@@ -4,7 +4,7 @@ import {PomodoroCreateType} from "../../../ui/props/Pomodoro/PomodoroCreateType"
 import {IsDoneAlert, Messages} from "../../../pages/chunk/MessageAlertChunk";
 
 
-export const usePomodoroTimer = (PomodoroUseCase: PomodoroService, userId: string | null) => {
+export const usePomodoroTimer = (PomodoroUseCase: PomodoroService) => {
     const [totalTime, setTotalTime] = useState(1500);
     const [timeLeft, setTimeLeft] = useState(1500);
     const [isRunning, setIsRunning] = useState(false);
@@ -69,7 +69,9 @@ export const usePomodoroTimer = (PomodoroUseCase: PomodoroService, userId: strin
         }
 
 
-        if (userId && timeCompleted > 0 && startTimeRef.current) {
+
+
+        if (timeCompleted > 0 && startTimeRef.current) {
             const pomodoroData: PomodoroCreateType = {
                 title: TasksTitle,
                 timeFocus: timeCompleted,
@@ -77,6 +79,7 @@ export const usePomodoroTimer = (PomodoroUseCase: PomodoroService, userId: strin
                 timeEnd: Math.floor(Date.now() / 1000),
                 created_date: Math.floor(Date.now() / 1000),
             };
+
             await PomodoroUseCase.createPomodro(pomodoroData);
         }
         reset();
@@ -87,13 +90,14 @@ export const usePomodoroTimer = (PomodoroUseCase: PomodoroService, userId: strin
         const timeCompleted = totalTime;
         setCompletedTime(timeCompleted);
 
-        // if (!isBreak && timeCompleted < 60) {
-        //     Messages("Помидор не должен быть меньше 1 минуты!")
-        //     reset();
-        //     return;
-        // }
+        if (!isBreak && timeCompleted < 60) {
+            Messages("Помидор не должен быть меньше 1 минуты!")
+            reset();
+            return;
+        }
 
-        if (!isBreak && userId && startTimeRef.current) {
+
+        if (!isBreak && startTimeRef.current) {
             const pomodoroData: PomodoroCreateType = {
                 title: TasksTitle,
                 timeFocus: timeCompleted,
@@ -101,7 +105,7 @@ export const usePomodoroTimer = (PomodoroUseCase: PomodoroService, userId: strin
                 timeEnd: Math.floor(Date.now() / 1000),
                 created_date: Math.floor(Date.now() / 1000),
             };
-
+            console.log(pomodoroData);
             await PomodoroUseCase.createPomodro(pomodoroData);
         }
 

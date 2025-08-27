@@ -22,6 +22,12 @@ class LanguageFixture extends Fixture
         ];
 
         foreach ($languages as $langData) {
+            $existing = $manager->getRepository(Language::class)
+                ->findOneBy(['name' => $langData['name']]);
+
+            if ($existing) {
+                continue;
+            }
             $language = new Language();
             $language->setName($langData['name']);
             $language->setPrefix($langData['prefix']);
