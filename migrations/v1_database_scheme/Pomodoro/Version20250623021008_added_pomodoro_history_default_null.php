@@ -39,5 +39,4 @@ final class Version20250623021008_added_pomodoro_history_default_null extends Ab
             }
         }
     }
-
 }

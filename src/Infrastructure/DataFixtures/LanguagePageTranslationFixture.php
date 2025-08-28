@@ -508,7 +508,41 @@ class LanguagePageTranslationFixture extends Fixture implements DependentFixture
                     'ko' => '습관',
                     'ja' => '習慣',
                 ],
+
+                'morning' => [
+                    'ru' => 'Утро',
+                    'en' => 'Morning',
+                    'kz' => 'Таңғы',
+                    'de' => 'Morgen',
+                    'kg' => 'Таң',
+                    'uz' => 'Ertalab',
+                    'ko' => '아침',
+                    'ja' => '朝',
+                ],
+
+                'night' => [
+                    'ru' => 'Ночь',
+                    'en' => 'Night',
+                    'kz' => 'Түн',
+                    'de' => 'Nacht',
+                    'kg' => 'Кеч',
+                    'uz' => 'Kecha',
+                    'ko' => '밤',
+                    'ja' => '夜',
+                ],
+
+                'midnight' => [
+                    'ru' => 'Полдень',
+                    'en' => 'Midnight',
+                    'kz' => 'Түскі уақыт',
+                    'de' => 'Mitternacht',
+                    'kg' => 'Түштөн кийинки',
+                    'uz' => 'O‘rta kechasi',
+                    'ko' => '자정',
+                    'ja' => '真夜中',
+                ],
             ],
+
 
 
             'week_short' => [

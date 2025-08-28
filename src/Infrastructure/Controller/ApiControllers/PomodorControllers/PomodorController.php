@@ -3,7 +3,7 @@
 namespace App\Infrastructure\Controller\ApiControllers\PomodorControllers;
 
 use App\Aplication\Dto\PomodorDto\ReqPomodorDto;
-use App\Aplication\UseCase\HabitsUseCase\QueryHabbitsUseCase;
+use App\Aplication\UseCase\HabitsUseCase\Habits\QueryHabbitsUseCase;
 use App\Aplication\UseCase\PomodorUseCases\Commands\PomodorCommandUseCase;
 use App\Aplication\UseCase\PomodorUseCases\Query\QueryPomodorUseCase;
 use App\Aplication\UseCase\TasksUseCases\QueryTasksUseCase;

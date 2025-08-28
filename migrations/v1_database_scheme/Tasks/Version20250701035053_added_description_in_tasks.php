@@ -42,5 +42,4 @@ final class Version20250701035053Addeddescriptionintasks extends AbstractMigrati
             }
         }
     }
-
 }

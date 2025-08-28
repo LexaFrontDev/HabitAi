@@ -9,7 +9,7 @@ class ReqUpdateHabitsDto
      */
     public function __construct(
         public readonly int $habitId,
-        public readonly string $titleHabit,
+        public readonly string $title,
         public readonly string $quote,
         public readonly string $goalInDays,
         public readonly string $datesType,

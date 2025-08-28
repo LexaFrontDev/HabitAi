@@ -39,5 +39,4 @@ final class Version20250626131625Renamemanuallycountinpurpose extends AbstractMi
             }
         }
     }
-
 }

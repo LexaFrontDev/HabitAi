@@ -32,7 +32,7 @@ final class Version20250625041914Edithabitsandpurpose extends AbstractMigration
             }
 
             if (!empty($sqlParts)) {
-                $this->addSql('ALTER TABLE Habits ' . implode(', ', $sqlParts));
+                $this->addSql('ALTER TABLE Habits '.implode(', ', $sqlParts));
             }
         }
 
@@ -54,7 +54,7 @@ final class Version20250625041914Edithabitsandpurpose extends AbstractMigration
 
             foreach (['cup_count', 'millimeter_count', 'minute_count', 'hour_count', 'kilometer_count', 'pages_count', 'new_count'] as $col) {
                 if (isset($columns[$col])) {
-                    $dropParts[] = 'DROP ' . $col;
+                    $dropParts[] = 'DROP '.$col;
                 }
             }
 
@@ -67,7 +67,7 @@ final class Version20250625041914Edithabitsandpurpose extends AbstractMigration
             $sqlParts = array_merge($addParts, $dropParts, $changeParts);
 
             if (!empty($sqlParts)) {
-                $this->addSql('ALTER TABLE purposes ' . implode(', ', $sqlParts));
+                $this->addSql('ALTER TABLE purposes '.implode(', ', $sqlParts));
             }
         }
     }
@@ -92,13 +92,13 @@ final class Version20250625041914Edithabitsandpurpose extends AbstractMigration
 
             foreach (['cup_count', 'millimeter_count', 'minute_count', 'hour_count', 'kilometer_count', 'pages_count', 'new_count'] as $col) {
                 if (!isset($columns[$col])) {
-                    $addParts[] = 'ADD ' . $col . ' INT DEFAULT NULL';
+                    $addParts[] = 'ADD '.$col.' INT DEFAULT NULL';
                 }
             }
 
             foreach (['habits_id', 'type', 'count'] as $col) {
                 if (isset($columns[$col])) {
-                    $dropParts[] = 'DROP ' . $col;
+                    $dropParts[] = 'DROP '.$col;
                 }
             }
 
@@ -111,9 +111,8 @@ final class Version20250625041914Edithabitsandpurpose extends AbstractMigration
             $sqlParts = array_merge($addParts, $dropParts, $changeParts);
 
             if (!empty($sqlParts)) {
-                $this->addSql('ALTER TABLE purposes ' . implode(', ', $sqlParts));
+                $this->addSql('ALTER TABLE purposes '.implode(', ', $sqlParts));
             }
         }
     }
-
 }

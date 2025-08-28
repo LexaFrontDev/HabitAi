@@ -140,14 +140,14 @@ final class Version20250622074210_create_habits_related_tables extends AbstractM
         $sm = $this->connection->createSchemaManager();
 
         foreach ([
-                     'date_daily',
-                     'date_repeat_per_month',
-                     'date_weekly',
-                     'Habits',
-                     'notifications',
-                     'purposes',
-                     'Tasks'
-                 ] as $table) {
+            'date_daily',
+            'date_repeat_per_month',
+            'date_weekly',
+            'Habits',
+            'notifications',
+            'purposes',
+            'Tasks',
+        ] as $table) {
             if ($sm->tablesExist([$table])) {
                 $this->addSql("DROP TABLE {$table}");
             }

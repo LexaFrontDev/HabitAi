@@ -2,8 +2,8 @@ import {DatesType} from "./DatesType";
 import {DateType} from "./DateType";
 
 export type EditDataType = {
-    habitsId: number;
-    titleHabit: string;
+    habitId: number;
+    title: string;
     quote: string;
     goalInDays: string;
     datesType: DatesType;
@@ -13,7 +13,7 @@ export type EditDataType = {
     purposeType: 'count' | string;
     purposeCount: number;
     checkManually: boolean;
+    autoCount: number;
     checkAuto: boolean;
     checkClose: boolean;
-    autoCount: number;
 };

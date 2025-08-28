@@ -33,7 +33,7 @@ final class Version_20250701_030209_Remove_legacy_notification extends AbstractM
             }
 
             if (!empty($drops)) {
-                $this->addSql('ALTER TABLE Tasks ' . implode(', ', $drops));
+                $this->addSql('ALTER TABLE Tasks '.implode(', ', $drops));
             }
         }
     }
@@ -54,7 +54,7 @@ final class Version_20250701_030209_Remove_legacy_notification extends AbstractM
             }
 
             if (!empty($adds)) {
-                $this->addSql('ALTER TABLE Tasks ' . implode(', ', $adds));
+                $this->addSql('ALTER TABLE Tasks '.implode(', ', $adds));
             }
         }
     }

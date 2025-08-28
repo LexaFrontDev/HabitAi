@@ -39,5 +39,4 @@ final class Version20250627034608Addedrecordedatinhabitshistory extends Abstract
             }
         }
     }
-
 }

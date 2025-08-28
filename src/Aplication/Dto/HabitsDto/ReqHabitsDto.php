@@ -8,7 +8,7 @@ class ReqHabitsDto
      * @param array<int, mixed> $date
      */
     public function __construct(
-        public readonly string $titleHabit,
+        public readonly string $title,
         public readonly string $quote,
         public readonly string $goalInDays,
         public readonly string $datesType,
@@ -24,9 +24,9 @@ class ReqHabitsDto
     ) {
     }
 
-    public function getTitleHabit(): string
+    public function getTitle(): string
     {
-        return $this->titleHabit;
+        return $this->title;
     }
 
     public function getQuote(): string

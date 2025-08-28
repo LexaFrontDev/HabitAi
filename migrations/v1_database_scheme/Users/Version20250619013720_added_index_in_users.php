@@ -20,7 +20,7 @@ final class Version20250619013720_added_index_in_users extends AbstractMigration
 
         if ($schemaManager->tablesExist(['Users'])) {
             $indexes = $schemaManager->listTableIndexes('Users');
-            $existingIndexNames = array_map(fn($index) => strtolower($index->getName()), $indexes);
+            $existingIndexNames = array_map(fn ($index) => strtolower($index->getName()), $indexes);
 
             if (!in_array('uniq_1483a5e95e237e06', $existingIndexNames, true)) {
                 $this->addSql('CREATE UNIQUE INDEX UNIQ_1483A5E95E237E06 ON Users (name)');
@@ -32,14 +32,13 @@ final class Version20250619013720_added_index_in_users extends AbstractMigration
         }
     }
 
-
     public function down(Schema $schema): void
     {
         $schemaManager = $this->connection->createSchemaManager();
 
         if ($schemaManager->tablesExist(['Users'])) {
             $indexes = $schemaManager->listTableIndexes('Users');
-            $existingIndexNames = array_map(fn($index) => strtolower($index->getName()), $indexes);
+            $existingIndexNames = array_map(fn ($index) => strtolower($index->getName()), $indexes);
 
             if (in_array('uniq_1483a5e95e237e06', $existingIndexNames, true)) {
                 $this->addSql('DROP INDEX UNIQ_1483A5E95E237E06 ON Users');
@@ -50,5 +49,4 @@ final class Version20250619013720_added_index_in_users extends AbstractMigration
             }
         }
     }
-
 }

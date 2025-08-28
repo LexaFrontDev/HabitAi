@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Aplication\UseCase\HabitsUseCase;
+namespace App\Aplication\UseCase\HabitsUseCase\Habits;
 
 use App\Aplication\Dto\HabitsDto\ReqHabitsDto;
 use App\Aplication\Dto\HabitsDto\ReqUpdateHabitsDto;
 use App\Aplication\Dto\HabitsDto\SaveHabitDto;
+use App\Aplication\Dto\PurposeDto\PurposeDto;
 use App\Aplication\UseCase\DatesUseCases\DatesCommandUseCase;
 use App\Domain\Exception\Message\MessageException;
 use App\Domain\Port\TokenProviderInterface;
@@ -12,7 +13,6 @@ use App\Domain\Repository\Habits\HabitsRepositoryInterface;
 use App\Domain\Repository\Purpose\PurposeRepositoryInterface;
 use App\Domain\Service\JwtServicesInterface;
 use Psr\Log\LoggerInterface;
-use App\Aplication\Dto\PurposeDto\PurposeDto;
 
 class CommandHabitsUseCase
 {
@@ -36,7 +36,7 @@ class CommandHabitsUseCase
         $userId = $userInfo->getUserId();
 
         $habitDto = new SaveHabitDto(
-            $reqHabitsDto->titleHabit,
+            $reqHabitsDto->title,
             $reqHabitsDto->quote,
             $reqHabitsDto->goalInDays,
             $reqHabitsDto->beginDate,
@@ -79,7 +79,7 @@ class CommandHabitsUseCase
             $userId = $userId->getUserId();
 
             $habitsDto = new SaveHabitDto(
-                $reqHabitsDto->getTitleHabit(),
+                $reqHabitsDto->getTitle(),
                 $reqHabitsDto->getQuote(),
                 $reqHabitsDto->getGoalInDays(),
                 $reqHabitsDto->getBeginDate(),

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Aplication\UseCase\HabitsUseCase;
+namespace App\Aplication\UseCase\HabitsUseCase\HabitsHistory;
 
 use App\Aplication\Dto\HabitsDto\GetHabitsProgress;
 use App\Aplication\Dto\HabitsDto\GetHabitsProgressHabitsTitle;
