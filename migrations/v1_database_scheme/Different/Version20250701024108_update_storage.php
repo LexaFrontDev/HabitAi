@@ -54,11 +54,10 @@ final class Version20250701024108Updatestorage extends AbstractMigration
             }
 
             if (!empty($addColumnsSql)) {
-                $this->addSql('ALTER TABLE Tasks ' . implode(', ', $addColumnsSql));
+                $this->addSql('ALTER TABLE Tasks '.implode(', ', $addColumnsSql));
             }
         }
     }
-
 
     public function down(Schema $schema): void
     {

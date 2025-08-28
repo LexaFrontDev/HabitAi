@@ -36,7 +36,7 @@ final class Version20250705100411Addedsometablesinusers extends AbstractMigratio
             }
 
             if (!empty($sqlParts)) {
-                $this->addSql('ALTER TABLE Users ' . implode(', ', $sqlParts));
+                $this->addSql('ALTER TABLE Users '.implode(', ', $sqlParts));
             }
         }
     }
@@ -63,7 +63,7 @@ final class Version20250705100411Addedsometablesinusers extends AbstractMigratio
             }
 
             if (!empty($sqlParts)) {
-                $this->addSql('ALTER TABLE Users ' . implode(', ', $sqlParts));
+                $this->addSql('ALTER TABLE Users '.implode(', ', $sqlParts));
             }
         }
     }

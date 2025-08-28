@@ -11,6 +11,7 @@ import {LangStorageUseCase} from "../../Aplication/UseCases/language/LangStorage
 import {HabitsService} from "../../Aplication/UseCases/Habits/HabitsService";
 import {HabitsApi} from "../../Infrastructure/request/habits/HabitsApi";
 import {useHabitsLogic} from "../../Aplication/UseCases/Habits/HabitsPageLogic";
+import Calendar from "react-calendar";
 
 const habitsService = new HabitsService(new HabitsApi());
 const LangUseCase = new LanguageRequestUseCase(new LanguageApi());
@@ -51,12 +52,19 @@ const HabitsPage = () => {
         IsLoading,
         setIsLoading,
         HabitsCurrentStatistics,
-        SetHabitsCurrentStatistics
+        SetHabitsCurrentStatistics,
+        fetchHabitsStatistic,
+        fetchHabitsTemplates,
+        Templates,
+        setTemplates,
+        handleUpdate
     } = useHabitsLogic(habitsService);
-
+    const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
     useEffect(() => {
         fetchHabits();
+        fetchHabitsStatistic();
+        fetchHabitsTemplates();
     }, []);
 
     useEffect(() => {
@@ -156,16 +164,30 @@ const HabitsPage = () => {
                                             const progress = (habit.count_end || 0) / habit.count_purposes;
 
                                             return (
-                                                <circle
-                                                    cx="60"
-                                                    cy="60"
-                                                    r={r}
-                                                    fill="none"
-                                                    stroke="#34cc2c"
-                                                    strokeWidth="4"
-                                                    strokeDasharray={circumference}
-                                                    strokeDashoffset={circumference * (1 - progress)}
-                                                />
+                                                <>
+
+                                                    <circle
+                                                        cx="60"
+                                                        cy="60"
+                                                        r={r}
+                                                        fill="#c0c0c0"
+                                                        stroke="none"
+                                                    />
+
+
+                                                    <circle
+                                                        cx="60"
+                                                        cy="60"
+                                                        r={r}
+                                                        fill="none"
+                                                        stroke="#1E90FF"
+                                                        strokeWidth="6"
+                                                        strokeDasharray={circumference}
+                                                        strokeDashoffset={circumference * (1 - progress)}
+                                                        strokeLinecap="round"
+                                                        transform="rotate(-90 60 60)"
+                                                    />
+                                                </>
                                             );
                                         })()}
                                     </svg>
@@ -181,7 +203,7 @@ const HabitsPage = () => {
 
     const morningHabits = habits.filter(h => h.period === 'morning');
     const nightHabits = habits.filter(h => h.period === 'night');
-    const otherHabits = habits.filter(h => h.period !== 'morning' && h.period !== 'night');
+    const otherHabits = habits.filter(h => h.period === 'other');
 
 
     return (
@@ -220,12 +242,14 @@ const HabitsPage = () => {
                                         </button>
                                         {isModalOpen && (
                                             <HabitModal
+                                                habitTemplates={Templates}
                                                 onClose={() => {
                                                     setIsModalOpen(false);
                                                     setEditingHabit(null);
                                                 }}
                                                 onSave={handleSave}
-                                                edit={true}
+                                                onEdit={handleUpdate}
+                                                edit={!!editingHabit}
                                                 editData={editingHabit}
                                             />
                                         )}
@@ -243,9 +267,9 @@ const HabitsPage = () => {
                                     ))}
                                 </div>
                                 <div className="habits-list">
-                                    {renderHabitsBlock('Утро', morningHabits, 'morning')}
-                                    {renderHabitsBlock('Вечер', nightHabits, 'night')}
-                                    {renderHabitsBlock('Другое', otherHabits, 'other')}
+                                    {renderHabitsBlock(t('habits.morning'), morningHabits, 'morning')}
+                                    {renderHabitsBlock(t('habits.night'), nightHabits, 'night')}
+                                    {renderHabitsBlock(t('habits.midnight'), otherHabits, 'other')}
                                     {habits.length === 0 && <p className="no-habits">Нет привычек.</p>}
                                 </div>
 
@@ -264,11 +288,11 @@ const HabitsPage = () => {
                                                 <h4 className="header-title">{habitsSide.title}</h4>
                                             </div>
                                             <div className="habit-actions">
-                                                <button onClick={() => handleEdit(habitsSide)}
-                                                        className="triger-pause">✏️
+                                                <button onClick={() => handleEdit(habitsSide)} className="triger-pause">
+                                                    <img className="icon-img" src="/Upload/Images/AppIcons/edit.svg" alt=""/>
                                                 </button>
-                                                <button onClick={() => handleDelete(habitsSide.habit_id)}
-                                                        className="triger-delete">🗑️
+                                                <button onClick={() => handleDelete(habitsSide.habit_id)} className="triger-delete">
+                                                    <img className="icon-img" src="/Upload/Images/AppIcons/delete.svg" alt=""/>
                                                 </button>
                                             </div>
                                         </div>
@@ -291,6 +315,73 @@ const HabitsPage = () => {
                                                 <span>{HabitsCurrentStatistics.tracking_today}</span>
                                             </div>
                                         </div>
+
+
+                                        <Calendar
+                                            formatMonthYear={(locale, date) => {
+                                                const monthNames = [
+                                                    t('month.January'), t('month.February'), t('month.March'),
+                                                    t('month.April'), t('month.May'), t('month.June'),
+                                                    t('month.July'), t('month.August'), t('month.September'),
+                                                    t('month.October'), t('month.November'), t('month.December')
+                                                ];
+                                                return `${monthNames[date.getMonth()]} ${date.getFullYear()}`;
+                                            }}
+                                            formatShortWeekday={(locale, date) => {
+                                                const weekdays = [
+                                                    t('week_short.mon'), t('week_short.tue'), t('week_short.wed'),
+                                                    t('week_short.thu'), t('week_short.fri'), t('week_short.sat'), t('week_short.sun')
+                                                ];
+                                                return weekdays[date.getDay() === 0 ? 6 : date.getDay() - 1];
+                                            }}
+                                            onClickDay={setSelectedDate}
+                                            value={selectedDate || new Date()}
+                                            tileContent={({ date, view }) => {
+                                                if (view === 'month' && HabitsCurrentStatistics) {
+                                                    const dateStr = date.toISOString().split('T')[0];
+                                                    const statForDate = HabitsCurrentStatistics.habitsList.find(
+                                                        (h: { recordedAt: string; count: number; countEnd: number }) => h.recordedAt.split('T')[0] === dateStr
+                                                    );
+
+                                                    if (statForDate) {
+                                                        const percent = Math.round((statForDate.countEnd / statForDate.count) * 100);
+                                                        const color = percent === 100 ? '#2ecc71' : percent >= 50 ? '#f1c40f' : '#f39c12';
+
+                                                        return (
+                                                            <div style={{ position: 'relative', width: '100%', height: '70%' }}>
+                                                                <svg
+                                                                    viewBox="0 0 36 36"
+                                                                    style={{
+                                                                        width: '100%',
+                                                                        height: '100%',
+                                                                    }}
+                                                                >
+                                                                    <path
+                                                                        d="M18 2.0845
+                                   a 15.9155 15.9155 0 0 1 0 31.831
+                                   a 15.9155 15.9155 0 0 1 0 -31.831"
+                                                                        fill="none"
+                                                                        stroke="#ddd"
+                                                                        strokeWidth="3"
+                                                                    />
+                                                                    <path
+                                                                        d="M18 2.0845
+                                   a 15.9155 15.9155 0 0 1 0 31.831
+                                   a 15.9155 15.9155 0 0 1 0 -31.831"
+                                                                        fill="none"
+                                                                        stroke={color}
+                                                                        strokeWidth="3"
+                                                                        strokeDasharray={`${percent}, 100`}
+                                                                    />
+                                                                </svg>
+                                                            </div>
+                                                        );
+                                                    }
+                                                }
+                                                return null;
+                                            }}
+                                        />
+
                                     </div>
                                 )}
                         </div>

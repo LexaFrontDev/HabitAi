@@ -22,7 +22,7 @@ final class Version20250627040414Addedindexeshabitshistory extends AbstractMigra
             $table = $sm->introspectTable('habits_history');
             $indexes = $table->getIndexes();
 
-            $indexNames = array_map(fn($index) => $index->getName(), $indexes);
+            $indexNames = array_map(fn ($index) => $index->getName(), $indexes);
 
             if (!in_array('idx_user', $indexNames, true)) {
                 $this->addSql('CREATE INDEX idx_user ON habits_history (user_id)');
@@ -45,7 +45,7 @@ final class Version20250627040414Addedindexeshabitshistory extends AbstractMigra
         if ($sm->tablesExist(['habits_history'])) {
             $table = $sm->introspectTable('habits_history');
             $indexes = $table->getIndexes();
-            $indexNames = array_map(fn($index) => $index->getName(), $indexes);
+            $indexNames = array_map(fn ($index) => $index->getName(), $indexes);
 
             if (in_array('idx_user', $indexNames, true)) {
                 $this->addSql('DROP INDEX idx_user ON habits_history');
@@ -60,5 +60,4 @@ final class Version20250627040414Addedindexeshabitshistory extends AbstractMigra
             }
         }
     }
-
 }

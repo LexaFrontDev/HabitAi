@@ -39,5 +39,4 @@ final class Version20250626135514Addeduseridinhabitshistory extends AbstractMigr
             }
         }
     }
-
 }

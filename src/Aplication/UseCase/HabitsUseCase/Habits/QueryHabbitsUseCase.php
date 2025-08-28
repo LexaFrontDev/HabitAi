@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Aplication\UseCase\HabitsUseCase;
+namespace App\Aplication\UseCase\HabitsUseCase\Habits;
 
 use App\Aplication\Mapper\FilterCriteriaMappers\Habits\SelectAllHabitsWithLimitMapper;
 use App\Domain\Exception\Message\MessageException;

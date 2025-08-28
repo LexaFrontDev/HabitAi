@@ -3,8 +3,8 @@ import { BrowserRouter, Routes, Route, useLocation, useNavigate } from 'react-ro
 import Loading from './pages/chunk/LoadingChunk/Loading';
 
 import Profile from './pages/Profile';
-import Pomodoro from "./pages/Pomodor/Pomodoro_page";
-import Habits_page from "./pages/Habits/Habits_page";
+import Pomodoro from "./pages/Pomodor/PomodoroPage";
+import Habits_page from "./pages/Habits/HabitsPage";
 import TasksPage from "./pages/Tasks/TasksPage";
 //@ts-ignore
 import MatricPage from "./pages/MatricPage/MatricPage";
@@ -14,6 +14,7 @@ import Lending from "./pages/main/pages/Main";
 import LoginPage from "./pages/AuthPages/Login";
 import RegisterPage from "./pages/AuthPages/Register";
 import {AuthCheck} from "./ui/props/Auth/AuthCheck";
+import HabitCalendar from "./pages/Statistic/StatisticPage";
 
 const RouterDom = () => {
     const [isAuthenticated, setIsAuthenticated] = useState<boolean|null>(null);
@@ -111,6 +112,15 @@ const RouterDom = () => {
                 path="/premium"
                 element={
                         <PremiumPage isAuthenticated={isAuthenticated} />
+                }
+            />
+
+            <Route
+                path="/profile/statistics"
+                element={
+                    <AuthCheck isAuthenticated={isAuthenticated}>
+                        <HabitCalendar />
+                    </AuthCheck>
                 }
             />
         </Routes>

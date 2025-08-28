@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Aplication\UseCase\HabitsUseCase;
+namespace App\Aplication\UseCase\HabitsUseCase\HabitsHistory;
 
 use App\Aplication\Dto\HabitsDto\SaveHabitsProgress;
 use App\Domain\Port\TokenProviderInterface;

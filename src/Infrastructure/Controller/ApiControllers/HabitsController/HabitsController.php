@@ -5,16 +5,17 @@ namespace App\Infrastructure\Controller\ApiControllers\HabitsController;
 use App\Aplication\Dto\HabitsDto\ReqHabitsDto;
 use App\Aplication\Dto\HabitsDto\ReqUpdateHabitsDto;
 use App\Aplication\Dto\HabitsDto\SaveHabitsProgress;
-use App\Aplication\UseCase\HabitsUseCase\CommandHabitsHistoryUseCase;
-use App\Aplication\UseCase\HabitsUseCase\CommandHabitsUseCase;
-use App\Aplication\UseCase\HabitsUseCase\QueryHabbitsUseCase;
-use App\Aplication\UseCase\HabitsUseCase\QueryHabitsHistory;
+use App\Aplication\UseCase\HabitsUseCase\Habits\CommandHabitsUseCase;
+use App\Aplication\UseCase\HabitsUseCase\Habits\QueryHabbitsUseCase;
+use App\Aplication\UseCase\HabitsUseCase\HabitsHistory\CommandHabitsHistoryUseCase;
+use App\Aplication\UseCase\HabitsUseCase\HabitsHistory\QueryHabitsHistory;
+use App\Aplication\UseCase\HabitsUseCase\HabitsTemplates\QueryHabitsTemplates;
 use App\Infrastructure\Attribute\RequiresJwt;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
 
 class HabitsController extends AbstractController
 {
@@ -23,6 +24,7 @@ class HabitsController extends AbstractController
         private QueryHabbitsUseCase $queryHabitsUseCase,
         private QueryHabitsHistory $queryHabitsHistory,
         private CommandHabitsHistoryUseCase $commandHabitsHistoryUseCase,
+        private QueryHabitsTemplates $queryHabitsTemplates,
     ) {
     }
 
@@ -100,12 +102,10 @@ class HabitsController extends AbstractController
             ], 400);
         }
         $result = $this->queryHabitsUseCase->getHabitsWidthLimit($limit, $offset);
-        $statistic = $this->queryHabitsHistory->getAllProgressWithHabitsTitleAll();
 
         return $this->json([
             'success' => true,
             'data' => $result,
-            'statistic' => $statistic,
         ]);
     }
 
@@ -152,12 +152,23 @@ class HabitsController extends AbstractController
         return $this->json(['success' => true, 'message' => 'Привычка удаленно'], 200);
     }
 
-    /**
-     * @throws \DateMalformedStringException
-     */
+    #[Route('/api/Habits/statistic/all', name: 'get_habit_statistic_all', methods: ['GET'])]
+    #[RequiresJwt]
+    public function getHabitsStatisticAll(): JsonResponse
+    {
+        return $this->json(['success' => true, 'result' => $this->queryHabitsHistory->getAllProgressWithHabitsTitleAll()]);
+    }
+
+    #[Route('/api/Habits/templates/all', name: 'get_habit_templates_all', methods: ['GET'])]
+    #[RequiresJwt]
+    public function getHabitsTemplatesAll(): JsonResponse
+    {
+        return $this->json(['success' => true, 'result' => $this->queryHabitsTemplates->getAllTemplates()]);
+    }
+
     #[Route('/api/Habits/statistic/all/{habitsId}', name: 'get_habit_statistic', methods: ['GET'])]
     #[RequiresJwt]
-    public function getHabitsStatisticAll(int $habitsId): JsonResponse
+    public function getHabitsStatisticAllByHabitId(int $habitsId): JsonResponse
     {
         return $this->json(['success' => true, 'result' => $this->queryHabitsHistory->getAllProgressWithHabitsTitleByHabitsId($habitsId)]);
     }

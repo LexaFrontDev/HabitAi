@@ -4,6 +4,7 @@ import {Days} from "../../../ui/props/Habits/Days";
 import {HabitsResponse} from "../../../ui/props/Habits/HabitsResponse";
 import {EditDataType} from "../../../ui/props/Habits/EditHabitsDataType";
 import {HabitsDatasWithStatistic} from "../../../ui/props/Habits/HabitsDatasWithStatistic";
+import {HabitTemplate} from "../../../ui/props/Habits/HabitTemplate";
 
 
 export class HabitsService {
@@ -45,11 +46,17 @@ export class HabitsService {
     }
 
 
-    async getHabitsAll(): Promise<HabitsDatasWithStatistic | false> {
+    async getHabitsAll(): Promise<DataType[] | false> {
         return await this.habitsApi.getHabitsAll(50, 0)
     }
 
+    async getHabitsTemplatesAll():  Promise<HabitTemplate[] | false>{
+        return await this.habitsApi.getHabitsTemplatesAll()
+    }
 
+    async getHabitsStatisticAll():  Promise<any | false>{
+        return await this.habitsApi.getHabitsStatisticAll()
+    }
 
     async createHabits(habits: Partial<DataType>): Promise<HabitsResponse> {
         try {

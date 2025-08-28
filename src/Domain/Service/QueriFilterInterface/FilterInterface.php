@@ -7,7 +7,7 @@ interface FilterInterface
     /**
      * @return $this
      */
-    public function initFilter(object $criteriasDto, string $tableName, string $alias = 'u', string $select = '*'): self;
+    public function initFilter(?object $criteriasDto, string $tableName, string $alias = 'u', string $select = '*'): self;
 
     /**
      * @return mixed[]

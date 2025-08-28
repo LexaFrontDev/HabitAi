@@ -1,0 +1,1 @@
+export type SettingKey = 'goal' | 'startDate' | 'duration' | 'reminder';

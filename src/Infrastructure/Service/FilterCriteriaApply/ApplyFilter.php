@@ -29,11 +29,16 @@ class ApplyFilter implements FilterInterface
     /**
      * @return $this
      */
-    public function initFilter(object $criteriasDto, string $tableName, string $alias = 'u', string $select = '*'): self
+    public function initFilter(?object $criteriasDto, string $tableName, string $alias = 'u', string $select = '*'): self
     {
         $this->qb = $this->entityManager->getConnection()->createQueryBuilder()
             ->select($select)
             ->from($tableName, $alias);
+
+
+        if (empty((array) $criteriasDto)) {
+            return $this;
+        }
 
         $countWhere = 0;
 

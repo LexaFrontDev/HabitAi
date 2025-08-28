@@ -4,6 +4,8 @@ import {useState} from "react";
 import {ErrorAlert, Messages} from "../../../pages/chunk/MessageAlertChunk";
 import {DataType} from "../../../ui/props/Habits/DataType";
 import {HabitsDatasWithStatistic} from "../../../ui/props/Habits/HabitsDatasWithStatistic";
+import {HabitTemplate} from "../../../ui/props/Habits/HabitTemplate";
+import {EditDataType} from "../../../ui/props/Habits/EditHabitsDataType";
 
 export const useHabitsLogic = (habitsService: HabitsService) => {
     const [currentPeriod, setCurrentPeriod] = useState('');
@@ -17,13 +19,20 @@ export const useHabitsLogic = (habitsService: HabitsService) => {
     const [HabitsCurrentStatistics, SetHabitsCurrentStatistics] = useState<any | null>(null)
     const [habitsSide, setHabitSide] = useState<any | null>(null);
     const [IsLoading, setIsLoading] = useState(false);
+    const [Templates, setTemplates] = useState<HabitTemplate[] | undefined>(undefined)
 
     const fetchHabits = async () => {
         setIsLoading(true);
         const hours = new Date().getHours();
         let period = 'other';
-        if (hours >= 5 && hours < 12) period = 'morning';
-        else if (hours >= 18 || hours < 5) period = 'night';
+        if (hours >= 5 && hours < 12) {
+            period = 'morning';
+        } else if (hours >= 12 && hours < 18) {
+            period = 'midday';
+        } else {
+            period = 'night';
+        }
+
 
         setCurrentPeriod(period);
 
@@ -35,9 +44,35 @@ export const useHabitsLogic = (habitsService: HabitsService) => {
             return setHabits([]);
         }
         setIsLoading(false);
-        setHabitsStatistic(result.statistic || [])
-        setHabits(result.data || []);
+        setHabits(result || []);
     };
+
+    const fetchHabitsStatistic = async () => {
+        setIsLoading(true);
+        let statistic = await habitsService.getHabitsStatisticAll();
+        if(!statistic){
+            setIsLoading(false);
+            return setHabitsStatistic([]);
+        }
+
+
+        console.log(statistic)
+        setIsLoading(false);
+        setHabitsStatistic(statistic || [])
+    }
+
+
+    const fetchHabitsTemplates = async () => {
+        setIsLoading(true);
+        let templates = await habitsService.getHabitsTemplatesAll();
+        if(!templates){
+            setIsLoading(false);
+            return setTemplates([]);
+        }
+
+        setIsLoading(false);
+        setTemplates(templates || [])
+    }
 
     const saveHabitProgress = async (habitId: number, countProgress: number) => {
         setHabits(prevHabits =>
@@ -81,9 +116,26 @@ export const useHabitsLogic = (habitsService: HabitsService) => {
             let result = await habitsService.createHabits(habitData);
             setIsModalOpen(false);
             setEditingHabit(null);
-            Messages(editingHabit ? 'Привычка обновлена!' : 'Привычка сохранена!');
+            Messages('Привычка сохранена!');
 
 
+
+            if (result.success) {
+                await fetchHabits();
+            } else {
+                Messages(result.message || 'Ошибка сохранения данных!');
+            }
+        } catch (error) {
+            Messages('Произошла ошибка! Попробуйте позже.');
+        }
+    };
+
+    const handleUpdate = async (habitData: EditDataType) => {
+        try {
+            let result = await habitsService.updateHabits(habitData);
+            setIsModalOpen(false);
+            setEditingHabit(null);
+            Messages('Привычка обновлена!');
 
             if (result.success) {
                 await fetchHabits();
@@ -122,15 +174,7 @@ export const useHabitsLogic = (habitsService: HabitsService) => {
 
         setHabitSide(habit);
         SetHabitsCurrentStatistics(habitStats);
-        console.log(HabitsStatistic);
-        console.log(habitStats);
     };
-
-
-
-
-
-
 
     const handleManualConfirm = async () => {
         const count = parseInt(manualInputValue);
@@ -175,6 +219,11 @@ export const useHabitsLogic = (habitsService: HabitsService) => {
         IsLoading,
         setIsLoading,
         HabitsCurrentStatistics,
-        SetHabitsCurrentStatistics
+        SetHabitsCurrentStatistics,
+        fetchHabitsStatistic,
+        fetchHabitsTemplates,
+        Templates,
+        setTemplates,
+        handleUpdate
     }
 }
