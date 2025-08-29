@@ -2,9 +2,9 @@
 
 namespace App\Domain\Repository\Tasks;
 
-use App\Aplication\Dto\TasksDto\TasksDay;
-use App\Aplication\Dto\TasksDto\TasksForSaveDto;
-use App\Aplication\Dto\TasksDto\TasksForUpdateDto;
+use App\Aplication\Dto\TasksDto\Tasks\TasksDay;
+use App\Aplication\Dto\TasksDto\Tasks\TasksForSaveDto;
+use App\Aplication\Dto\TasksDto\Tasks\TasksForUpdateDto;
 
 interface TasksInterface
 {

@@ -6,7 +6,7 @@ use App\Aplication\Dto\PomodorDto\ReqPomodorDto;
 use App\Aplication\UseCase\HabitsUseCase\Habits\QueryHabbitsUseCase;
 use App\Aplication\UseCase\PomodorUseCases\Commands\PomodorCommandUseCase;
 use App\Aplication\UseCase\PomodorUseCases\Query\QueryPomodorUseCase;
-use App\Aplication\UseCase\TasksUseCases\QueryTasksUseCase;
+use App\Aplication\UseCase\TasksUseCases\Tasks\QueryTasksUseCase;
 use App\Infrastructure\Attribute\RequiresJwt;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;

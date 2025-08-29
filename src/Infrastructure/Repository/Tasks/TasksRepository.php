@@ -2,11 +2,11 @@
 
 namespace App\Infrastructure\Repository\Tasks;
 
-use App\Aplication\Dto\TasksDto\TasksDateGet;
-use App\Aplication\Dto\TasksDto\TasksDay;
-use App\Aplication\Dto\TasksDto\TasksDurationGet;
-use App\Aplication\Dto\TasksDto\TasksForSaveDto;
-use App\Aplication\Dto\TasksDto\TasksForUpdateDto;
+use App\Aplication\Dto\TasksDto\Tasks\TasksDateGet;
+use App\Aplication\Dto\TasksDto\Tasks\TasksDay;
+use App\Aplication\Dto\TasksDto\Tasks\TasksDurationGet;
+use App\Aplication\Dto\TasksDto\Tasks\TasksForSaveDto;
+use App\Aplication\Dto\TasksDto\Tasks\TasksForUpdateDto;
 use App\Domain\Entity\Tasks\Task;
 use App\Domain\Repository\Tasks\TasksInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;

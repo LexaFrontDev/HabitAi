@@ -3,6 +3,7 @@ import {TaskUpdate} from "../../../ui/props/Tasks/TaskUpdate";
 import {Task} from "../../../ui/props/Tasks/Task";
 import {TaskResponse} from "../../../ui/props/Tasks/TaskResponse";
 import {SaveTasksDto} from "../../../ui/props/Tasks/SaveTasksDto";
+import {ListTasks} from "../../../ui/props/Tasks/ListTasks/ListTasks";
 
 export class TasksService {
     constructor(private readonly tasksApi: TasksReqInterface) {}
@@ -13,6 +14,10 @@ export class TasksService {
 
     async getTasksAll(): Promise<Task[]> {
         return await this.tasksApi.getTasksAll();
+    }
+
+    async getListTasks(): Promise<ListTasks[] | false>{
+        return await this.tasksApi.getListTasks()
     }
 
     async createTask(task: Partial<SaveTasksDto>): Promise<TaskResponse> {

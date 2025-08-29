@@ -2,17 +2,18 @@
 
 namespace App\Infrastructure\Controller\ApiControllers\TasksControllers;
 
-use App\Aplication\Dto\TasksDto\TasksForSaveDto;
-use App\Aplication\Dto\TasksDto\TasksForUpdateDto;
-use App\Aplication\UseCase\TasksUseCases\CommandTasksUseCase;
-use App\Aplication\UseCase\TasksUseCases\QueryTasksUseCase;
-use App\Aplication\UseCase\TasksUseCases\TasksHistoryUseCases;
+use App\Aplication\Dto\TasksDto\Tasks\TasksForSaveDto;
+use App\Aplication\Dto\TasksDto\Tasks\TasksForUpdateDto;
+use App\Aplication\UseCase\TasksUseCases\ListTasks\QueryListTasks;
+use App\Aplication\UseCase\TasksUseCases\Tasks\CommandTasksUseCase;
+use App\Aplication\UseCase\TasksUseCases\Tasks\QueryTasksUseCase;
+use App\Aplication\UseCase\TasksUseCases\TasksHistory\TasksHistoryUseCases;
 use App\Infrastructure\Attribute\RequiresJwt;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use Symfony\Component\Routing\Annotation\Route;
 
 class TasksControllers extends AbstractController
 {
@@ -20,6 +21,7 @@ class TasksControllers extends AbstractController
         private CommandTasksUseCase $commandTasksUseCase,
         private QueryTasksUseCase $queryTasksUseCase,
         private TasksHistoryUseCases $tasksHistoryUseCases,
+        private QueryListTasks $queryListTasks,
     ) {
     }
 
@@ -104,5 +106,12 @@ class TasksControllers extends AbstractController
         $result = $this->tasksHistoryUseCases->saveToDo($taskId, $month, $date);
 
         return $this->json(['success' => true, 'data' => $result]);
+    }
+
+    #[Route('/api/list/tasks/all', name: 'get_lists_tasks_all', methods: ['GET'])]
+    #[RequiresJwt]
+    public function getListTasksAll(): JsonResponse
+    {
+        return $this->json(['success' => true, 'result' => $this->queryListTasks->getAllList()]);
     }
 }

@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Aplication\UseCase\TasksUseCases;
+namespace App\Aplication\UseCase\TasksUseCases\Tasks;
 
-use App\Aplication\Dto\TasksDto\TasksForSaveDto;
-use App\Aplication\Dto\TasksDto\TasksForUpdateDto;
+use App\Aplication\Dto\TasksDto\Tasks\TasksForSaveDto;
+use App\Aplication\Dto\TasksDto\Tasks\TasksForUpdateDto;
 use App\Domain\Port\TokenProviderInterface;
 use App\Domain\Repository\Tasks\TasksInterface;
 use App\Domain\Service\JwtServicesInterface;

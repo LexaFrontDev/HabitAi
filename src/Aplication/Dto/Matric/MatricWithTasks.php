@@ -2,7 +2,7 @@
 
 namespace App\Aplication\Dto\Matric;
 
-use App\Aplication\Dto\TasksDto\TasksDay;
+use App\Aplication\Dto\TasksDto\Tasks\TasksDay;
 
 class MatricWithTasks
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Aplication\UseCase\TasksUseCases;
+namespace App\Aplication\UseCase\TasksUseCases\TasksHistory;
 
 use App\Domain\Exception\Message\MessageException;
 use App\Domain\Port\TokenProviderInterface;

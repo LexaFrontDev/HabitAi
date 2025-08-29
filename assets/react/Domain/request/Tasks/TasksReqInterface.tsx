@@ -1,5 +1,6 @@
 import {Task} from "../../../ui/props/Tasks/Task";
 import {TaskUpdate} from "../../../ui/props/Tasks/TaskUpdate";
+import {ListTasks} from "../../../ui/props/Tasks/ListTasks/ListTasks";
 
 export interface TasksReqInterface{
      getTasksByDate(date: string): Promise<Task[]>;
@@ -8,4 +9,5 @@ export interface TasksReqInterface{
      updateTask(task: TaskUpdate): Promise<any>
      deleteTask(taskId: string | number): Promise<any>
      toggleWontDo(taskId: number | string): Promise<any>
+     getListTasks(): Promise<ListTasks[] | false>
 }
