@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Infrastructure\DataFixtures;
+namespace App\Infrastructure\DataFixtures\V1Fixtures;
 
 use App\Domain\Entity\Language\Language;
 use App\Domain\Entity\Language\LanguagePageTranslation;
 use Doctrine\Bundle\FixturesBundle\Fixture;
-use Doctrine\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
+use Doctrine\Persistence\ObjectManager;
 
 class LanguagePageTranslationFixture extends Fixture implements DependentFixtureInterface
 {
@@ -95,15 +95,15 @@ class LanguagePageTranslationFixture extends Fixture implements DependentFixture
                     'de' => 'Zu Aufgaben', 'kg' => 'Тапшырмаларга өтүңүз', 'uz' => 'Vazifalarga oʻting', 'ko' => '작업으로 이동', 'ja' => 'タスクへ',
                 ],
                 'HeadText' => [
-                    'ru' => 'Увеличьте вашу продуктивность с TaskFlow Premium', 'en' => 'Boost your productivity with TaskFlow Premium',
-                    'kz' => 'TaskFlow Premium арқылы өнімділігіңізді арттырыңыз',
-                    'de' => 'Steigere deine Produktivität mit TaskFlow Premium', 'kg' => 'TaskFlow Premium сиздин өндүрүмдүүлүгүңүздү жогорулатат',
-                    'uz' => 'TaskFlow Premium bilan samaradorlikni oshiring', 'ko' => 'TaskFlow Premium으로 생산성을 높이세요', 'ja' => 'TaskFlow Premiumで生産性を高めましょう',
+                    'ru' => 'Увеличьте вашу продуктивность с TaskFlow PremiumUseCases', 'en' => 'Boost your productivity with TaskFlow PremiumUseCases',
+                    'kz' => 'TaskFlow PremiumUseCases арқылы өнімділігіңізді арттырыңыз',
+                    'de' => 'Steigere deine Produktivität mit TaskFlow PremiumUseCases', 'kg' => 'TaskFlow PremiumUseCases сиздин өндүрүмдүүлүгүңүздү жогорулатат',
+                    'uz' => 'TaskFlow PremiumUseCases bilan samaradorlikni oshiring', 'ko' => 'TaskFlow Premium으로 생산성을 높이세요', 'ja' => 'TaskFlow Premiumで生産性を高めましょう',
                 ],
                 'DescText' => [
                     'ru' => 'Откройте все премиум-функции и наслаждайтесь организованной жизнью.', 'en' => 'Unlock all premium features and enjoy an organized life.',
                     'kz' => 'Барлық премиум функцияларды ашып, жүйелі өмірдің рақатын көріңіз.',
-                    'de' => 'Schalte alle Premium-Funktionen frei und genieße ein organisiertes Leben.',
+                    'de' => 'Schalte alle PremiumUseCases-Funktionen frei und genieße ein organisiertes Leben.',
                     'kg' => 'Бардык премиум функцияларды ачып, уюшкан жашоонун ырахатын көрүңүз.',
                     'uz' => 'Barcha premium funksiyalarni ochib, tartibli hayotdan bahramand bo‘ling.',
                     'ko' => '모든 프리미엄 기능을 잠금 해제하고 정돈된 생활을 즐기세요.', 'ja' => 'すべてのプレミアム 기능을開放し、整理された生活を楽しみましょう。',
@@ -114,15 +114,15 @@ class LanguagePageTranslationFixture extends Fixture implements DependentFixture
                 ],
                 'benefitsTitle' => [
                     'ru' => 'Что даёт премиум?', 'en' => 'What does premium offer?', 'kz' => 'Премиум қандай артықшылықтар береді?',
-                    'de' => 'Was bietet Premium?', 'kg' => 'Премиум эмнени берет?', 'uz' => 'Premium qanday afzalliklar beradi?', 'ko' => '프리미엄이 제공하는 이점은 무엇인가요?', 'ja' => 'プレミアムのメリットは何ですか？',
+                    'de' => 'Was bietet PremiumUseCases?', 'kg' => 'Премиум эмнени берет?', 'uz' => 'PremiumUseCases qanday afzalliklar beradi?', 'ko' => '프리미엄이 제공하는 이점은 무엇인가요?', 'ja' => 'プレミアムのメリットは何ですか？',
                 ],
                 'readyQuestion' => [
-                    'ru' => 'Готовы достичь большего с Premium?',
-                    'en' => 'Ready to achieve more with Premium?',
-                    'kz' => 'Premium арқылы үлкен жетістікке жетуге дайынсыз ба?',
-                    'de' => 'Bereit, mit Premium mehr zu erreichen?',
-                    'kg' => 'Premium менен чоң жетишкендиктерге жетүүгө даярсызбы?',
-                    'uz' => 'Premium bilan katta yutuqlarga erishishga tayyormisiz?',
+                    'ru' => 'Готовы достичь большего с PremiumUseCases?',
+                    'en' => 'Ready to achieve more with PremiumUseCases?',
+                    'kz' => 'PremiumUseCases арқылы үлкен жетістікке жетуге дайынсыз ба?',
+                    'de' => 'Bereit, mit PremiumUseCases mehr zu erreichen?',
+                    'kg' => 'PremiumUseCases менен чоң жетишкендиктерге жетүүгө даярсызбы?',
+                    'uz' => 'PremiumUseCases bilan katta yutuqlarga erishishga tayyormisiz?',
                     'ko' => '프리미엄으로 더 큰 성과를 얻을 준비 되셨나요?',
                     'ja' => 'プレミアムでより大きな成果を達成する準備はできていますか？',
                 ],
@@ -615,6 +615,51 @@ class LanguagePageTranslationFixture extends Fixture implements DependentFixture
                     'uz' => 'Ya',
                     'ko' => '일',
                     'ja' => '日',
+                ],
+            ],
+
+
+
+            'statistic' => [
+                'all_tracking_days' => [
+                    'ru' => 'Общее количество дней',
+                    'en' => 'Total days tracked',
+                    'kz' => 'Жалпы күндер саны',
+                    'de' => 'Gesamte Anzahl der Tage',
+                    'kg' => 'Жалпы күндөрдүн саны',
+                    'uz' => 'Umumiy kunlar soni',
+                    'ko' => '총 일수',
+                    'ja' => '合計日数',
+                ],
+                'all_tracking_count' => [
+                    'ru' => 'Общее количество',
+                    'en' => 'Total count',
+                    'kz' => 'Жалпы саны',
+                    'de' => 'Gesamtanzahl',
+                    'kg' => 'Жалпы саны',
+                    'uz' => 'Umumiy soni',
+                    'ko' => '총 횟수',
+                    'ja' => '合計数',
+                ],
+                'tracking_week' => [
+                    'ru' => 'Количество за неделю',
+                    'en' => 'Count for the week',
+                    'kz' => 'Апта бойынша саны',
+                    'de' => 'Anzahl für die Woche',
+                    'kg' => 'Апта боюнча саны',
+                    'uz' => 'Haftalik hisob',
+                    'ko' => '이번 주 횟수',
+                    'ja' => '今週の数',
+                ],
+                'tracking_today' => [
+                    'ru' => 'Количество за сегодня',
+                    'en' => 'Count for today',
+                    'kz' => 'Бүгінгі саны',
+                    'de' => 'Anzahl für heute',
+                    'kg' => 'Бүгүнкү саны',
+                    'uz' => 'Bugungi hisob',
+                    'ko' => '오늘 횟수',
+                    'ja' => '今日の数',
                 ],
             ],
 

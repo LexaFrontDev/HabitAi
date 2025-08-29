@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Aplication\UseCase\TasksUseCases;
+namespace App\Aplication\UseCase\TasksUseCases\Tasks;
 
-use App\Aplication\Dto\TasksDto\TasksDay;
+use App\Aplication\Dto\TasksDto\Tasks\TasksDay;
 use App\Domain\Port\TokenProviderInterface;
 use App\Domain\Repository\Tasks\TasksInterface;
 use App\Domain\Service\JwtServicesInterface;

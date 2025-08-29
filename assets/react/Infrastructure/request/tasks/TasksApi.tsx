@@ -1,6 +1,7 @@
 import {Task} from "../../../ui/props/Tasks/Task";
 import {TaskUpdate} from "../../../ui/props/Tasks/TaskUpdate";
 import {TasksReqInterface} from "../../../Domain/request/Tasks/TasksReqInterface";
+import {ListTasks} from "../../../ui/props/Tasks/ListTasks/ListTasks";
 
 export class TasksApi implements TasksReqInterface{
     async getTasksByDate(date: string): Promise<Task[]> {
@@ -20,6 +21,20 @@ export class TasksApi implements TasksReqInterface{
 
         return await res.json();
     }
+
+
+
+    async getListTasks(): Promise<ListTasks[] | false> {
+        const res = await fetch(`/api/list/tasks/all`);
+
+        if (!res.ok) {
+            const error = await res.json().catch(() => ({}));
+            throw new Error(error.message || 'Ошибка получения задач');
+        }
+
+        return await res.json();
+    }
+
 
 
     async saveTask(task: Partial<Task>): Promise<any> {

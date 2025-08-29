@@ -99,14 +99,7 @@ const RouterDom = () => {
                 }
             />
 
-            <Route
-                path="/matric"
-                element={
-                    <AuthCheck isAuthenticated={isAuthenticated}>
-                        <MatricPage />
-                    </AuthCheck>
-                }
-            />
+
 
             <Route
                 path="/premium"

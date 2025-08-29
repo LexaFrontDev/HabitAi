@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Aplication\Dto\TasksDto;
+namespace App\Aplication\Dto\TasksDto\Tasks;
 
 class TasksDateGet
 {

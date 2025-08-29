@@ -2,19 +2,15 @@ import React, { useState, useEffect, useRef } from 'react';
 import Sidebar from '../chunk/SideBar';
 import DataChunk from "../chunk/DataSelectChunk/DataChunk";
 import Loading from "../chunk/LoadingChunk/Loading";
-import SidePanel from "../chunk/Tasks/TasksAside";
 import { Task } from "../../ui/props/Tasks/Task";
-import { TimeData } from "../../ui/props/Tasks/TimeData";
 import {ListTypeDTO} from "../../Aplication/Dto/ArrayDto/ListType/ListTypeDTO";
 import {TasksService} from "../../Aplication/UseCases/Tasks/TasksService";
 import {TasksApi} from "../../Infrastructure/request/tasks/TasksApi";
 import { Messages, ErrorAlert, SuccessAlert, IsDoneAlert } from '../chunk/MessageAlertChunk';
-import {TaskDelete} from "../../ui/props/Tasks/TaskDelete";
 import {TaskUpdate} from "../../ui/props/Tasks/TaskUpdate";
 import {SaveTasksDto} from "../../ui/props/Tasks/SaveTasksDto";
 import {TasksDateDto} from "../../ui/props/Tasks/TasksDateDto";
 import {Period} from "../../ui/props/Tasks/type/periodType";
-import ResizablePanel from "../../ui/organism/Aside/ResizablePanel";
 import {ImperativePanelGroupHandle, Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import {Button} from "../../ui/atoms/button/Button";
 import TextArea from "../../ui/atoms/TextArea/TextArea";
@@ -24,6 +20,7 @@ import {useTranslation} from "react-i18next";
 import {LanguageRequestUseCase} from "../../Aplication/UseCases/language/LanguageRequestUseCase";
 import {LanguageApi} from "../../Infrastructure/request/Language/LanguageApi";
 import {formatTaskDateTime} from "../../Domain/Services/Tasks/taskDateFormatter";
+import {ListTasks} from "../../ui/props/Tasks/ListTasks/ListTasks";
 
 const tasksService = new TasksService(new TasksApi());
 const LangUseCase = new LanguageRequestUseCase(new LanguageApi());
@@ -49,9 +46,7 @@ const TasksPage: React.FC = () => {
     });
     const [tasks, setTasks] = useState<Task[]>([]);
     const [editingTask, setEditingTask] = useState<Task | null>(null);
-    const [infoTasks, setInfoTasks] = useState<Task | null>(null);
     const [showEditModal, setShowEditModal] = useState<boolean>(false);
-    const [showInfoTasks, setShowInfoTasks] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     const [showEditDateModal, setShowEditDateModal] = useState<boolean>(false);
@@ -66,7 +61,7 @@ const TasksPage: React.FC = () => {
     const [langCode, setLangCode] = useState('en');
     const { t, i18n } = useTranslation('translation');
     const [translationsLoaded, setTranslationsLoaded] = useState<boolean>(false);
-
+    const [ListTasks, SetListTasks] = useState<ListTasks[] | []>([])
 
 
     useEffect(() => {
@@ -85,6 +80,27 @@ const TasksPage: React.FC = () => {
         };
         detectLang();
     }, []);
+
+
+    useEffect(() => {
+        const fetchListTasks = async () => {
+            try {
+                let result = await tasksService.getListTasks();
+                if (!result) {
+                    SetListTasks([]);
+                    return;
+                }
+                SetListTasks(result);
+            } catch (error) {
+                console.error("Ошибка при загрузке задач:", error);
+                SetListTasks([]);
+            }
+        };
+
+        fetchListTasks();
+    }, []);
+
+
 
     const formatDate = (date: Date): string => {
         const year = date.getFullYear();
@@ -348,7 +364,6 @@ const TasksPage: React.FC = () => {
 
     const renderTaskDateTime = (task: Task) => {
         const lines = formatTaskDateTime(task);
-        console.log(task);
         return (
             <div>
                 {lines.map((line, index) => (
@@ -378,6 +393,13 @@ const TasksPage: React.FC = () => {
                                     <Button key={4} variant="listButton"  isActive={activeId === 4}  onClick={() => handlePeriodChange('nextWeek', 4)} className="day handl">{t('buttons.WeekButton')}</Button>
                                     <Button key={5} variant="listButton"  isActive={activeId === 5}  onClick={() => handlePeriodChange('nextMonth', 5)} className="day handl">{t('buttons.MonthButton')}</Button>
                                 </div>
+                            </div>
+
+                            <div className="list-tasks">
+                                <button className="triger" onClick={() => setAddList(true)}>Добавить список</button>
+                                {ListTasks.map((task) => (
+                                    <button>task.label</button>
+                                ))}
                             </div>
                         </div>
                     </div>

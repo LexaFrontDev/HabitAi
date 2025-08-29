@@ -62,11 +62,6 @@ class SidebarService implements SidebarServiceInterface
                     url: '/Habits',
                     icon: 'Upload/Images/Habits/bar-chart-2.svg',
                 ),
-                new SidebarItemDTO(
-                    label: 'Матрица Эйзенхауэра',
-                    url: '/matric',
-                    icon: 'Upload/Images/AppIcons/hexagon.svg',
-                ),
             ],
         ];
     }

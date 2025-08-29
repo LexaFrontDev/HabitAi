@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Aplication\Dto\TasksDto;
+namespace App\Aplication\Dto\TasksDto\Tasks;
 
-class TasksDurationGet
+class TaskDurationDto
 {
     public function __construct(
         public readonly ?string $startDate = null,
@@ -11,6 +11,5 @@ class TasksDurationGet
         public readonly ?string $endTime = null,
     ) {
     }
-
 
 }

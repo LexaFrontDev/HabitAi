@@ -4,13 +4,13 @@ namespace App\Infrastructure\Repository\Matric;
 
 use App\Aplication\Dto\Matric\MatricWithTasks;
 use App\Aplication\Dto\Matric\ReplaceMatricColumn;
-use App\Aplication\Dto\TasksDto\TasksDay;
-use App\Aplication\Dto\TasksDto\TasksDurationGet;
+use App\Aplication\Dto\TasksDto\Tasks\TasksDateGet;
+use App\Aplication\Dto\TasksDto\Tasks\TasksDay;
+use App\Aplication\Dto\TasksDto\Tasks\TasksDurationGet;
 use App\Domain\Entity\Matric\MatricJunction;
 use App\Domain\Repository\Matric\MatricInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use App\Aplication\Dto\TasksDto\TasksDateGet;
 
 /**
  * @extends ServiceEntityRepository<MatricJunction>

@@ -123,7 +123,7 @@ const PremiumPage: React.FC<PremiumPageProps> = ({ isAuthenticated }) => {
         {
             question: 'Как отменить подписку?',
             answer:
-                'Если вы оформили подписку через Google Play или App Store — откройте соответствующее приложение, перейдите в раздел "Подписки" и отмените TaskFlow Premium. Если подписка оформлена напрямую, просто напишите нам через "Обратную связь".',
+                'Если вы оформили подписку через Google Play или App Store — откройте соответствующее приложение, перейдите в раздел "Подписки" и отмените TaskFlow PremiumUseCases. Если подписка оформлена напрямую, просто напишите нам через "Обратную связь".',
         },
         {
             question: 'Что делать, если остались вопросы?',
@@ -172,7 +172,7 @@ const PremiumPage: React.FC<PremiumPageProps> = ({ isAuthenticated }) => {
             {/* хедер */}
             <header className="premium-header text-center py-5">
                 <TextBlock variant="h1" align="center" weight="bold" size="display-4" className="mb-3">
-                    {t('HeadText') || 'Увеличьте вашу продуктивность с TaskFlow Premium'}
+                    {t('HeadText') || 'Увеличьте вашу продуктивность с TaskFlow PremiumUseCases'}
                 </TextBlock>
                 <TextBlock variant="p" align="center" color="text-muted" size="lead" className="mb-4">
                     {t('DescText') || 'Разблокируйте все премиум-функции на всех платформах. Наслаждайтесь организованной жизнью в полной мере.'}
@@ -215,7 +215,7 @@ const PremiumPage: React.FC<PremiumPageProps> = ({ isAuthenticated }) => {
             <section className="premium-begin-section text-center py-5 bg-dark">
                 <div className="container">
                     <h2 className="display-6 fw-semibold mb-4">
-                        {t('readyQuestion') || 'Готовы ли вы достичь большего с Premium?'}
+                        {t('readyQuestion') || 'Готовы ли вы достичь большего с PremiumUseCases?'}
                     </h2>
                     <Button as="link" to="/users/register" variant="subscribe">
                         {t('readyButton') || 'Вперёд'}
