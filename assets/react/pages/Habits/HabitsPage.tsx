@@ -4,16 +4,22 @@ import Loading from "../chunk/LoadingChunk/Loading";
 import HabitModal from "../chunk/Habits/HabitsModal";
 import {ImperativePanelGroupHandle, Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import {useTranslation} from "react-i18next";
-import {LanguageRequestUseCase} from "../../Aplication/UseCases/language/LanguageRequestUseCase";
-import {LanguageApi} from "../../Infrastructure/request/Language/LanguageApi";
-import {LangStorage} from "../../Infrastructure/languageStorage/LangStorage";
-import {LangStorageUseCase} from "../../Aplication/UseCases/language/LangStorageUseCase";
-import {HabitsService} from "../../Aplication/UseCases/Habits/HabitsService";
-import {HabitsApi} from "../../Infrastructure/request/habits/HabitsApi";
-import {useHabitsLogic} from "../../Aplication/UseCases/Habits/HabitsPageLogic";
-import Calendar from "react-calendar";
+import {LanguageRequestUseCase} from "../../Services/language/LanguageRequestUseCase";
 
-const habitsService = new HabitsService(new HabitsApi());
+import {LangStorage} from "../../Services/languageStorage/LangStorage";
+import {LangStorageUseCase} from "../../Services/language/LangStorageUseCase";
+import {HabitsService} from "../../Services/Habits/HabitsService";
+
+import {useHabitsLogic} from "../../Services/Habits/HabitsPageLogic";
+import Calendar from "react-calendar";
+import {LanguageApi} from "../../Services/language/LanguageApi";
+import {CtnServices} from "../../Services/Ctn/CtnServices";
+import {CacheServiceInterface} from "../../interfaces/Cache/CacheServiceInterface";
+import {IndexedDBCacheService} from "../../Services/Cache/IndexedDBCacheService";
+
+
+const ctnService = new CtnServices(new IndexedDBCacheService())
+const habitsService = new HabitsService(ctnService);
 const LangUseCase = new LanguageRequestUseCase(new LanguageApi());
 const langStorage = new LangStorage();
 const langUseCase = new LangStorageUseCase(langStorage);
@@ -291,7 +297,7 @@ const HabitsPage = () => {
                                                 <button onClick={() => handleEdit(habitsSide)} className="triger-pause">
                                                     <img className="icon-img" src="/Upload/Images/AppIcons/edit.svg" alt=""/>
                                                 </button>
-                                                <button onClick={() => handleDelete(habitsSide.habit_id)} className="triger-delete">
+                                                <button onClick={() => handleDelete(habitsSide.habit_id, habitsSide.cacheId)} className="triger-delete">
                                                     <img className="icon-img" src="/Upload/Images/AppIcons/delete.svg" alt=""/>
                                                 </button>
                                             </div>

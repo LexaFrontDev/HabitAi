@@ -2,6 +2,7 @@ import {DatesType} from "./DatesType";
 import {DateType} from "./DateType";
 
 export type EditDataType = {
+    cacheId: number;
     habitId: number;
     title: string;
     quote: string;

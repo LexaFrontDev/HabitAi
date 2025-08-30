@@ -7,9 +7,9 @@ import {Days, getAllTranslatedDays, getTranslatedDaysArray} from "../../../ui/pr
 import {HabitTemplate} from "../../../ui/props/Habits/HabitTemplate";
 import {HabitModalProps} from "../../../ui/props/Habits/HabitModalProps";
 import {Day} from "../../../ui/props/Habits/DaysType";
-import {renderStep} from "../../../Infrastructure/HabitModal/RenderCreateHabitsModal";
+import {renderStep} from "../../../components/HabitModal/RenderCreateHabitsModal";
 import {SettingKey} from "../../../ui/props/Habits/RenderHabits/SettingKey";
-import {renderStepEdit} from "../../../Infrastructure/HabitModal/renderStepEditModal";
+import {renderStepEdit} from "../../../components/HabitModal/renderStepEditModal";
 
 
 
@@ -21,6 +21,7 @@ const HabitModal: React.FC<HabitModalProps> = ({habitTemplates, onClose, onEdit,
 
     const [step, setStep] = useState(1);
     const [data, setData] = useState<DataType>({
+        cacheId: 0,
         title: '',
         quote: '',
         goalInDays: '30',
@@ -211,6 +212,7 @@ const HabitModal: React.FC<HabitModalProps> = ({habitTemplates, onClose, onEdit,
         if (!validateStep(step)) return;
 
         const payload: DataType = {
+            cacheId: data.cacheId,
             title: data.title,
             quote: data.quote,
             goalInDays: data.goalInDays,
@@ -235,6 +237,7 @@ const HabitModal: React.FC<HabitModalProps> = ({habitTemplates, onClose, onEdit,
         if (!validateStep(step) || !editData?.habit_id) return;
 
         const payload: EditDataType = {
+            cacheId: data.cacheId,
             habitId: editData.habit_id,
             title: data.title,
             quote: data.quote,

@@ -1,9 +1,10 @@
 import {TasksDateDto} from "./TasksDateDto";
 
-export interface TaskUpdate {
-    cacheId: number
+export interface Task {
+    cacheId: number;
     id: number | string;
-    title: string;
+    title?: string;
+    todo: boolean;
     description?: string;
     timeData: TasksDateDto;
 }

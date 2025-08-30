@@ -2,22 +2,26 @@ import React, { useState, useEffect, useRef } from 'react';
 import Sidebar from '../chunk/SideBar';
 import { Messages, ErrorAlert, SuccessAlert, IsDoneAlert } from '../chunk/MessageAlertChunk';
 import {ImperativePanelGroupHandle, Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
-import {LanguageRequestUseCase} from "../../Aplication/UseCases/language/LanguageRequestUseCase";
-import {LanguageApi} from "../../Infrastructure/request/Language/LanguageApi";
-import {LangStorage} from "../../Infrastructure/languageStorage/LangStorage";
-import {LangStorageUseCase} from "../../Aplication/UseCases/language/LangStorageUseCase";
+import {LanguageRequestUseCase} from "../../Services/language/LanguageRequestUseCase";
+
+import {LangStorage} from "../../Services/languageStorage/LangStorage";
+import {LangStorageUseCase} from "../../Services/language/LangStorageUseCase";
 import {useTranslation} from "react-i18next";
 import Loading from "../chunk/LoadingChunk/Loading";
 import { PomodoroData } from "../../ui/props/Habits/PomodoroData";
-import {formatTaskDateTime} from "../../Domain/Services/Tasks/taskDateFormatter";
+
 import {Task} from "../../ui/props/Tasks/Task";
-import {PomodoroAPi} from "../../Infrastructure/request/Pomodoro/PomodoroAPi";
-import {PomodoroService} from "../../Aplication/UseCases/Pomodoro/PomodoroService";
-import {usePomodoroTimer} from "../../Aplication/UseCases/Pomodoro/PomodoroTimer";
+
+import {PomodoroService} from "../../Services/Pomodoro/PomodoroService";
+import {usePomodoroTimer} from "../../Services/Pomodoro/PomodoroTimer";
 import {ToastContainer} from "react-toastify";
+import {LanguageApi} from "../../Services/language/LanguageApi";
+import {formatTaskDateTime} from "../../Services/Tasks/taskDateFormatter";
+import {CtnServices} from "../../Services/Ctn/CtnServices";
+import {IndexedDBCacheService} from "../../Services/Cache/IndexedDBCacheService";
 
-
-const PomodoroUseCase = new PomodoroService(new PomodoroAPi());
+const ctnService = new CtnServices(new IndexedDBCacheService())
+const PomodoroUseCase = new PomodoroService(ctnService);
 const LangUseCase = new LanguageRequestUseCase(new LanguageApi());
 const langStorage = new LangStorage();
 const langUseCase = new LangStorageUseCase(langStorage);
@@ -39,7 +43,7 @@ const Pomodoro = () => {
             const result = await PomodoroUseCase.getPomdoroSummary();
 
             if (result) {
-                setDataPomodoro(result);
+                setDataPomodoro(result[0]);
             }
         };
         fetchPomodoro();
