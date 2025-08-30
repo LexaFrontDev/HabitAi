@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Loading from '../../chunk/LoadingChunk/Loading';
-import { LangStorageUseCase } from "../../../Aplication/UseCases/language/LangStorageUseCase";
-import { LangStorage } from "../../../Infrastructure/languageStorage/LangStorage";
+import { LangStorageUseCase } from "../../../Services/language/LangStorageUseCase";
+import { LangStorage } from "../../../Services/languageStorage/LangStorage";
 import { Button } from "../../../ui/atoms/button/Button";
 import { AppLink } from "../../../ui/atoms/link/AppLink";
 import { ImageWrapper } from "../../../ui/atoms/Image/ImageWrapper";
@@ -13,10 +13,10 @@ import ReviewCard from "../../../ui/molecule/Cards/ReviewCard";
 import Copyright from "../../../ui/atoms/TextBlock/Copyright";
 import Navbar from "../../../ui/organism/navbar/Navbar";
 import LanguageSelect from "../../../ui/atoms/select/LanguageSelect";
-import { LanguageRequestUseCase } from "../../../Aplication/UseCases/language/LanguageRequestUseCase";
-import { LanguageApi } from "../../../Infrastructure/request/Language/LanguageApi";
+import { LanguageRequestUseCase } from "../../../Services/language/LanguageRequestUseCase";
 import {ReviewCardProps} from "../../../ui/props/CardProps/Review/ReviewCardProps";
 import {FeatureCardProps} from "../../../ui/props/CardProps/Feature/FeatureCardProps";
+import {LanguageApi} from "../../../Services/language/LanguageApi";
 
 
 

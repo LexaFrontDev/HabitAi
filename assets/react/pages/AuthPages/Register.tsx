@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
-import {LangStorage} from "../../Infrastructure/languageStorage/LangStorage";
-import {LangStorageUseCase} from "../../Aplication/UseCases/language/LangStorageUseCase";
-import {LanguageRequestUseCase} from "../../Aplication/UseCases/language/LanguageRequestUseCase";
-import {LanguageApi} from "../../Infrastructure/request/Language/LanguageApi";
+import {LangStorage} from "../../Services/languageStorage/LangStorage";
+import {LangStorageUseCase} from "../../Services/language/LangStorageUseCase";
+import {LanguageRequestUseCase} from "../../Services/language/LanguageRequestUseCase";
+import {LanguageApi} from "../../Services/language/LanguageApi";
 import {useTranslation} from "react-i18next";
 import Loading from "../chunk/LoadingChunk/Loading";
 

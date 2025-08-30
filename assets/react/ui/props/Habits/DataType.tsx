@@ -2,6 +2,7 @@ import {DateType} from "./DateType";
 import {DatesType} from "./DatesType";
 
 export type DataType = {
+    cacheId: number;
     title: string;
     quote: string;
     goalInDays: string;

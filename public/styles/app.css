@@ -882,7 +882,6 @@ footer {
   max-width: 550px;
   margin-bottom: 15rem;
   height: auto;
-  min-height: 550px;
   max-height: 820px;
   padding: 24px;
   --bg-color: #184e77;
@@ -1771,6 +1770,58 @@ a:hover {
   background: rgb(0, 26.5, 51);
 }
 
+.list-tasks {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.title-list-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.list-header {
+  background: transparent;
+  border: 1px solid #52b788;
+  border-radius: 5px;
+  color: #fff;
+  padding: 14px 10px 6px;
+  outline: none;
+  font-size: 16px;
+}
+
+.title-list-wrapper label {
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  font-size: 16px;
+  color: #aaa;
+  pointer-events: none;
+  transform: translateY(-50%);
+  transition: all 0.2s ease;
+}
+
+.list-header:focus + label,
+.list-header:not(:placeholder-shown) + label {
+  top: -30px;
+  left: 0;
+  font-size: 18px;
+  color: #ffffff;
+  transform: none;
+}
+
+.select-type-list .buttons-list-types svg {
+  width: 60px;
+  height: 60px;
+  cursor: pointer;
+}
+.select-type-list .buttons-list-types svg:hover {
+  color: #0d8f1a;
+}
+
 .panel-content {
   height: 100vh;
   display: flex;
@@ -2125,9 +2176,9 @@ a:hover {
 
 .header-container {
   display: flex;
-  justify-content: space-between;
-  align-items: baseline;
+  justify-content: center;
   flex-wrap: nowrap;
+  align-items: baseline;
 }
 .header-container .header-title {
   font-family: "Lucida Grande", "Lucida Sans Unicode", Verdana, Arial, Helvetica, sans-serif;

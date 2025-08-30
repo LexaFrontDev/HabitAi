@@ -21,7 +21,6 @@ final class ListTasksRepository extends ServiceEntityRepository implements ListT
 
     public function saveListTask(TasksListCreate $task): bool
     {
-
         $entity = new ListTasks();
         $entity->setUserId($task->user_id);
         $entity->setLabel($task->label);

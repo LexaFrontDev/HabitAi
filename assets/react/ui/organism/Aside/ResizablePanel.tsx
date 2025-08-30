@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from "react";
 import { ResizablePanelProps } from "../../props/ResizablePanel/ResizablePanelProps";
-import { createResizeHandler } from "../../../Aplication/UseCases/Resize/ResizeLogic";
+import { createResizeHandler } from "../../../components/Resize/ResizeLogic";
 
 export default function ResizablePanel({
                                            position,
