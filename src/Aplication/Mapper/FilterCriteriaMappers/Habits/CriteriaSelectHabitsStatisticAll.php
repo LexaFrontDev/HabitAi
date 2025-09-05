@@ -20,7 +20,14 @@ class CriteriaSelectHabitsStatisticAll
                 nameAlias: 'h',
                 select: 'title',
                 joinType: JoinType::INNER,
-                onCondition: [new OnConditionDto(expr: 'h.id = hh.habits_id', type: 'and')]
+                onCondition: [
+                    new OnConditionDto(
+                        left: 'h.id',
+                        operator: '=',
+                        right: 'hh.habits_id',
+                        type: 'AND'
+                    ),
+                ]
             ),
             pagination: new PaginationDto(limit: $limit, offset: $offset, isDelete: 1),
         );

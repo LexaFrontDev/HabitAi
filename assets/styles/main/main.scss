@@ -1,5 +1,5 @@
 html, body {
-  background: linear-gradient(135deg, $bg-start, $bg-end);
+  background-color: var(--color-green-dark);
   font-family: 'Segoe UI', sans-serif;
   color: $text-dark;
   margin: 0;
@@ -9,7 +9,7 @@ html, body {
 }
 
 .navbar {
-  background-color: $navbar-bg;
+  background-color: var(--color-green-dark);
   border-bottom: 1px solid lighten($navbar-bg, 10%);
 
   .navbar-brand {
@@ -41,7 +41,7 @@ html, body {
 }
 
 .hero {
-  background: linear-gradient(120deg, $bg-start, $bg-end);
+  background: var(--color-green-dark);
   padding: 6rem 1rem;
   position: relative;
 

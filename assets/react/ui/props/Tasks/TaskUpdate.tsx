@@ -1,7 +1,6 @@
 import {TasksDateDto} from "./TasksDateDto";
 
 export interface TaskUpdate {
-    cacheId: number
     id: number | string;
     title: string;
     description?: string;

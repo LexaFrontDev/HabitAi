@@ -22,8 +22,8 @@ class FeaturesService implements FeaturesServiceInterface
             new FeatureDTO(
                 title: 'Список Привычек',
                 desc: 'Формируй полезные действия.',
-                icon: 'Upload/Images/Habits/bar-chart-2.svg',
-                url: '/Habits',
+                icon: 'Upload/Images/habits/bar-chart-2.svg',
+                url: '/habits',
             ),
             new FeatureDTO(
                 title: 'Матрица Эйзенхауэра',
@@ -40,8 +40,8 @@ class FeaturesService implements FeaturesServiceInterface
             new FeatureDTO(
                 title: 'Список Задач',
                 desc: 'Управляй своим списком дел.',
-                icon: 'Tasks.svg',
-                url: '/Tasks',
+                icon: 'tasks.svg',
+                url: '/tasks',
             ),
         ];
     }

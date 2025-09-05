@@ -11,7 +11,7 @@ final class Version20250701024108Updatestorage extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Обновление таблиц storage и Tasks: удаление uid, task_type; добавление полей с датами и временем';
+        return 'Обновление таблиц storage и tasks: удаление uid, task_type; добавление полей с датами и временем';
     }
 
     public function up(Schema $schema): void
@@ -22,11 +22,11 @@ final class Version20250701024108Updatestorage extends AbstractMigration
             $this->addSql('ALTER TABLE storage DROP uid');
         }
 
-        if ($sm->tablesExist(['Tasks'])) {
-            $columns = $sm->introspectTable('Tasks')->getColumns();
+        if ($sm->tablesExist(['tasks'])) {
+            $columns = $sm->introspectTable('tasks')->getColumns();
 
             if (isset($columns['task_type'])) {
-                $this->addSql('ALTER TABLE Tasks DROP task_type');
+                $this->addSql('ALTER TABLE tasks DROP task_type');
             }
 
             $addColumnsSql = [];
@@ -54,7 +54,7 @@ final class Version20250701024108Updatestorage extends AbstractMigration
             }
 
             if (!empty($addColumnsSql)) {
-                $this->addSql('ALTER TABLE Tasks '.implode(', ', $addColumnsSql));
+                $this->addSql('ALTER TABLE tasks '.implode(', ', $addColumnsSql));
             }
         }
     }
@@ -63,9 +63,9 @@ final class Version20250701024108Updatestorage extends AbstractMigration
     {
         $sm = $this->connection->createSchemaManager();
 
-        if ($sm->tablesExist(['Tasks'])) {
+        if ($sm->tablesExist(['tasks'])) {
             $this->addSql(<<<'SQL'
-                ALTER TABLE Tasks
+                ALTER TABLE tasks
                     ADD task_type VARCHAR(255) NOT NULL,
                     DROP date,
                     DROP time,

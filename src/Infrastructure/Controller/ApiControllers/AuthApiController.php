@@ -8,6 +8,7 @@ use App\Aplication\Dto\UsersDto\UsersForLogin;
 use App\Aplication\Dto\UsersDto\UsersForRegister;
 use App\Aplication\UseCase\AuthUseCase\UsersAuth;
 use App\Aplication\UseCase\Service\JwtTokens\JwtUseCase;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,6 +21,7 @@ class AuthApiController extends AbstractController
     public function __construct(
         private readonly UsersAuth $usersAuth,
         private JwtUseCase $jwtAuth,
+        private LoggerInterface $logger,
     ) {
     }
 
@@ -69,6 +71,39 @@ class AuthApiController extends AbstractController
         $response->headers->clearCookie('refreshToken', '/');
 
         return $response;
+    }
+
+    #[Route('/api/auth/google/callback', name: 'api_google_callback', methods: ['GET'])]
+    public function google(Request $request): JsonResponse
+    {
+        // Google отправляет код авторизации в query параметре "code"
+        $code = $request->query->get('code');
+        $error = $request->query->get('error');
+
+        if ($error) {
+            return $this->json([
+                'status' => 'error',
+                'message' => $error,
+            ], 400);
+        }
+
+        if (!$code) {
+            return $this->json([
+                'status' => 'error',
+                'message' => 'Authorization code not found',
+            ], 400);
+        }
+
+        // Логируем код для проверки
+        $this->logger->info('Google OAuth code: '.$code);
+
+        // Далее: обменять код на access token через Google OAuth API
+        // https://developers.google.com/identity/protocols/oauth2/web-server#exchange-authorization-code
+
+        return $this->json([
+            'status' => 'success',
+            'code' => $code,
+        ]);
     }
 
     #[Route('/api/auth/login', name: 'api_login', methods: ['POST'])]

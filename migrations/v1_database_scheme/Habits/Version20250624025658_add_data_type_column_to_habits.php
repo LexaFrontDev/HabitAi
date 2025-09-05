@@ -11,16 +11,16 @@ final class Version20250624025658_add_data_type_column_to_habits extends Abstrac
 {
     public function getDescription(): string
     {
-        return 'Добавляет колонку data_type в таблицу Habits, если она отсутствует';
+        return 'Добавляет колонку data_type в таблицу habits, если она отсутствует';
     }
 
     public function up(Schema $schema): void
     {
         $sm = $this->connection->createSchemaManager();
 
-        if ($sm->tablesExist(['Habits']) && !$sm->introspectTable('Habits')->hasColumn('data_type')) {
+        if ($sm->tablesExist(['habits']) && !$sm->introspectTable('habits')->hasColumn('data_type')) {
             $this->addSql(<<<'SQL'
-                ALTER TABLE Habits ADD data_type VARCHAR(255) NOT NULL
+                ALTER TABLE habits ADD data_type VARCHAR(255) NOT NULL
             SQL);
         }
     }
@@ -29,9 +29,9 @@ final class Version20250624025658_add_data_type_column_to_habits extends Abstrac
     {
         $sm = $this->connection->createSchemaManager();
 
-        if ($sm->tablesExist(['Habits']) && $sm->introspectTable('Habits')->hasColumn('data_type')) {
+        if ($sm->tablesExist(['habits']) && $sm->introspectTable('habits')->hasColumn('data_type')) {
             $this->addSql(<<<'SQL'
-                ALTER TABLE Habits DROP data_type
+                ALTER TABLE habits DROP data_type
             SQL);
         }
     }

@@ -13,7 +13,7 @@ final class Version20250802094715 extends AbstractMigration
 
     public function getDescription(): string
     {
-        return 'Safe migration: modifies Tasks, Habits, Users and other tables with column existence checks.';
+        return 'Safe migration: modifies tasks, habits, Users and other tables with column existence checks.';
     }
 
     private function hasColumn(string $table, string $column): bool
@@ -50,8 +50,8 @@ final class Version20250802094715 extends AbstractMigration
         $this->abortIf('mysql' !== $platform, 'Migration supports only MySQL.');
 
         $tables = [
-            'Habits',
-            'Tasks',
+            'habits',
+            'tasks',
             'date_daily',
             'date_repeat_per_month',
             'date_weekly',
@@ -83,8 +83,8 @@ final class Version20250802094715 extends AbstractMigration
             $this->addSql('ALTER TABLE matric_column ADD user_id INT NOT NULL');
         }
 
-        if (!$this->hasColumn('Tasks', 'time')) {
-            $this->addSql('ALTER TABLE Tasks
+        if (!$this->hasColumn('tasks', 'time')) {
+            $this->addSql('ALTER TABLE tasks
                 ADD time VARCHAR(255) DEFAULT NULL,
                 ADD start_date VARCHAR(255) DEFAULT NULL,
                 ADD start_time VARCHAR(255) DEFAULT NULL,
@@ -94,16 +94,16 @@ final class Version20250802094715 extends AbstractMigration
             ');
         }
 
-        if ($this->hasColumn('Tasks', 'task_type')) {
-            $this->addSql('ALTER TABLE Tasks DROP task_type');
+        if ($this->hasColumn('tasks', 'task_type')) {
+            $this->addSql('ALTER TABLE tasks DROP task_type');
         }
 
-        if ($this->hasColumn('Tasks', 'notification_id')) {
-            $this->addSql('ALTER TABLE Tasks DROP notification_id');
+        if ($this->hasColumn('tasks', 'notification_id')) {
+            $this->addSql('ALTER TABLE tasks DROP notification_id');
         }
 
-        if ($this->hasColumn('Tasks', 'due_date')) {
-            $this->addSql('ALTER TABLE Tasks DROP due_date');
+        if ($this->hasColumn('tasks', 'due_date')) {
+            $this->addSql('ALTER TABLE tasks DROP due_date');
         }
 
         if ($this->hasIndex('tasks_history', 'IDX_USER_ID')) {
@@ -121,8 +121,8 @@ final class Version20250802094715 extends AbstractMigration
         $this->abortIf('mysql' !== $platform, 'Migration supports only MySQL.');
 
         $tables = [
-            'Habits',
-            'Tasks',
+            'habits',
+            'tasks',
             'date_daily',
             'date_repeat_per_month',
             'date_weekly',
@@ -154,8 +154,8 @@ final class Version20250802094715 extends AbstractMigration
             $this->addSql('ALTER TABLE matric_column DROP COLUMN user_id');
         }
 
-        if ($this->hasColumn('Tasks', 'time')) {
-            $this->addSql('ALTER TABLE Tasks
+        if ($this->hasColumn('tasks', 'time')) {
+            $this->addSql('ALTER TABLE tasks
                 DROP COLUMN time,
                 DROP COLUMN start_date,
                 DROP COLUMN start_time,
@@ -165,16 +165,16 @@ final class Version20250802094715 extends AbstractMigration
             ');
         }
 
-        if (!$this->hasColumn('Tasks', 'task_type')) {
-            $this->addSql('ALTER TABLE Tasks ADD task_type VARCHAR(255) DEFAULT NULL');
+        if (!$this->hasColumn('tasks', 'task_type')) {
+            $this->addSql('ALTER TABLE tasks ADD task_type VARCHAR(255) DEFAULT NULL');
         }
 
-        if (!$this->hasColumn('Tasks', 'notification_id')) {
-            $this->addSql('ALTER TABLE Tasks ADD notification_id INT DEFAULT NULL');
+        if (!$this->hasColumn('tasks', 'notification_id')) {
+            $this->addSql('ALTER TABLE tasks ADD notification_id INT DEFAULT NULL');
         }
 
-        if (!$this->hasColumn('Tasks', 'due_date')) {
-            $this->addSql('ALTER TABLE Tasks ADD due_date DATETIME DEFAULT NULL');
+        if (!$this->hasColumn('tasks', 'due_date')) {
+            $this->addSql('ALTER TABLE tasks ADD due_date DATETIME DEFAULT NULL');
         }
 
         if (!$this->hasIndex('tasks_history', 'IDX_USER_ID') && $this->hasColumn('tasks_history', 'user_id')) {

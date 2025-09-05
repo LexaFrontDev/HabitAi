@@ -3,23 +3,23 @@ import {Days} from "../../ui/props/Habits/Days";
 import {HabitsResponse} from "../../ui/props/Habits/HabitsResponse";
 import {EditDataType} from "../../ui/props/Habits/EditHabitsDataType";
 import {HabitTemplate} from "../../ui/props/Habits/HabitTemplate";
-import {CtnServices} from "../Ctn/CtnServices";
+import {RequestServices} from "../Ctn/RequestServices";
 
 
 export class HabitsService {
-    constructor(private readonly cacheService: CtnServices) {}
+    constructor(private readonly reqService: RequestServices) {}
 
-    async getHabitsFor(date: string): Promise<DataType[] | false> {
-        return await this.cacheService.get<DataType>(`habits`, `/api/get/Habits/by/day?date=${date}`, 'GET');
+    async getHabitsFor(date: string): Promise<DataType[] | false | DataType> {
+        return await this.reqService.get<DataType>(`habits`, `/api/get/Habits/by/day?date=${date}`, 'GET');
     }
 
     async getHabitsStatistic(habitId: number): Promise<any>{
-        return await this.cacheService.get<any>('habits_statistic', `/api/Habits/statistic/all/${habitId}`, 'GET');
+        return await this.reqService.get<any>('habits_statistic', `/api/Habits/statistic/all/${habitId}`, 'GET');
     }
 
-    async getHabitsForDay(day: Days): Promise<DataType[] | false> {
+    async getHabitsForDay(day: Days): Promise<DataType[] | false | DataType> {
         const date = this.getDateForDayOfWeek(day);
-        return await this.cacheService.get<DataType>(`habits`, `/api/get/Habits/by/day?date=${date}`, 'GET');
+        return await this.reqService.get<DataType>(`habits`, `/api/get/Habits/by/day?date=${date}`, 'GET');
     }
 
 
@@ -44,21 +44,21 @@ export class HabitsService {
     }
 
 
-    async getHabitsAll(limit: number = 50, offset: number = 0): Promise<DataType[] | false> {
-        return await this.cacheService.get<DataType>(`habits`, `/api/get/Habits/all?limit=${limit}&offset=${offset}`, 'GET');
+    async getHabitsAll(limit: number = 50, offset: number = 0): Promise<DataType[] | false | DataType> {
+        return await this.reqService.get<DataType>(`habits`, `/api/get/Habits/all?limit=${limit}&offset=${offset}`, 'GET');
     }
 
-    async getHabitsTemplatesAll():  Promise<HabitTemplate[] | false>{
-        return await this.cacheService.get<HabitTemplate>(`habits_templates`, `/api/Habits/templates/all`, 'GET');
+    async getHabitsTemplatesAll():  Promise<HabitTemplate[] | false | HabitTemplate>{
+        return await this.reqService.get<HabitTemplate>(`habits_templates`, `/api/Habits/templates/all`, 'GET');
     }
 
     async getHabitsStatisticAll():  Promise<any | false>{
-        return await this.cacheService.get<any>(`habits_statistic`, `/api/Habits/statistic/all`, 'GET');
+        return await this.reqService.get<any>(`habits_statistic`, `/api/Habits/statistic/all`, 'GET');
     }
 
     async createHabits(habits: Partial<DataType>): Promise<HabitsResponse> {
         try {
-            const response = await this.cacheService.create<any, any>(`habits`, `/api/Habits/save`, 'POST', habits);
+            const response = await this.reqService.create(`/api/Habits/save`, 'POST', habits);
             return {
                 success: true,
                 message: response.data?.message ?? 'Привычка успешно создана',
@@ -76,9 +76,9 @@ export class HabitsService {
     }
 
 
-    async updateHabits(habits: EditDataType, cacheId: number): Promise<HabitsResponse> {
+    async updateHabits(habits: EditDataType): Promise<HabitsResponse> {
         try {
-            const response = await this.cacheService.update<any, any>(`habits`, '/api/Habits/update', cacheId, 'PUT', habits);
+            const response = await this.reqService.update('/api/habits/update', 'PUT', habits);
             return {
                 success: true,
                 message: response.data?.message ?? 'Привычка успешно обновлена',
@@ -96,9 +96,9 @@ export class HabitsService {
     }
 
 
-    async deleteHabits(habitId: number, cacheId: number): Promise<HabitsResponse> {
+    async deleteHabits(habitId: number): Promise<HabitsResponse> {
         try {
-            const response = await this.cacheService.delete(`habits`, `/api/Habits/delete/${habitId}`, cacheId, 'DELETE');
+            const response = await this.reqService.delete(`/api/Habits/delete/${habitId}`,  'DELETE');
             return {
                 success: true,
                 message: 'Задача успешно удалена',
@@ -116,7 +116,7 @@ export class HabitsService {
     async saveProgress(habitId: number, countProgress: number): Promise<HabitsResponse> {
         try {
 
-            const response = await this.cacheService.create<any, any>(`habits_progress`, '/api/Habits/save/progress', 'POST', {habits_id: habitId, count_end: countProgress});
+            const response = await this.reqService.create('/api/habits/save/progress', 'POST', {habits_id: habitId, count_end: countProgress});
             return {
                 success: true,
                 message: response?.data?.message || '',
@@ -145,9 +145,4 @@ export class HabitsService {
              icon.src = '/Upload/Images/AppIcons/arrow-right.svg';
          }
     };
-
-
-
-
-
 }

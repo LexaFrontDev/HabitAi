@@ -18,7 +18,7 @@ class SelectAllMatricMapper
                 id: $userId
             ),
             Tasks: new EntityJoinCriteria(
-                nameTable: 'Tasks',
+                nameTable: 'tasks',
                 nameAlias: 't',
                 select: '*',
                 joinType: JoinType::INNER,

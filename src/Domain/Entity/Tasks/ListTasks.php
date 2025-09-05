@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'list_tasks')]
+#[ORM\HasLifecycleCallbacks]
 class ListTasks
 {
     #[ORM\Id]
@@ -22,14 +23,11 @@ class ListTasks
     #[ORM\Column(name: 'priority', type: 'integer', nullable: false)]
     private int $priority;
 
-
-
     #[ORM\Column(name: 'list_type', type: 'string', length: 255, nullable: false)]
     private string $list_type;
 
-
-    #[ORM\Column(name: 'created_at', type: 'datetime', nullable: true, options: ['comment' => 'Дата создания записи'])]
-    private ?\DateTimeInterface $created_at = null;
+    #[ORM\Column(name: 'created_at', type: 'datetime', nullable: false, options: ['comment' => 'Дата создания записи'])]
+    private \DateTimeInterface $created_at;
 
     #[ORM\Column(name: 'updated_at', type: 'datetime', nullable: true, options: ['comment' => 'Дата обновления записи'])]
     private ?\DateTimeInterface $updated_at = null;
@@ -37,82 +35,50 @@ class ListTasks
     #[ORM\Column(name: 'is_delete', type: 'boolean', options: ['comment' => 'Флаг логического удаления'])]
     private bool $is_delete = false;
 
-
-    // getter setters
-
-    public function getUserId(): int
-    {
-        return $this->user_id;
-    }
-
-    public function setUserId(int $user_id): void
+    public function __construct(int $user_id, string $label, int $priority, string $list_type)
     {
         $this->user_id = $user_id;
+        $this->label = $label;
+        $this->priority = $priority;
+        $this->list_type = $list_type;
+        $this->created_at = new \DateTimeImmutable();
     }
 
-    public function getLabel(): string
+    #[ORM\PreUpdate]
+    public function setUpdatedAt(): void
     {
-        return $this->label;
+        $this->updated_at = new \DateTimeImmutable();
     }
 
-    public function setLabel(string $label): void
+    public function rename(string $label): void
     {
         $this->label = $label;
+        $this->touch();
     }
 
-    public function getPriority(): int
+    public function changePriority(int $priority): void
     {
-        return $this->priority;
-    }
-
-    public function setPriority(int $priority): void
-    {
+        if ($priority < 1 || $priority > 5) {
+            throw new \InvalidArgumentException('Priority must be between 1 and 5');
+        }
         $this->priority = $priority;
+        $this->touch();
     }
 
-    public function getListType(): string
-    {
-        return $this->list_type;
-    }
-
-    public function setListType(string $list_type): void
+    public function changeType(string $list_type): void
     {
         $this->list_type = $list_type;
+        $this->touch();
     }
 
-    public function getCreatedAt(): ?\DateTimeInterface
+    public function markAsDeleted(): void
     {
-        return $this->created_at;
+        $this->is_delete = true;
+        $this->touch();
     }
 
-    public function setCreatedAt(?\DateTimeInterface $created_at): self
+    private function touch(): void
     {
-        $this->created_at = $created_at;
-
-        return $this;
-    }
-
-    public function getUpdatedAt(): ?\DateTimeInterface
-    {
-        return $this->updated_at;
-    }
-
-    public function setUpdatedAt(?\DateTimeInterface $updated_at): self
-    {
-        $this->updated_at = $updated_at;
-
-        return $this;
-    }
-
-    public function getis_delete(): bool
-    {
-        return $this->is_delete;
-    }
-
-    public function setis_delete(bool $is_delete): self
-    {
-        $this->is_delete = $is_delete;
-
-        return $this;
+        $this->updated_at = new \DateTimeImmutable();
     }
 }

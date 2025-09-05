@@ -96,13 +96,13 @@ const Aside = () => {
             </div>
 
             <nav className="tabs" style={{ fontSize: `${scaleFactor * 1.1}em` }}>
-                <a onClick={() => setActiveTab('Habits')}>Привычки</a>
+                <a onClick={() => setActiveTab('habits')}>Привычки</a>
                 <a onClick={() => setActiveTab('tasks')}>Задачи</a>
                 <a onClick={() => setActiveTab('Pomodoro')}>История</a>
             </nav>
 
             <div className="content" style={{ fontSize: `${scaleFactor * 1}em` }}>
-                {activeTab === 'Habits' && (
+                {activeTab === 'habits' && (
                     <section>
                         <h2 style={{ fontSize: `${scaleFactor * 1.3}em` }}>Привычки</h2>
                         {habitsList && habitsList.length > 0 ? (

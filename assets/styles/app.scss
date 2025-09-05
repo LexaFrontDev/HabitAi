@@ -1,14 +1,25 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@font-face {
+  font-family: 'Klein';
+  src: url('./fonts/klein/KleinText-Regular.woff2') format('woff2'),
+  url('./fonts/klein/KleinText-Regular.woff') format('woff');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 :root {
   --color-grey: 255, 255, 255;
   --opacity-variant-grey-3: 0.03;
+  --color-green-dark: #114438;
   --color-forest-green:  #57886c;
   --color-golden-fields-yellow-green: #83781b;
   --color-golden-fields-green: #95b46a;
   --color-golden-fields-green-dark: #3e5622;
+  --color-boost-orange: #fe9527;
 }
 
 
@@ -78,22 +89,26 @@ $line-resize-color: #999;
 
 @import 'main/main';
 @import 'main/sidebar';
-@import 'ChunkStyles/NavBar';
+@import 'chunkStyles/NavBar';
 @import 'main/home';
 @import 'pomodor/pomodor';
 @import 'pomodor/aside_pomodor';
-@import 'Habits/Habits';
-@import 'Auth/login';
-@import 'Auth/register';
-@import 'ChunkStyles/Date';
-@import 'Tasks/tasks';
-@import 'ChunkStyles/DatePicker';
-@import "ChunkStyles/StaticDatePicker";
-@import "Matric/matric";
-@import "ChunkStyles/alert";
-@import "Main/PremiumPage";
-@import "ChunkStyles/tasksAside";
+@import 'habits/Habits';
+@import 'auth/login';
+@import 'auth/register';
+@import 'chunkStyles/Date';
+@import 'tasks/tasks';
+@import 'chunkStyles/DatePicker';
+@import "chunkStyles/StaticDatePicker";
+@import "matric/matric";
+@import "chunkStyles/alert";
+@import "main/PremiumPage";
+@import "chunkStyles/tasksAside";
 
+.font-Klein{
+  font-family: Klein;
+  font-weight: 700;
+}
 
 
 .navbar-logo img {
@@ -233,6 +248,12 @@ $line-resize-color: #999;
 }
 
 
+.bg-boost {
+  background: var(--color-boost-orange);
+  padding: 0.5em 0em; /* вместо 5px */
+}
+
+
 .react-calendar__month-view__days {
   display: grid !important;
   grid-template-columns: repeat(7, 1fr);
@@ -328,32 +349,6 @@ $line-resize-color: #999;
 }
 
 
-
-
-//@media (max-width: 768px) {
-//  #sidebar {
-//    flex-direction: row;
-//
-//    position: fixed;
-//    top: $navbar-height;
-//
-//    height: auto;
-//    width: 100%;
-//
-//    justify-content: space-around;
-//  }
-//
-//  #content {
-//    margin-left: 0;
-//
-//    /* Отступ вниз под navbar и sidebar в мобильной версии */
-//    padding-top: calc(#{$app-content-padding} + #{$navbar-height} + 60px);
-//  }
-//
-//  .sidebar-item::after {
-//    display: none;
-//  }
-//}
 
 
 

@@ -28,7 +28,7 @@ class HabitsController extends AbstractController
     ) {
     }
 
-    #[Route('/api/Habits/save', name: 'save_habit', methods: ['POST'])]
+    #[Route('/api/habits/save', name: 'save_habit', methods: ['POST'])]
     #[RequiresJwt]
     public function saveHabits(#[MapRequestPayload] ReqHabitsDto $reqHabitsDto): JsonResponse
     {
@@ -41,7 +41,7 @@ class HabitsController extends AbstractController
         return $this->json(['success' => false, 'message' => 'Привычки не добавлены'], 400);
     }
 
-    #[Route('/api/Habits/update', name: 'update_habit', methods: ['PUT'])]
+    #[Route('/api/habits/update', name: 'update_habit', methods: ['PUT'])]
     #[RequiresJwt]
     public function updateHabits(#[MapRequestPayload] ReqUpdateHabitsDto $reqHabitsDto): JsonResponse
     {
@@ -54,7 +54,7 @@ class HabitsController extends AbstractController
         return $this->json(['success' => false, 'message' => 'Привычки не обновлены'], 400);
     }
 
-    #[Route('/api/get/Habits/by/day', name: 'get_habits', methods: ['GET'])]
+    #[Route('/api/get/habits/by/day', name: 'get_habits', methods: ['GET'])]
     #[RequiresJwt]
     public function getHabits(Request $request): JsonResponse
     {
@@ -78,7 +78,7 @@ class HabitsController extends AbstractController
         ], 404);
     }
 
-    #[Route('/api/get/Habits/all', name: 'get_habits_all', methods: ['GET'])]
+    #[Route('/api/get/habits/all', name: 'get_habits_all', methods: ['GET'])]
     #[RequiresJwt]
     public function getHabitsAll(Request $request): JsonResponse
     {
@@ -109,7 +109,7 @@ class HabitsController extends AbstractController
         ]);
     }
 
-    #[Route('/api/get/count/Habits/today', name: 'get_count_habits', methods: ['GET'])]
+    #[Route('/api/get/count/habits/today', name: 'get_count_habits', methods: ['GET'])]
     #[RequiresJwt]
     public function getHabitsContToDay(): JsonResponse
     {
@@ -127,7 +127,7 @@ class HabitsController extends AbstractController
         ]);
     }
 
-    #[Route('/api/Habits/save/progress', name: 'save_habit_progress', methods: ['POST'])]
+    #[Route('/api/habits/save/progress', name: 'save_habit_progress', methods: ['POST'])]
     #[RequiresJwt]
     public function saveHabitsProgress(#[MapRequestPayload] SaveHabitsProgress $reqHabitsDto): JsonResponse
     {
@@ -140,7 +140,7 @@ class HabitsController extends AbstractController
         return $this->json(['success' => false, 'message' => 'Прогресс не добавлены'], 400);
     }
 
-    #[Route('/api/Habits/delete/{habitId}', name: 'delete_habit', methods: ['DELETE'])]
+    #[Route('/api/habits/delete/{habitId}', name: 'delete_habit', methods: ['DELETE'])]
     #[RequiresJwt]
     public function deleteHabits(int $habitId): JsonResponse
     {
@@ -152,21 +152,21 @@ class HabitsController extends AbstractController
         return $this->json(['success' => true, 'message' => 'Привычка удаленно'], 200);
     }
 
-    #[Route('/api/Habits/statistic/all', name: 'get_habit_statistic_all', methods: ['GET'])]
+    #[Route('/api/habits/statistic/all', name: 'get_habit_statistic_all', methods: ['GET'])]
     #[RequiresJwt]
     public function getHabitsStatisticAll(): JsonResponse
     {
         return $this->json(['success' => true, 'result' => $this->queryHabitsHistory->getAllProgressWithHabitsTitleAll()]);
     }
 
-    #[Route('/api/Habits/templates/all', name: 'get_habit_templates_all', methods: ['GET'])]
+    #[Route('/api/habits/templates/all', name: 'get_habit_templates_all', methods: ['GET'])]
     #[RequiresJwt]
     public function getHabitsTemplatesAll(): JsonResponse
     {
         return $this->json(['success' => true, 'result' => $this->queryHabitsTemplates->getAllTemplates()]);
     }
 
-    #[Route('/api/Habits/statistic/all/{habitsId}', name: 'get_habit_statistic', methods: ['GET'])]
+    #[Route('/api/habits/statistic/all/{habitsId}', name: 'get_habit_statistic', methods: ['GET'])]
     #[RequiresJwt]
     public function getHabitsStatisticAllByHabitId(int $habitsId): JsonResponse
     {

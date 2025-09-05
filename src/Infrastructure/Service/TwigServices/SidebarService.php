@@ -49,7 +49,7 @@ class SidebarService implements SidebarServiceInterface
             'item' => [
                 new SidebarItemDTO(
                     label: 'Задачи',
-                    url: '/Tasks',
+                    url: '/tasks',
                     icon: 'Upload/Images/AppIcons/check-circle.svg',
                 ),
                 new SidebarItemDTO(
@@ -59,8 +59,8 @@ class SidebarService implements SidebarServiceInterface
                 ),
                 new SidebarItemDTO(
                     label: 'Привычки',
-                    url: '/Habits',
-                    icon: 'Upload/Images/Habits/bar-chart-2.svg',
+                    url: '/habits',
+                    icon: 'Upload/Images/habits/bar-chart-2.svg',
                 ),
             ],
         ];

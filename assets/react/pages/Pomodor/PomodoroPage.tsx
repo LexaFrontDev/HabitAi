@@ -17,10 +17,12 @@ import {usePomodoroTimer} from "../../Services/Pomodoro/PomodoroTimer";
 import {ToastContainer} from "react-toastify";
 import {LanguageApi} from "../../Services/language/LanguageApi";
 import {formatTaskDateTime} from "../../Services/Tasks/taskDateFormatter";
-import {CtnServices} from "../../Services/Ctn/CtnServices";
-import {IndexedDBCacheService} from "../../Services/Cache/IndexedDBCacheService";
+import {RequestServices} from "../../Services/Ctn/RequestServices";
 
-const ctnService = new CtnServices(new IndexedDBCacheService())
+
+
+
+const ctnService = new RequestServices()
 const PomodoroUseCase = new PomodoroService(ctnService);
 const LangUseCase = new LanguageRequestUseCase(new LanguageApi());
 const langStorage = new LangStorage();
@@ -43,7 +45,8 @@ const Pomodoro = () => {
             const result = await PomodoroUseCase.getPomdoroSummary();
 
             if (result) {
-                setDataPomodoro(result[0]);
+                // @ts-ignore
+                setDataPomodoro(result);
             }
         };
         fetchPomodoro();
@@ -199,12 +202,12 @@ const Pomodoro = () => {
                                 </div>
 
                                     <nav className="tabs">
-                                        <a onClick={() => setActiveTab('Habits')}>Привычки</a>
+                                        <a onClick={() => setActiveTab('habits')}>Привычки</a>
                                         <a onClick={() => setActiveTab('tasks')}>Задачи</a>
                                         <a onClick={() => setActiveTab('Pomodoro')}>История</a>
                                     </nav>
 
-                                    {activeTab === 'Habits' && (
+                                    {activeTab === 'habits' && (
                                         <section>
                                             <h2>Привычки</h2>
                                             {habitsList && habitsList.length > 0 ? (

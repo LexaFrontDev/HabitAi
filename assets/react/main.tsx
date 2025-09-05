@@ -1,3 +1,4 @@
+// index.tsx
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './Services/Library/i18n';
@@ -5,6 +6,12 @@ import RouterDom from './Router';
 import { I18nextProvider } from 'react-i18next';
 import i18n from './Services/Library/i18n';
 import 'react-toastify/dist/ReactToastify.css';
+
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/serviceWorker/ServiceWorker.js')
+        .then(registration => console.log('Service Worker зарегистрирован:', registration))
+        .catch(err => console.error('Не удалось зарегистрировать Service Worker:', err));
+}
 
 
 // @ts-ignore

@@ -4,7 +4,7 @@ namespace App\Domain\Entity\Habits;
 
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity, ORM\Table(name: 'Habits')]
+#[ORM\Entity, ORM\Table(name: 'habits')]
 class Habit
 {
     #[ORM\Id, ORM\GeneratedValue, ORM\Column(type: 'integer')]

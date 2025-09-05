@@ -79,7 +79,7 @@ class QueryHabbitsUseCase
         $token = $this->tokenProvider->getTokens();
         $userId = $this->jwtServices->getUserInfoFromToken($token->getAccessToken())->getUserId();
         $dto = $this->selectAllHabitsWithLimit->toDto($userId, $limit, $offset);
-        $obj = $this->filter->initFilter(criteriasDto: $dto, tableName: 'Habits', alias: 'h', select: '*, h.id AS habit_id');
+        $obj = $this->filter->initFilter(criteriasDto: $dto, tableName: 'habits', alias: 'h', select: '*, h.id AS habit_id');
         $results = $obj->getList();
 
         if (empty($results)) {

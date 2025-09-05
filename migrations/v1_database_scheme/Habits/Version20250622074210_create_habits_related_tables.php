@@ -57,9 +57,9 @@ final class Version20250622074210_create_habits_related_tables extends AbstractM
             SQL);
         }
 
-        if (!$sm->tablesExist(['Habits'])) {
+        if (!$sm->tablesExist(['habits'])) {
             $this->addSql(<<<'SQL'
-                CREATE TABLE Habits (
+                CREATE TABLE habits (
                     id INT AUTO_INCREMENT NOT NULL,
                     title VARCHAR(255) NOT NULL,
                     icon_url VARCHAR(255) DEFAULT NULL,
@@ -107,9 +107,9 @@ final class Version20250622074210_create_habits_related_tables extends AbstractM
             SQL);
         }
 
-        if (!$sm->tablesExist(['Tasks'])) {
+        if (!$sm->tablesExist(['tasks'])) {
             $this->addSql(<<<'SQL'
-                CREATE TABLE Tasks (
+                CREATE TABLE tasks (
                     id INT AUTO_INCREMENT NOT NULL,
                     habit_id INT NOT NULL,
                     task_type VARCHAR(255) NOT NULL,
@@ -143,10 +143,10 @@ final class Version20250622074210_create_habits_related_tables extends AbstractM
             'date_daily',
             'date_repeat_per_month',
             'date_weekly',
-            'Habits',
+            'habits',
             'notifications',
             'purposes',
-            'Tasks',
+            'tasks',
         ] as $table) {
             if ($sm->tablesExist([$table])) {
                 $this->addSql("DROP TABLE {$table}");

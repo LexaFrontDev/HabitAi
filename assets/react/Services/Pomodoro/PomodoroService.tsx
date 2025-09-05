@@ -2,49 +2,26 @@
 import {PomodoroData} from "../../ui/props/Habits/PomodoroData";
 import {PomodoroCreateType} from "../../ui/props/Pomodoro/PomodoroCreateType";
 import {ErrorAlert} from "../../pages/chunk/MessageAlertChunk";
-import {CtnServices} from "../Ctn/CtnServices";
+import {RequestServices} from "../Ctn/RequestServices";
 import {DataType} from "../../ui/props/Habits/DataType";
 
 
 export class PomodoroService {
-    constructor(private readonly cacheService: CtnServices) {}
+    constructor(private readonly cacheService: RequestServices) {}
 
-    async getPomdoroSummary(): Promise<PomodoroData[] | false> {
-        return await this.cacheService.get<PomodoroData>(`pomodoro`, `/api/pomodor/summary`, 'GET');
+    async getPomdoroSummary(): Promise<PomodoroData[] | false | PomodoroData> {
+        return await this.cacheService.get<PomodoroData>(`/api/pomodor/summary`, 'GET');
     }
 
     async createPomodro(data: PomodoroCreateType): Promise<boolean> {
-        const cachedSummary = await this.cacheService.getAlsoCache<PomodoroData>('pomodoro');
-        if (!cachedSummary || !cachedSummary.length) {
-            ErrorAlert('Кэш с pomodoro пустой');
-            return false;
-        }
 
-        const summary = cachedSummary[0];
-        summary.pomodorHistory.push(data as any);
+        const response = this.cacheService.create('/api/pomodor/create', "POST", data);
 
-
-        const updated = await this.cacheService.updateAlsoCache('pomodoro', summary.cacheId, summary);
-        if (!updated) {
-            ErrorAlert('Ошибка обновления кэша истории помодоро');
-            return false;
-        }
-
-
-
-        const response = await fetch('/api/pomodor/create', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(data),
-        });
-
-        if (!response.ok) {
-            await this.cacheService.updateAlsoCache('pomodoro', summary.cacheId, { ...summary, _pending: true });
+        if (!response) {
             ErrorAlert('Не удалось сохранить историю на сервере, данные будут синхронизированы позже');
             return false;
         }
-
-        return response.ok;
+        return response;
     }
 
 

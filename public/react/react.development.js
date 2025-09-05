@@ -2535,7 +2535,7 @@
   var NORMAL_PRIORITY_TIMEOUT = 5000;
   var LOW_PRIORITY_TIMEOUT = 10000; // Never times out
 
-  var IDLE_PRIORITY_TIMEOUT = maxSigned31BitInt; // Tasks are stored on a min heap
+  var IDLE_PRIORITY_TIMEOUT = maxSigned31BitInt; // tasks are stored on a min heap
 
   var taskQueue = [];
   var timerQueue = []; // Incrementing id counter. Used to maintain insertion order.
@@ -2555,7 +2555,7 @@
   var isInputPending = typeof navigator !== 'undefined' && navigator.scheduling !== undefined && navigator.scheduling.isInputPending !== undefined ? navigator.scheduling.isInputPending.bind(navigator.scheduling) : null;
 
   function advanceTimers(currentTime) {
-    // Check for Tasks that are no longer delayed and add them to the queue.
+    // Check for tasks that are no longer delayed and add them to the queue.
     var timer = peek(timerQueue);
 
     while (timer !== null) {
@@ -2806,7 +2806,7 @@
       push(timerQueue, newTask);
 
       if (peek(taskQueue) === null && newTask === peek(timerQueue)) {
-        // All Tasks are delayed, and this is the task with the earliest delay.
+        // All tasks are delayed, and this is the task with the earliest delay.
         if (isHostTimeoutScheduled) {
           // Cancel an existing timeout.
           cancelHostTimeout();
@@ -2863,7 +2863,7 @@
   var scheduledHostCallback = null;
   var taskTimeoutID = -1; // Scheduler periodically yields in case there is other work on the main
   // thread, like user events. By default, it yields multiple times per frame.
-  // It does not attempt to align with frame boundaries, since most Tasks don't
+  // It does not attempt to align with frame boundaries, since most tasks don't
   // need to be frame aligned; for those that do, use requestAnimationFrame.
 
   var frameInterval = frameYieldMs;
@@ -3082,7 +3082,7 @@
               didWarnAboutMessageChannel = true;
 
               if (typeof MessageChannel === 'undefined') {
-                error('This browser does not have a MessageChannel implementation, ' + 'so enqueuing Tasks via await act(async () => ...) will fail. ' + 'Please file an issue at https://github.com/facebook/react/issues ' + 'if you encounter this warning.');
+                error('This browser does not have a MessageChannel implementation, ' + 'so enqueuing tasks via await act(async () => ...) will fail. ' + 'Please file an issue at https://github.com/facebook/react/issues ' + 'if you encounter this warning.');
               }
             }
           }

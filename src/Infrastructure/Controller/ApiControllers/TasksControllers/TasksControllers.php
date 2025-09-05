@@ -2,8 +2,11 @@
 
 namespace App\Infrastructure\Controller\ApiControllers\TasksControllers;
 
+use App\Aplication\Dto\TasksDto\ListTasks\TasksListReq;
+use App\Aplication\Dto\TasksDto\ListTasks\TasksListReqWithListId;
 use App\Aplication\Dto\TasksDto\Tasks\TasksForSaveDto;
 use App\Aplication\Dto\TasksDto\Tasks\TasksForUpdateDto;
+use App\Aplication\UseCase\TasksUseCases\ListTasks\CommandListTasks;
 use App\Aplication\UseCase\TasksUseCases\ListTasks\QueryListTasks;
 use App\Aplication\UseCase\TasksUseCases\Tasks\CommandTasksUseCase;
 use App\Aplication\UseCase\TasksUseCases\Tasks\QueryTasksUseCase;
@@ -19,6 +22,7 @@ class TasksControllers extends AbstractController
 {
     public function __construct(
         private CommandTasksUseCase $commandTasksUseCase,
+        private CommandListTasks $commandListTasks,
         private QueryTasksUseCase $queryTasksUseCase,
         private TasksHistoryUseCases $tasksHistoryUseCases,
         private QueryListTasks $queryListTasks,
@@ -74,6 +78,32 @@ class TasksControllers extends AbstractController
 
         if (!$result) {
             return $this->json(['success' => false, 'message' => 'Ошибка при обновлении задачи'], 400);
+        }
+
+        return $this->json(['success' => true, 'data' => $result]);
+    }
+
+    #[Route('/api/list/tasks/save', name: 'list_tasks_save', methods: ['POST'])]
+    #[RequiresJwt]
+    public function saveListTasks(#[MapRequestPayload] TasksListReq $dto): JsonResponse
+    {
+        $result = $this->commandListTasks->saveListTasks($dto);
+
+        if (!$result) {
+            return $this->json(['success' => false, 'message' => 'Ошибка при сохранение списка задачи'], 400);
+        }
+
+        return $this->json(['success' => true, 'data' => $result]);
+    }
+
+    #[Route('/api/list/tasks/update', name: 'list_tasks_update', methods: ['PUT'])]
+    #[RequiresJwt]
+    public function updateListTasks(#[MapRequestPayload] TasksListReqWithListId $dto): JsonResponse
+    {
+        $result = $this->commandListTasks->updateListTasks($dto);
+
+        if (!$result) {
+            return $this->json(['success' => false, 'message' => 'Ошибка при обновлении списка задачи'], 400);
         }
 
         return $this->json(['success' => true, 'data' => $result]);

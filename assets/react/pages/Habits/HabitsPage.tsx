@@ -5,20 +5,15 @@ import HabitModal from "../chunk/Habits/HabitsModal";
 import {ImperativePanelGroupHandle, Panel, PanelGroup, PanelResizeHandle} from "react-resizable-panels";
 import {useTranslation} from "react-i18next";
 import {LanguageRequestUseCase} from "../../Services/language/LanguageRequestUseCase";
-
 import {LangStorage} from "../../Services/languageStorage/LangStorage";
 import {LangStorageUseCase} from "../../Services/language/LangStorageUseCase";
 import {HabitsService} from "../../Services/Habits/HabitsService";
-
 import {useHabitsLogic} from "../../Services/Habits/HabitsPageLogic";
 import Calendar from "react-calendar";
 import {LanguageApi} from "../../Services/language/LanguageApi";
-import {CtnServices} from "../../Services/Ctn/CtnServices";
-import {CacheServiceInterface} from "../../interfaces/Cache/CacheServiceInterface";
-import {IndexedDBCacheService} from "../../Services/Cache/IndexedDBCacheService";
+import {RequestServices} from "../../Services/Ctn/RequestServices";
 
-
-const ctnService = new CtnServices(new IndexedDBCacheService())
+const ctnService = new RequestServices()
 const habitsService = new HabitsService(ctnService);
 const LangUseCase = new LanguageRequestUseCase(new LanguageApi());
 const langStorage = new LangStorage();
@@ -297,7 +292,7 @@ const HabitsPage = () => {
                                                 <button onClick={() => handleEdit(habitsSide)} className="triger-pause">
                                                     <img className="icon-img" src="/Upload/Images/AppIcons/edit.svg" alt=""/>
                                                 </button>
-                                                <button onClick={() => handleDelete(habitsSide.habit_id, habitsSide.cacheId)} className="triger-delete">
+                                                <button onClick={() => handleDelete(habitsSide.habit_id)} className="triger-delete">
                                                     <img className="icon-img" src="/Upload/Images/AppIcons/delete.svg" alt=""/>
                                                 </button>
                                             </div>

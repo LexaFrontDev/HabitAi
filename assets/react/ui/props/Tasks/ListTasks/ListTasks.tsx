@@ -1,6 +1,5 @@
 export type ListTasks = {
-    cacheId: number;
     label: string;
-    priority: string;
+    priority: number;
     list_type: string;
 };

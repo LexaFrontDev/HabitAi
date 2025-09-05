@@ -27,21 +27,24 @@ class SelectAllHabitsWithLimitMapper
                 nameAlias: 'dd',
                 select: '*',
                 joinType: JoinType::LEFT,
-                onCondition: [new OnConditionDto(expr: "hdj.data_id = dd.id AND hdj.data_type = 'daily'", type: 'AND')]
+                onCondition: [new OnConditionDto(expr: 'hdj.data_id = dd.id AND hdj.data_type = :data_type', type: 'AND')],
+                paramsJoin: ['data_type' => 'daily']
             ),
             date_weekly: new EntityJoinCriteria(
                 nameTable: 'date_weekly',
                 nameAlias: 'dw',
                 select: '*',
                 joinType: JoinType::LEFT,
-                onCondition: [new OnConditionDto(expr: "hdj.data_id = dw.id AND hdj.data_type = 'weekly'", type: 'AND')]
+                onCondition: [new OnConditionDto(expr: 'hdj.data_id = dw.id AND hdj.data_type = :data_type', type: 'AND')],
+                paramsJoin: ['data_type' => 'weekly']
             ),
             date_repeat_per_month: new EntityJoinCriteria(
                 nameTable: 'date_repeat_per_month',
                 nameAlias: 'dr',
                 select: '*',
                 joinType: JoinType::LEFT,
-                onCondition: [new OnConditionDto(expr: "hdj.data_id = dr.id AND hdj.data_type = 'repeat'", type: 'AND')]
+                onCondition: [new OnConditionDto(expr: 'hdj.data_id = dr.id AND hdj.data_type = :data_type', type: 'AND')],
+                paramsJoin: ['data_type' => 'repeat']
             ),
             purposes: new EntityJoinCriteria(
                 nameTable: 'purposes',
@@ -56,9 +59,10 @@ class SelectAllHabitsWithLimitMapper
                 select: '*, hh.id AS habit_history_id',
                 joinType: JoinType::LEFT,
                 onCondition: [
-                    new OnConditionDto(expr: "hh.habits_id = h.id AND hh.user_id = $userId", type: 'AND'),
+                    new OnConditionDto(expr: 'hh.habits_id = h.id AND hh.user_id = :user_id', type: 'AND'),
                     new OnConditionDto(expr: 'DATE(hh.recorded_at) = CURRENT_DATE', type: 'AND'),
-                ]
+                ],
+                paramsJoin: ['user_id' => $userId]
             ),
             pagination: new PaginationDto(
                 limit: $limit,

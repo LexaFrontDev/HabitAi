@@ -40,6 +40,19 @@ class LanguagePageTranslationFixture extends Fixture implements DependentFixture
                     'de' => 'Wachse jeden Tag um 1 %', 'kg' => 'Ар күнү 1 % өс', 'uz' => 'Har kuni 1 % o‘s',
                     'ko' => '매일 1% 성장하세요', 'ja' => '毎日1％成長しよう',
                 ],
+
+                'boldText' => [
+                    'ru' => 'Повышай свою продуктивность',
+                    'en' => 'Boost your productivity',
+                    'kz' => 'Өнімділігіңді арттыр',
+                    'de' => 'Steigere deine Produktivität',
+                    'kg' => 'Өндүрүмдүүлүгүңдү жогорулат',
+                    'uz' => 'Mahsuldorligingni oshir',
+                    'ko' => '생산성을 높이세요',
+                    'ja' => '生産性を高めよう',
+                ],
+
+
                 'logoDescText' => [
                     'ru' => 'Таймер Pomodoro, список привычек и матрица Эйзенхауэра — всё в одном месте',
                     'en' => 'Pomodoro timer, habit list, and Eisenhower matrix—all in one place',
@@ -91,7 +104,7 @@ class LanguagePageTranslationFixture extends Fixture implements DependentFixture
 
             'premium' => [
                 'goToTasksButtonText' => [
-                    'ru' => 'Перейти к задачам', 'en' => 'Go to Tasks', 'kz' => 'Тапсырмаларға өту',
+                    'ru' => 'Перейти к задачам', 'en' => 'Go to tasks', 'kz' => 'Тапсырмаларға өту',
                     'de' => 'Zu Aufgaben', 'kg' => 'Тапшырмаларга өтүңүз', 'uz' => 'Vazifalarga oʻting', 'ko' => '작업으로 이동', 'ja' => 'タスクへ',
                 ],
                 'HeadText' => [
@@ -409,7 +422,7 @@ class LanguagePageTranslationFixture extends Fixture implements DependentFixture
 
             'tasks' => [
                 'tasksHeadText' => [
-                    'ru' => 'Задачи', 'en' => 'Tasks', 'kz' => 'Тапсырмалар',
+                    'ru' => 'Задачи', 'en' => 'tasks', 'kz' => 'Тапсырмалар',
                     'de' => 'Aufgaben', 'kg' => 'Тапшырмалар', 'uz' => 'Vazifalar',
                     'ko' => '작업', 'ja' => 'タスク',
                 ],
@@ -500,7 +513,7 @@ class LanguagePageTranslationFixture extends Fixture implements DependentFixture
             'habits' => [
                 'habitsHeadText' => [
                     'ru' => 'Привычки',
-                    'en' => 'Habits',
+                    'en' => 'habits',
                     'kz' => 'Әдеттер',
                     'de' => 'Gewohnheiten',
                     'kg' => 'Адатар',

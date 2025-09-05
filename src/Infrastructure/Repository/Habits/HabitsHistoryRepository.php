@@ -138,7 +138,7 @@ class HabitsHistoryRepository extends ServiceEntityRepository implements HabitsH
                     hh.recorded_at,
                     h.title
                 FROM habits_history hh
-                INNER JOIN Habits h ON h.id = hh.habits_id
+                INNER JOIN habits h ON h.id = hh.habits_id
                 WHERE hh.user_id = :userId
                 AND hh.is_deleted = 0
                 AND h.is_delete = 0
