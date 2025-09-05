@@ -16,7 +16,7 @@
   border: 1px solid #52b788;
   border-radius: 5px;
   color: #fff;
-  padding: 14px 10px 6px;
+  padding: 7px 13px 7px;
   outline: none;
   font-size: 16px;
 }
@@ -336,7 +336,7 @@
   }
 }
 
-/* Styling for Tasks marked as "Won't do" */
+/* Styling for tasks marked as "Won't do" */
 .task-item.wont-do .task-title,
 .task-item.wont-do .task-description {
   text-decoration: line-through;

@@ -8,24 +8,24 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
 /**
- * Adds "description" column to "Tasks" table.
+ * Adds "description" column to "tasks" table.
  */
 final class Version20250701035053Addeddescriptionintasks extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Adds "description" column to the "Tasks" table, if it exists.';
+        return 'Adds "description" column to the "tasks" table, if it exists.';
     }
 
     public function up(Schema $schema): void
     {
         $sm = $this->connection->createSchemaManager();
-        if ($sm->tablesExist(['Tasks'])) {
-            $table = $sm->introspectTable('Tasks');
+        if ($sm->tablesExist(['tasks'])) {
+            $table = $sm->introspectTable('tasks');
             $columns = $table->getColumns();
 
             if (!isset($columns['description'])) {
-                $this->addSql('ALTER TABLE Tasks ADD description LONGTEXT DEFAULT NULL');
+                $this->addSql('ALTER TABLE tasks ADD description LONGTEXT DEFAULT NULL');
             }
         }
     }
@@ -33,12 +33,12 @@ final class Version20250701035053Addeddescriptionintasks extends AbstractMigrati
     public function down(Schema $schema): void
     {
         $sm = $this->connection->createSchemaManager();
-        if ($sm->tablesExist(['Tasks'])) {
-            $table = $sm->introspectTable('Tasks');
+        if ($sm->tablesExist(['tasks'])) {
+            $table = $sm->introspectTable('tasks');
             $columns = $table->getColumns();
 
             if (isset($columns['description'])) {
-                $this->addSql('ALTER TABLE Tasks DROP description');
+                $this->addSql('ALTER TABLE tasks DROP description');
             }
         }
     }

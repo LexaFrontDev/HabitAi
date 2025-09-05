@@ -1,14 +1,21 @@
 @charset "UTF-8";
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+@font-face {
+  font-family: "Klein";
+  src: url("./fonts/klein/KleinText-Regular.woff2") format("woff2"), url("./fonts/klein/KleinText-Regular.woff") format("woff");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
 :root {
   --color-grey: 255, 255, 255;
   --opacity-variant-grey-3: 0.03;
+  --color-green-dark: #114438;
   --color-forest-green: #57886c;
   --color-golden-fields-yellow-green: #83781b;
   --color-golden-fields-green: #95b46a;
   --color-golden-fields-green-dark: #3e5622;
+  --color-boost-orange: #fe9527;
 }
 
 .loading {
@@ -37,7 +44,7 @@
 }
 
 html, body {
-  background: linear-gradient(135deg, #588157, #588157);
+  background-color: var(--color-green-dark);
   font-family: "Segoe UI", sans-serif;
   color: #ffffff;
   margin: 0;
@@ -47,7 +54,7 @@ html, body {
 }
 
 .navbar {
-  background-color: #588157;
+  background-color: var(--color-green-dark);
   border-bottom: 1px solid rgb(111, 157.125, 109.875);
 }
 .navbar .navbar-brand {
@@ -74,7 +81,7 @@ html, body {
 }
 
 .hero {
-  background: linear-gradient(120deg, #588157, #588157);
+  background: var(--color-green-dark);
   padding: 6rem 1rem;
   position: relative;
 }
@@ -1269,7 +1276,7 @@ small {
 }
 
 .login-image {
-  flex: 0.8;
+  flex: 1.6;
   width: 600px;
   background: #a4ac86 url("../../../public/StorageImages/Icons/focused.svg") no-repeat center center;
   background-size: cover;
@@ -1788,7 +1795,7 @@ a:hover {
   border: 1px solid #52b788;
   border-radius: 5px;
   color: #fff;
-  padding: 14px 10px 6px;
+  padding: 7px 13px 7px;
   outline: none;
   font-size: 16px;
 }
@@ -2043,7 +2050,7 @@ a:hover {
   color: white;
 }
 
-/* Styling for Tasks marked as "Won't do" */
+/* Styling for tasks marked as "Won't do" */
 .task-item.wont-do .task-title,
 .task-item.wont-do .task-description {
   text-decoration: line-through;
@@ -3009,6 +3016,11 @@ a:hover {
   cursor: pointer;
 }
 
+.font-Klein {
+  font-family: Klein;
+  font-weight: 700;
+}
+
 .navbar-logo img {
   width: 240px;
   height: 50px;
@@ -3132,6 +3144,11 @@ a:hover {
   text-align: center;
   padding: clamp(4px, 0.8vw, 6px);
   font-size: clamp(12px, 0.9vw, 14px);
+}
+
+.bg-boost {
+  background: var(--color-boost-orange);
+  padding: 0.5em 0em; /* вместо 5px */
 }
 
 .react-calendar__month-view__days {

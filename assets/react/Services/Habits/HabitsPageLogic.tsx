@@ -132,7 +132,7 @@ export const useHabitsLogic = (habitsService: HabitsService) => {
 
     const handleUpdate = async (habitData: EditDataType) => {
         try {
-            let result = await habitsService.updateHabits(habitData, habitData.cacheId);
+            let result = await habitsService.updateHabits(habitData);
             setIsModalOpen(false);
             setEditingHabit(null);
             Messages('Привычка обновлена!');
@@ -147,9 +147,9 @@ export const useHabitsLogic = (habitsService: HabitsService) => {
         }
     };
 
-    const handleDelete = async (habitId: number, cacheId: number) => {
+    const handleDelete = async (habitId: number) => {
         if (window.confirm('Вы уверены, что хотите удалить эту привычку?')) {
-            let  result = await habitsService.deleteHabits(habitId, cacheId)
+            let  result = await habitsService.deleteHabits(habitId)
 
             if (result.success) {
                 Messages('Привычка удалена!');

@@ -11,7 +11,7 @@ final class Version20250623032051_updated_habits_tables_structure extends Abstra
 {
     public function getDescription(): string
     {
-        return 'Изменение структуры таблиц Habits, Tasks, добавление связующих таблиц и удаление старых полей.';
+        return 'Изменение структуры таблиц habits, tasks, добавление связующих таблиц и удаление старых полей.';
     }
 
     public function up(Schema $schema): void
@@ -53,8 +53,8 @@ final class Version20250623032051_updated_habits_tables_structure extends Abstra
             $this->addSql('ALTER TABLE date_weekly DROP habit_id');
         }
 
-        if ($sm->tablesExist('Habits') && $sm->introspectTable('Habits')->hasColumn('date_type')) {
-            $this->addSql('ALTER TABLE Habits DROP date_type');
+        if ($sm->tablesExist('habits') && $sm->introspectTable('habits')->hasColumn('date_type')) {
+            $this->addSql('ALTER TABLE habits DROP date_type');
         }
 
         if ($sm->tablesExist('pomodoro_history') && $sm->introspectTable('pomodoro_history')->hasColumn('target_type')) {
@@ -65,22 +65,22 @@ final class Version20250623032051_updated_habits_tables_structure extends Abstra
             $this->addSql('ALTER TABLE purposes DROP target_type, DROP target_id');
         }
 
-        if ($sm->tablesExist('Tasks')) {
-            $columns = $sm->introspectTable('Tasks')->getColumns();
+        if ($sm->tablesExist('tasks')) {
+            $columns = $sm->introspectTable('tasks')->getColumns();
 
             if (array_key_exists('habit_id', $columns) || array_key_exists('pomodoro_count', $columns) || array_key_exists('pomodoro_id', $columns)) {
-                $this->addSql('ALTER TABLE Tasks ADD purpose_id INT DEFAULT NULL');
+                $this->addSql('ALTER TABLE tasks ADD purpose_id INT DEFAULT NULL');
 
                 if (array_key_exists('habit_id', $columns)) {
-                    $this->addSql('ALTER TABLE Tasks DROP habit_id');
+                    $this->addSql('ALTER TABLE tasks DROP habit_id');
                 }
 
                 if (array_key_exists('pomodoro_count', $columns)) {
-                    $this->addSql('ALTER TABLE Tasks DROP pomodoro_count');
+                    $this->addSql('ALTER TABLE tasks DROP pomodoro_count');
                 }
 
                 if (array_key_exists('pomodoro_id', $columns)) {
-                    $this->addSql('ALTER TABLE Tasks DROP pomodoro_id');
+                    $this->addSql('ALTER TABLE tasks DROP pomodoro_id');
                 }
             }
         }
@@ -101,10 +101,10 @@ final class Version20250623032051_updated_habits_tables_structure extends Abstra
             $this->addSql('ALTER TABLE date_weekly ADD habit_id INT NOT NULL');
         }
 
-        if ($sm->tablesExist('Tasks')) {
-            $this->addSql('ALTER TABLE Tasks ADD habit_id INT NOT NULL');
-            $this->addSql('ALTER TABLE Tasks ADD pomodoro_id INT DEFAULT NULL');
-            $this->addSql('ALTER TABLE Tasks CHANGE purpose_id pomodoro_count INT DEFAULT NULL');
+        if ($sm->tablesExist('tasks')) {
+            $this->addSql('ALTER TABLE tasks ADD habit_id INT NOT NULL');
+            $this->addSql('ALTER TABLE tasks ADD pomodoro_id INT DEFAULT NULL');
+            $this->addSql('ALTER TABLE tasks CHANGE purpose_id pomodoro_count INT DEFAULT NULL');
         }
 
         if ($sm->tablesExist('purposes')) {
@@ -115,8 +115,8 @@ final class Version20250623032051_updated_habits_tables_structure extends Abstra
             $this->addSql('ALTER TABLE date_repeat_per_month ADD habit_id INT NOT NULL');
         }
 
-        if ($sm->tablesExist('Habits')) {
-            $this->addSql('ALTER TABLE Habits ADD date_type VARCHAR(255) NOT NULL');
+        if ($sm->tablesExist('habits')) {
+            $this->addSql('ALTER TABLE habits ADD date_type VARCHAR(255) NOT NULL');
         }
 
         if ($sm->tablesExist('pomodoro_history')) {

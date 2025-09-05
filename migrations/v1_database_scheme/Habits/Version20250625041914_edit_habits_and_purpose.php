@@ -11,15 +11,15 @@ final class Version20250625041914Edithabitsandpurpose extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Изменение таблиц Habits и purposes: переименование поля, добавление и удаление колонок';
+        return 'Изменение таблиц habits и purposes: переименование поля, добавление и удаление колонок';
     }
 
     public function up(Schema $schema): void
     {
         $sm = $this->connection->createSchemaManager();
 
-        if ($sm->tablesExist(['Habits'])) {
-            $columns = $sm->introspectTable('Habits')->getColumns();
+        if ($sm->tablesExist(['habits'])) {
+            $columns = $sm->introspectTable('habits')->getColumns();
 
             $sqlParts = [];
 
@@ -32,7 +32,7 @@ final class Version20250625041914Edithabitsandpurpose extends AbstractMigration
             }
 
             if (!empty($sqlParts)) {
-                $this->addSql('ALTER TABLE Habits '.implode(', ', $sqlParts));
+                $this->addSql('ALTER TABLE habits '.implode(', ', $sqlParts));
             }
         }
 
@@ -76,9 +76,9 @@ final class Version20250625041914Edithabitsandpurpose extends AbstractMigration
     {
         $sm = $this->connection->createSchemaManager();
 
-        if ($sm->tablesExist(['Habits'])) {
+        if ($sm->tablesExist(['habits'])) {
             $this->addSql(<<<'SQL'
-            ALTER TABLE Habits
+            ALTER TABLE habits
                 DROP notification_date,
                 CHANGE user_id notification_id INT DEFAULT NULL
         SQL);

@@ -34,7 +34,7 @@ final class Version20250710023600Addcreatedatupdatedatdeletedintables extends Ab
             'date_daily',
             'date_repeat_per_month',
             'date_weekly',
-            'Habits',
+            'habits',
             'habits_data_juntion',
             'habits_pomodor_junction',
             'language',
@@ -45,7 +45,7 @@ final class Version20250710023600Addcreatedatupdatedatdeletedintables extends Ab
             'purposes',
             'refresh_tokens',
             'storage',
-            'Tasks',
+            'tasks',
             'Users',
         ];
 
@@ -71,7 +71,7 @@ final class Version20250710023600Addcreatedatupdatedatdeletedintables extends Ab
             'date_daily',
             'date_repeat_per_month',
             'date_weekly',
-            'Habits',
+            'habits',
             'habits_data_juntion',
             'habits_pomodor_junction',
             'language',
@@ -82,7 +82,7 @@ final class Version20250710023600Addcreatedatupdatedatdeletedintables extends Ab
             'purposes',
             'refresh_tokens',
             'storage',
-            'Tasks',
+            'tasks',
             'Users',
         ];
 

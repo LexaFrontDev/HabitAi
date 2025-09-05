@@ -121,7 +121,7 @@ class HabitsRepository extends ServiceEntityRepository implements HabitsReposito
             hh.*, 
             hdj.data_type,
             dd.*, dw.*, dr.*
-        FROM Habits h
+        FROM habits h
         INNER JOIN habits_data_juntion hdj ON hdj.habits_id = h.id
         LEFT JOIN date_daily dd ON hdj.data_id = dd.id AND hdj.data_type = 'daily'
         LEFT JOIN date_weekly dw ON hdj.data_id = dw.id AND hdj.data_type = 'weekly'
@@ -184,7 +184,7 @@ class HabitsRepository extends ServiceEntityRepository implements HabitsReposito
 
         $sql = "
         SELECT COUNT(*) as count
-        FROM Habits h
+        FROM habits h
         INNER JOIN habits_data_juntion hdj ON hdj.habits_id = h.id
         LEFT JOIN date_daily dd ON hdj.data_id = dd.id AND hdj.data_type = 'daily'
         LEFT JOIN date_weekly dw ON hdj.data_id = dw.id AND hdj.data_type = 'weekly'

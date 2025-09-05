@@ -124,11 +124,15 @@ const Lending: React.FC = () => {
                 <div className="container">
                     <div className="row d-flex flex-column text-center align-items-center">
                         <div className="col-12 col-lg-8 mb-4">
-                            <TextBlock variant="h1" align="center" weight="bold" size="display-4" className="mb-3">
+                            <TextBlock  variant="h1" font="klein" align="center" weight="bold" size="text-[3.5rem]" className="mb-3 ">
                                 {t('landing.logoHeadText') || 'TaskFlow — порядок в делах'}
                             </TextBlock>
 
-                            <TextBlock variant="p" align="center" color="text-muted" size="lead" className="mb-4">
+                            <TextBlock variant="h1" font="klein" align="center" weight="bold" size="text-[5em]" className="mb-3 bg-boost text-red-500">
+                                {t('landing.boldText') || 'TaskFlow — порядок в делах'}
+                            </TextBlock>
+
+                            <TextBlock variant="p" font="poppins"  align="center" color="text-muted" size="lead" className="mb-4">
                                 {t('landing.logoDescText') || 'Легкий и мощный инструмент для задач и привычек'}
                             </TextBlock>
                             <Button as="link" to="/users/register" variant="big">
@@ -136,7 +140,6 @@ const Lending: React.FC = () => {
                             </Button>
                         </div>
                     </div>
-                    <ImageWrapper src="/StorageImages/Icons/FonLogos.png" size="big" position="center" />
                 </div>
             </section>
 

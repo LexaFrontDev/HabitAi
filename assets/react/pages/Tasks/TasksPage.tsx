@@ -18,15 +18,14 @@ import {LangStorage} from "../../Services/languageStorage/LangStorage";
 import {LangStorageUseCase} from "../../Services/language/LangStorageUseCase";
 import {useTranslation} from "react-i18next";
 import {LanguageRequestUseCase} from "../../Services/language/LanguageRequestUseCase";
-
-
 import {ListTasks} from "../../ui/props/Tasks/ListTasks/ListTasks";
 import {LanguageApi} from "../../Services/language/LanguageApi";
 import {formatTaskDateTime} from "../../Services/Tasks/taskDateFormatter";
-import {CtnServices} from "../../Services/Ctn/CtnServices";
-import {IndexedDBCacheService} from "../../Services/Cache/IndexedDBCacheService";
+import {RequestServices} from "../../Services/Ctn/RequestServices";
+import {CreateListReq} from "../../ui/props/Tasks/ListTasks/CreateListReq";
+import {ToastContainer} from "react-toastify";
 
-const ctnService = new CtnServices(new IndexedDBCacheService())
+const ctnService = new RequestServices()
 const tasksService = new TasksService(ctnService);
 const LangUseCase = new LanguageRequestUseCase(new LanguageApi());
 const langStorage = new LangStorage();
@@ -67,8 +66,8 @@ const TasksPage: React.FC = () => {
     const [translationsLoaded, setTranslationsLoaded] = useState<boolean>(false);
     const [ListTasks, SetListTasks] = useState<ListTasks[] | []>([])
     const [ListType, SetListType] = useState<string>('list');
-    const [typeTitle, setTypeTitle] = useState("");
-
+    const [ListTitle, setListTitle] = useState<string>("");
+    const [ListPriority, setListPriority] = useState<number>(1);
 
     useEffect(() => {
         const detectLang = async () => {
@@ -96,6 +95,7 @@ const TasksPage: React.FC = () => {
                     SetListTasks([]);
                     return;
                 }
+                // @ts-ignore
                 SetListTasks(result);
             } catch (error) {
                 console.error("Ошибка при загрузке задач:", error);
@@ -143,6 +143,7 @@ const TasksPage: React.FC = () => {
                     const tasks = await tasksService.getTasksAll();
                     if(!tasks) setTasks([]);
                     console.log(tasks);
+                    // @ts-ignore
                     setTasks(tasks || []);
                 } else {
                     const date = getActiveDate();
@@ -173,6 +174,7 @@ const TasksPage: React.FC = () => {
         try {
             setLoading(true);
             const allTasks = await tasksService.getTasksAll();
+            // @ts-ignore
             setTasks(allTasks || []);
             setActivePeriod(period);
         } catch (err: any) {
@@ -202,7 +204,6 @@ const TasksPage: React.FC = () => {
 
 
             const createdTask: Task = {
-                cacheId: result.cacheId,
                 id: result.task,
                 title,
                 description,
@@ -229,8 +230,8 @@ const TasksPage: React.FC = () => {
         setTimeData(dateData);
     };
 
-    const handleDelete = async (taskId: number | string, cacheId: number) => {
-        const result = await tasksService.deleteTask(taskId, cacheId);
+    const handleDelete = async (taskId: number | string) => {
+        const result = await tasksService.deleteTask(taskId);
 
         if (result.success) {
             setTasks(tasks.filter(task => task.id !== taskId));
@@ -247,19 +248,32 @@ const TasksPage: React.FC = () => {
     };
 
     const handleEdit = (task: Task) => {
-        console.log(task)
         setEditingTask(task);
         setShowEditModal(true);
     };
 
 
-    const saveTypes = () => {
-        if(typeTitle === ""){
+    const saveTypes = async () => {
+        if (typeof ListTitle !== "string" || ListTitle.trim() === "") {
             ErrorAlert('Заполните корректно данные');
+            setAddList(false);
+            return;
         }
 
+        let dto: CreateListReq = {
+            label: ListTitle,
+            priority: ListPriority,
+            list_type: ListType
+        }
 
-
+        const result = await tasksService.createList(dto);
+        if(!result){
+            ErrorAlert('Ошибка сервера');
+            setAddList(false);
+            return;
+        }
+        SuccessAlert('Список создался успешно');
+        setAddList(false);
     }
 
 
@@ -269,7 +283,6 @@ const TasksPage: React.FC = () => {
 
 
         const taskDto: TaskUpdate = {
-            cacheId: editingTask.cacheId,
             id: editingTask.id,
             title: editingTask.title!,
             description: editingTask.description || '',
@@ -280,7 +293,6 @@ const TasksPage: React.FC = () => {
 
         if (result.success && result.task) {
             const updatedTask: Task = {
-                cacheId: editingTask.cacheId,
                 id: result.task,
                 title: editingTask.title!,
                 description: editingTask.description || '',
@@ -303,7 +315,7 @@ const TasksPage: React.FC = () => {
     };
 
 
-    const handleWontDo = async (taskId: number | string,  cacheId: number,status: boolean) => {
+    const handleWontDo = async (taskId: number | string, status: boolean) => {
         if (status) {
             Messages(t('tasks.confirmTasks'));
         } else {
@@ -330,7 +342,7 @@ const TasksPage: React.FC = () => {
                 timeData: prev.timeData
             };
         });
-        const result = await tasksService.toggleWontDo(taskId, cacheId, status);
+        const result = await tasksService.toggleWontDo(taskId, status);
         if (!result.success && result.front) {
             ErrorAlert(result.message);
         } else if(!result.success) {
@@ -356,7 +368,6 @@ const TasksPage: React.FC = () => {
 
 
         await tasksService.updateTask({
-            cacheId: updatedTask.cacheId,
             id: updatedTask.id,
             title: updatedTask.title!,
             description: updatedTask.description || '',
@@ -406,7 +417,7 @@ const TasksPage: React.FC = () => {
     return (
         <div id="tasks-page">
             <Sidebar/>
-
+            <ToastContainer position="top-right" autoClose={3000} />
             <PanelGroup autoSaveId="example" direction="horizontal" style={{ height: "100vh" }} ref={groupRef} onLayout={handleLayoutChange}>
 
                 <Panel maxSize={25} defaultSize={20} minSize={0}>
@@ -422,11 +433,23 @@ const TasksPage: React.FC = () => {
                                 </div>
                             </div>
 
-                            <div className="list-tasks">
-                                <button className="triger-pause mt-5" onClick={() => setAddList(true)}>Добавить список</button>
-                                {ListTasks.map((task) => (
-                                    <button>task.label</button>
-                                ))}
+                            <div className="list-tasks space-x-4">
+                                <button
+                                    className="triger-pause mt-5"
+                                    onClick={() => setAddList(true)}>
+                                    Добавить список
+                                </button>
+
+
+                                    {ListTasks
+                                        .slice()
+                                        .sort((a, b) => b.priority - a.priority)
+                                        .map((task) => (
+                                            <div  className="flex gap-2  bg-black" key={task.label}>
+                                                <img className="" src="/Upload/Images/AppIcons/align-justify.svg" alt=""/>
+                                                <span>{task.label}</span>
+                                            </div>
+                                        ))}
                             </div>
                         </div>
                     </div>
@@ -521,7 +544,7 @@ const TasksPage: React.FC = () => {
                                                         type="checkbox"
                                                         style={{display: "none"}}
                                                         checked={task.todo || false}
-                                                        onChange={() => handleWontDo(task.id, task.cacheId, !task.todo)}
+                                                        onChange={() => handleWontDo(task.id,  !task.todo)}
                                                     />
 
                                                     <label className="cbx" htmlFor={`cbx-${task.id}`}>
@@ -543,7 +566,7 @@ const TasksPage: React.FC = () => {
                                                 <div className="dots-menu">
                                                     <span  className="dots">...</span>
                                                     <div className="dropdown-menu">
-                                                        <button  onClick={() => handleDelete(task.id, task.cacheId)}>{t('buttons.deleteButton')}</button>
+                                                        <button  onClick={() => handleDelete(task.id)}>{t('buttons.deleteButton')}</button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -568,7 +591,7 @@ const TasksPage: React.FC = () => {
                                                 type="checkbox"
                                                 style={{display: "none"}}
                                                 checked={editingTask.todo || false}
-                                                onChange={() => handleWontDo(editingTask.id, editingTask.cacheId, !editingTask.todo)}
+                                                onChange={() => handleWontDo(editingTask.id,  !editingTask.todo)}
                                             />
                                             <label className="cbx" htmlFor={`cbx-${editingTask.id}`}>
                                                       <span>
@@ -627,40 +650,79 @@ const TasksPage: React.FC = () => {
             </PanelGroup>
 
             {showAddList && (
-                <div className="modal">
-                    <div className="modal-content"  style={{ maxHeight: "400px" }}>
-                        <div className="header-container">
-                            <h5 className="header-title">Создать список</h5>
+                <div className="modal fixed inset-0 flex items-center justify-center ">
+                    <div className="modal-content  rounded-xl shadow-lg p-6 w-full max-w-md max-h-[90vh] overflow-auto"  style={{ maxHeight: "500px" }}>
+                        <div className="header-container mb-5">
+                            <h5 className="header-title text-xl font-bold">Создать список</h5>
                         </div>
-                        <div className="content mt-5">
+                        <div className="content  mb-5 relative">
                             <div className="title-list-wrapper">
                                 <input
                                     id="title_list"
                                     name="title_list"
                                     type="text"
-                                    placeholder=" "
-                                    className="list-header"
-                                    value={title}
-                                    onChange={(e) => setTypeTitle(e.target.value)}
+                                    className="list-header w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                    value={ListTitle}
+                                    onChange={(e) => setListTitle(e.target.value)}
                                 />
-                                <label htmlFor="title_list">Название списка</label>
+                                <label htmlFor="title_list absolute left-2 top-0 text-gray-500 text-sm mt-1">Название списка</label>
                             </div>
-                            <div className="select-type-list">
-                                <span className="list_types_label">Тип</span>
-                                <div className="buttons-list-types">
-                                    <svg onClick={() => SetListType('list')} fill="currentColor">
-                                        <use xlinkHref="/Upload/Images/AppIcons/view_kanban.svg"/>
-                                    </svg>
-                                    <svg onClick={() => SetListType('kanban')} fill="currentColor">
+                            <div className="mb-2 ml-2 flex">
+                                <span className="block mb-2 font-semibold">Приоритет</span>
+                                <div className="flex gap-2 items-center">
+                                    {([1, 2, 3, 4, 5] as const).map((priority) => {
+                                        const colors = ["#A0A0A0", "#EF4444", "#F97316", "#3B82F6", "#10B981"];
+                                        const fillColor = colors[priority - 1]; // каждый флаг свой цвет
+                                        const isSelected = ListPriority === priority;
+
+                                        return (
+                                            <div
+                                                key={priority}
+                                                className={`w-12 h-12 flex items-center justify-center cursor-pointer rounded-full hover:scale-110 transition-transform ${
+                                                    isSelected ? "shadow-lg scale-110" : ""
+                                                }`}
+                                                onClick={() => setListPriority(priority)}
+                                            >
+                                                <svg
+                                                    style={{color: fillColor}}
+                                                    width="24"
+                                                    height="24"
+                                                >
+                                                    <use xlinkHref="/Upload/Images/AppIcons/flag.svg"/>
+                                                </svg>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                            <div className="mb-4 ml-2 flex">
+                                <span className="block mb-2 font-semibold">Тип</span>
+                                <div className="flex gap-2">
+                                    <svg
+                                        onClick={() => SetListType("list")}
+                                        className={`w-12 h-12  cursor-pointer ${ListType === "list" ? "text-blue-500" : "text-gray-400"}`}
+                                        fill="currentColor"
+                                        width="50"
+                                        height="50"
+                                    >
                                         <use xlinkHref="/Upload/Images/AppIcons/list_tasks.svg"/>
+                                    </svg>
+                                    <svg
+                                        onClick={() => SetListType("kanban")}
+                                        className={`w-12 h-12 cursor-pointer ${ListType === "kanban" ? "text-blue-500" : "text-gray-400"}`}
+                                        fill="currentColor"
+                                        width="50"
+                                        height="50"
+                                    >
+                                        <use xlinkHref="/Upload/Images/AppIcons/view_kanban.svg"/>
                                     </svg>
                                 </div>
                             </div>
 
-
-
-                            <button onClick={() => saveTypes()}>Создать</button>
-                            <button onClick={() => setAddList(false)}>Отмена</button>
+                            <div className="flex justify-between">
+                                <button className="triger" onClick={() => saveTypes()}>Создать</button>
+                                <button className="triger-delete" onClick={() => setAddList(false)}>Отмена</button>
+                            </div>
                         </div>
                     </div>
                 </div>
