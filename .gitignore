@@ -1,5 +1,6 @@
 
 ###> symfony/framework-bundle ###
+package-lock.json
 .env
 .env.dev
 .env.test
@@ -37,5 +38,4 @@ phpstan.neon
 ###> friendsofphp/php-cs-fixer ###
 /.php-cs-fixer.php
 /.php-cs-fixer.cache
-package-lock.json
 ###< friendsofphp/php-cs-fixer ###
