@@ -6,6 +6,7 @@ final class OrderByDto
 {
     public function __construct(
         public string $field,
-        public string $direction = OrderDirection::DESC
-    ) {}
+        public string $direction = OrderDirection::DESC,
+    ) {
+    }
 }

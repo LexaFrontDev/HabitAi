@@ -49,7 +49,7 @@ class DateCriterionApplier implements CriterionApplierInterface
 
         if (!empty($criterion->YmdTimeStamp)) {
             try {
-                $dateFromTs = (new \DateTimeImmutable())->setTimestamp((int)$criterion->YmdTimeStamp);
+                $dateFromTs = (new \DateTimeImmutable())->setTimestamp((int) $criterion->YmdTimeStamp);
                 $conditions[] = [
                     'expr' => "$alias.$field = :{$field}_ts",
                     'param' => "{$field}_ts",
@@ -61,7 +61,7 @@ class DateCriterionApplier implements CriterionApplierInterface
         }
 
         foreach ($conditions as $cond) {
-            if ($countWhere === 0) {
+            if (0 === $countWhere) {
                 $qb->where($cond['expr']);
             } else {
                 $qb->andWhere($cond['expr']);
@@ -69,6 +69,7 @@ class DateCriterionApplier implements CriterionApplierInterface
             $qb->setParameter($cond['param'], $cond['value']);
             ++$countWhere;
         }
+
         return $countWhere;
     }
 }
