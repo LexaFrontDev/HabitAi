@@ -81,6 +81,7 @@ const RouterDom = () => {
 
 
     const getPlatform = () => {
+        console.log('Дошли')
         const ua = navigator.userAgent;
 
         let os = 'Unknown OS';
@@ -97,25 +98,34 @@ const RouterDom = () => {
         else if (/Safari/.test(ua) && !/Chrome/.test(ua)) browser = 'Safari';
         else if (/Edg/.test(ua)) browser = 'Edge';
         else if (/OPR/.test(ua)) browser = 'Opera';
-
+        console.log('тоже')
         return `${browser}_${os}`;
     };
 
 
 
     const subscribePush = async () => {
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/serviceWorker/ServiceWorker.js')
-                .then(registration => console.log('Service Worker зарегистрирован:', registration))
-                .catch(err => console.error('Не удалось зарегистрировать Service Worker:', err));
-        }
-
         try {
-            console.log('Дошлм епта')
-            const registration = await navigator.serviceWorker.ready;
+            if (!('serviceWorker' in navigator)) return;
+            if (Notification.permission === 'denied') {
+                console.warn('Пуши заблокированы пользователем. Нужно сбросить разрешения в браузере.');
+                return;
+            }
+
+            if (Notification.permission !== 'granted') {
+                const permission = await Notification.requestPermission();
+                if (permission !== 'granted') {
+                    console.warn('Пользователь не разрешил пуши.');
+                    return;
+                }
+            }
+            console.log('Service Worker зарегистрирован:');
+            const registration = await navigator.serviceWorker.register('/serviceWorker/ServiceWorker.js');
+            console.log('Service Worker зарегистрирован:', registration);
+
             const subscription = await registration.pushManager.subscribe({
                 userVisibleOnly: true,
-                applicationServerKey: urlBase64ToUint8Array(import.meta.env.VITE_PUSH_PUBLIC_KEY)
+                applicationServerKey: urlBase64ToUint8Array('BGFRrWJKC5fnlb_eLwOIqa4bWlbBqRUIFvlDYQ1GX56Hl5Kv4KNopAIqZ2Tq6ohG4hIdLJoim4313yKUyNevXgo')
             });
 
             const pushData = {
@@ -124,8 +134,7 @@ const RouterDom = () => {
                 keys: subscription.toJSON().keys
             };
 
-            console.log(pushData);
-
+            console.log('Отправляем данные подписки:', pushData);
 
             await fetch('/api/save/subscription/web', {
                 method: 'POST',
@@ -135,10 +144,12 @@ const RouterDom = () => {
                 },
                 body: JSON.stringify(pushData)
             });
+
         } catch (err) {
             console.error('Не удалось подписать на пуши:', err);
         }
     };
+
 
 
     if (isAuthenticated === null) return <Loading />;
