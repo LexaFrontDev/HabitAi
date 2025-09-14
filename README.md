@@ -1,15 +1,85 @@
-HabitAi is an application designed to help people boost their productivity using AI (artificial intelligence).
+# 🚀 HabitAi
 
-Currently under active development. The tech stack includes Flutter, React, Vue, Symfony, PHP 8.3, and the architecture follows Clean Architecture principles, Domain-Driven Design (DDD), and Atomic Design.
+**HabitAi** is an application designed to boost productivity with the help of Artificial Intelligence (AI).
 
-New frontend improvements:
+Project is currently under **active development**.
 
-Implemented Cache-Then-Network (CTN) system for optimized data fetching and faster response times.
+[🇷🇺 Читать на русском](README.ru.md)
 
-Integrated IndexedDB (IDB) for persistent client-side caching, allowing offline access and reducing server load.
+---
 
-The data layer architecture has been updated to support centralized caching and efficient state management.
+## 🛠️ Tech Stack
 
-Features such as task management, Eisenhower matrix, Pomodoro timer, and multilingual support for 5 languages are already implemented but still being refined.
+* **Frontend:** Flutter, React, Vue
+* **Backend:** Symfony (PHP 8.3)
+* **Architecture:** Clean Architecture, Domain-Driven Design (DDD), Atomic Design
 
-Stay tuned for updates!
+## ✨ Features
+
+* 📌 **Task Management**
+* 🧭 **Eisenhower Matrix** for prioritization
+* ⏳ **Pomodoro Timer** for focused work
+* 🌍 **Multilingual Support** (5 languages)
+* ⚡ **Frontend improvements**:
+
+    * **Cache-Then-Network (CTN)** system for optimized data fetching
+    * **IndexedDB (IDB)** integration for offline access and reduced server load
+    * Centralized caching and efficient state management
+
+---
+
+## 📦 Installation & Usage
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/LexaFrontDev/HabitAi.git
+cd HabitAi
+composer install
+npm install
+```
+
+### 2. Start Docker containers
+
+```bash
+make up-docker-build
+```
+
+### 3. Enter PHP container
+
+```bash
+make sh
+```
+
+### 4. Run migrations
+
+```bash
+php bin/console doctrine:migrations:migrate -n
+```
+
+### 5. Load fixtures
+
+```bash
+php bin/console doctrine:fixtures:load
+exit
+```
+
+### 6. Start frontend
+
+```bash
+npm run
+```
+
+### 7. Stop and remove containers
+
+```bash
+make down
+```
+
+---
+
+## 📌 Project Status
+
+🔧 Under active development.
+Stay tuned for updates and new releases!
+
