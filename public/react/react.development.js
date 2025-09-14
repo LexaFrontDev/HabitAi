@@ -2352,7 +2352,7 @@
       return element;
     } // Skip key warning if the type isn't valid since our key validation logic
     // doesn't expect a non-string/function type and can throw confusing errors.
-    // We don't want exception behavior to differ between dev and prod.
+    // We don't want exception behavior to differ between dev.log and prod.
     // (Rendering will throw with a helpful message and as soon as the type is
     // fixed, the key warnings will appear.)
 

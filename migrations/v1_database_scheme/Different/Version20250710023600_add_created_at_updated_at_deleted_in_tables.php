@@ -55,7 +55,7 @@ final class Version20250710023600Addcreatedatupdatedatdeletedintables extends Ab
                     $this->addSql("ALTER TABLE {$table} ADD created_at DATETIME DEFAULT NULL");
                 }
                 if (!$this->columnExists($schema, $table, 'updated_at')) {
-                    $default = 'storage' === $table ? "DATETIME DEFAULT NULL COMMENT '(DC2Type:datetime_immutable)'" : 'DATETIME DEFAULT NULL';
+                    $default = 'storage' === $table ? "DATETIME DEFAULT NULL" : 'DATETIME DEFAULT NULL';
                     $this->addSql("ALTER TABLE {$table} ADD updated_at {$default}");
                 }
                 if (!$this->columnExists($schema, $table, 'is_delete')) {

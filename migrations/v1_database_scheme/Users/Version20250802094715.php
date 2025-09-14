@@ -67,15 +67,15 @@ final class Version20250802094715 extends AbstractMigration
 
         foreach ($tables as $table) {
             if (!$this->hasColumn($table, 'created_at')) {
-                $this->addSql("ALTER TABLE `$table` ADD created_at DATETIME DEFAULT NULL COMMENT 'Дата создания записи'");
+                $this->addSql("ALTER TABLE `$table` ADD created_at DATETIME DEFAULT NULL");
             }
 
             if (!$this->hasColumn($table, 'updated_at')) {
-                $this->addSql("ALTER TABLE `$table` ADD updated_at DATETIME DEFAULT NULL COMMENT 'Дата обновления записи'");
+                $this->addSql("ALTER TABLE `$table` ADD updated_at DATETIME DEFAULT NULL");
             }
 
             if (!$this->hasColumn($table, 'is_delete')) {
-                $this->addSql("ALTER TABLE `$table` ADD is_delete TINYINT(1) NOT NULL COMMENT 'Флаг логического удаления'");
+                $this->addSql("ALTER TABLE `$table` ADD is_delete TINYINT(1) NOT NULL");
             }
         }
 
@@ -111,7 +111,7 @@ final class Version20250802094715 extends AbstractMigration
         }
 
         if ($this->hasColumn('tasks_history', 'tasks_id')) {
-            $this->addSql("ALTER TABLE tasks_history CHANGE tasks_id tasks_id INT NOT NULL COMMENT 'ID задачи'");
+            $this->addSql("ALTER TABLE tasks_history CHANGE tasks_id tasks_id INT NOT NULL");
         }
     }
 

@@ -20,7 +20,7 @@ const RouterDom = () => {
     const location = useLocation();
     const navigate = useNavigate();
 
-    // Сохраняем последнюю защищённую страницу
+
     useEffect(() => {
         const allowedPages = [
             '/tasks',
@@ -40,6 +40,8 @@ const RouterDom = () => {
         const checkAuth = async () => {
             try {
                 const res = await fetch('/api/auth/check');
+                const data = await res.json();
+                console.log(data);
                 const ok = res.ok;
                 setIsAuthenticated(ok);
 

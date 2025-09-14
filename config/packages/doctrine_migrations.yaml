@@ -1,8 +1,8 @@
 doctrine_migrations:
     migrations_paths:
-        'Migrations\V1\Tasks': '%kernel.project_dir%/migrations/v1_database_scheme/tasks'
-        'Migrations\V1\Habits': '%kernel.project_dir%/migrations/v1_database_scheme/habits'
-        'Migrations\V1\Users': '%kernel.project_dir%/migrations/v1_database_scheme/users'
-        'Migrations\V1\Pomodoro': '%kernel.project_dir%/migrations/v1_database_scheme/pomodoro'
-        'Migrations\V1\Different': '%kernel.project_dir%/migrations/v1_database_scheme/different'
+        'Migrations\V1\Tasks': '%kernel.project_dir%/migrations/v1_database_scheme/Tasks'
+        'Migrations\V1\Habits': '%kernel.project_dir%/migrations/v1_database_scheme/Habits'
+        'Migrations\V1\Users': '%kernel.project_dir%/migrations/v1_database_scheme/Users'
+        'Migrations\V1\Pomodoro': '%kernel.project_dir%/migrations/v1_database_scheme/Pomodoro'
+        'Migrations\V1\Different': '%kernel.project_dir%/migrations/v1_database_scheme/Different'
     enable_profiler: false

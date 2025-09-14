@@ -49,6 +49,7 @@ const TasksPage: React.FC = () => {
         }
     });
     const [tasks, setTasks] = useState<Task[]>([]);
+    const [allTasks, setAllTasks] = useState<Task[]>([]);
     const [editingTask, setEditingTask] = useState<Task | null>(null);
     const [showEditModal, setShowEditModal] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
@@ -136,30 +137,42 @@ const TasksPage: React.FC = () => {
     };
 
     useEffect(() => {
-        const fetchTasks = async () => {
+        const fetchAllTasks = async () => {
             try {
                 setLoading(true);
-                if (activePeriod === 'all') {
-                    const tasks = await tasksService.getTasksAll();
-                    if(!tasks) setTasks([]);
-                    console.log(tasks);
-                    // @ts-ignore
-                    setTasks(tasks || []);
-                } else {
-                    const date = getActiveDate();
-                    const tasks = await tasksService.getTasksFor(date);
-                    setTasks(tasks || []);
-                }
+                const allTasksResult = await tasksService.getTasksAll();
+                setAllTasks(Array.isArray(allTasksResult) ? allTasksResult : []);
+                console.log(allTasks)
             } catch (err: any) {
                 setError(err.message);
-                setTasks([]);
+                setAllTasks([]);
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchTasks();
-    }, [activePeriod]);
+        fetchAllTasks();
+    }, []);
+
+    useEffect(() => {
+        if (activePeriod === 'all') {
+            setTasks(allTasks);
+        } else {
+            const activeDate = getActiveDate();
+            const filtered = allTasks.filter(task => {
+                if (!task.timeData?.date) return false;
+                const taskDate = new Date(task.timeData.date);
+                const taskDateStr = taskDate.toISOString().slice(0, 10).replace(/-/g, '');
+                return taskDateStr === activeDate;
+            });
+            setTasks(filtered);
+        }
+    }, [activePeriod, allTasks]);
+
+
+
+
+
 
     const handlePeriodChange = async (period: Period,  id: number) => {
         setActiveId(id)
@@ -173,9 +186,13 @@ const TasksPage: React.FC = () => {
     const getTasks = async (period: 'today' | 'tomorrow' | 'nextWeek' | 'nextMonth' | 'all') => {
         try {
             setLoading(true);
-            const allTasks = await tasksService.getTasksAll();
-            // @ts-ignore
-            setTasks(allTasks || []);
+            if (allTasks.length === 0) {
+                const fetchedTasks = await tasksService.getTasksAll();
+                const tasksArray: Task[] = Array.isArray(fetchedTasks) ? fetchedTasks : [];
+                setAllTasks(tasksArray);
+            }
+
+            setTasks(allTasks);
             setActivePeriod(period);
         } catch (err: any) {
             setError(err.message || t('tasks.mistakeGetAllTasks'));

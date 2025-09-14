@@ -8,17 +8,17 @@ use App\Aplication\Dto\UsersDto\UsersInfoForToken;
 use App\Aplication\Dto\JwtDto\JwtTokenDto;
 use App\Domain\Entity\Users;
 use App\Domain\Exception\Message\MessageException;
+use App\Domain\Exception\UsersException\UserNotAuthenticatedException;
 use App\Domain\Repository\Users\UsersRepositoryInterface;
 use App\Domain\Service\JwtServicesInterface;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use App\Domain\Service\PasswordService\PasswordHasherInterface;
 
 class UsersAuth
 {
     public function __construct(
         private readonly UsersRepositoryInterface $usersRepository,
         private readonly JwtServicesInterface $jwtServices,
-        private readonly UserPasswordHasherInterface $passwordHasher,
+        private readonly PasswordHasherInterface $passwordHasher,
     ) {
     }
 
@@ -29,8 +29,8 @@ class UsersAuth
 
         $user = $this->usersRepository->findByEmail($email);
 
-        if (!$user instanceof Users || !$this->passwordHasher->isPasswordValid($user, $plainPassword)) {
-            throw new AuthenticationException('Invalid email or password.');
+        if (!$user instanceof Users || !$this->passwordHasher->validate($plainPassword, $user->getPassword())) {
+            throw new UserNotAuthenticatedException('Invalid email or password.');
         }
 
         $tokenData = new UsersInfoForToken(
@@ -54,7 +54,7 @@ class UsersAuth
         $userEntity->setEmail($users->getEmail());
         $userEntity->setName($users->getName());
 
-        $hashedPassword = $this->passwordHasher->hashPassword($userEntity, $users->getPassword());
+        $hashedPassword = $this->passwordHasher->hash($users->getPassword());
         $userEntity->setPassword($hashedPassword);
         $userEntity->setRole($users->getRole() ?: 'user');
         $userEntity->setPremium($users->getPremium());
