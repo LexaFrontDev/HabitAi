@@ -52,14 +52,14 @@ final class Version20250710023600Addcreatedatupdatedatdeletedintables extends Ab
         foreach ($tables as $table) {
             if ($this->tableExists($schema, $table)) {
                 if (!$this->columnExists($schema, $table, 'created_at')) {
-                    $this->addSql("ALTER TABLE {$table} ADD created_at DATETIME DEFAULT NULL");
+                    $this->addSql("ALTER TABLE {$table} ADD created_at TIMESTAMP DEFAULT NULL");
                 }
                 if (!$this->columnExists($schema, $table, 'updated_at')) {
-                    $default = 'storage' === $table ? "DATETIME DEFAULT NULL" : 'DATETIME DEFAULT NULL';
+                    $default = 'storage' === $table ? "TIMESTAMP DEFAULT NULL" : 'TIMESTAMP DEFAULT NULL';
                     $this->addSql("ALTER TABLE {$table} ADD updated_at {$default}");
                 }
                 if (!$this->columnExists($schema, $table, 'is_delete')) {
-                    $this->addSql("ALTER TABLE {$table} ADD is_delete TINYINT(1) NOT NULL");
+                    $this->addSql("ALTER TABLE {$table} ADD is_delete BOOLEAN NOT NULL");
                 }
             }
         }

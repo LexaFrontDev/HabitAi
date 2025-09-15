@@ -11,63 +11,57 @@ final class Version20250625041914Edithabitsandpurpose extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Изменение таблиц habits и purposes: переименование поля, добавление и удаление колонок';
+        return 'Изменение таблиц habits и purposes: переименование поля, добавление и удаление колонок (PostgreSQL)';
     }
 
     public function up(Schema $schema): void
     {
         $sm = $this->connection->createSchemaManager();
 
+        // --- HABITS ---
         if ($sm->tablesExist(['habits'])) {
             $columns = $sm->introspectTable('habits')->getColumns();
 
-            $sqlParts = [];
-
             if (!isset($columns['notification_date'])) {
-                $sqlParts[] = 'ADD notification_date VARCHAR(255) NOT NULL';
+                $this->addSql('ALTER TABLE habits ADD COLUMN notification_date VARCHAR(255) NOT NULL');
             }
 
             if (isset($columns['notification_id'])) {
-                $sqlParts[] = 'CHANGE notification_id user_id INT DEFAULT NULL';
-            }
-
-            if (!empty($sqlParts)) {
-                $this->addSql('ALTER TABLE habits '.implode(', ', $sqlParts));
+                // Переименование notification_id → user_id
+                $this->addSql('ALTER TABLE habits RENAME COLUMN notification_id TO user_id');
+                // Установка DEFAULT NULL
+                $this->addSql('ALTER TABLE habits ALTER COLUMN user_id DROP NOT NULL');
             }
         }
 
+        // --- PURPOSES ---
         if ($sm->tablesExist(['purposes'])) {
             $columns = $sm->introspectTable('purposes')->getColumns();
 
-            $addParts = [];
-            $dropParts = [];
 
             if (!isset($columns['habits_id'])) {
-                $addParts[] = 'ADD habits_id INT NOT NULL';
+                $this->addSql('ALTER TABLE purposes ADD COLUMN habits_id INTEGER NOT NULL');
             }
             if (!isset($columns['type'])) {
-                $addParts[] = 'ADD type VARCHAR(255) NOT NULL';
+                $this->addSql('ALTER TABLE purposes ADD COLUMN type VARCHAR(255) NOT NULL');
             }
             if (!isset($columns['count'])) {
-                $addParts[] = 'ADD count INT NOT NULL';
+                $this->addSql('ALTER TABLE purposes ADD COLUMN count INTEGER NOT NULL');
             }
+
 
             foreach (['cup_count', 'millimeter_count', 'minute_count', 'hour_count', 'kilometer_count', 'pages_count', 'new_count'] as $col) {
                 if (isset($columns[$col])) {
-                    $dropParts[] = 'DROP '.$col;
+                    $this->addSql("ALTER TABLE purposes DROP COLUMN $col");
                 }
             }
 
-            $changeParts = [
-                'CHANGE check_manually check_manually TINYINT(1) NOT NULL',
-                'CHANGE check_auto check_auto TINYINT(1) NOT NULL',
-                'CHANGE check_close check_close TINYINT(1) NOT NULL',
-            ];
 
-            $sqlParts = array_merge($addParts, $dropParts, $changeParts);
-
-            if (!empty($sqlParts)) {
-                $this->addSql('ALTER TABLE purposes '.implode(', ', $sqlParts));
+            foreach (['check_manually', 'check_auto', 'check_close'] as $col) {
+                if (isset($columns[$col])) {
+                    $this->addSql("ALTER TABLE purposes ALTER COLUMN $col SET NOT NULL");
+                    $this->addSql("ALTER TABLE purposes ALTER COLUMN $col TYPE BOOLEAN USING $col::BOOLEAN");
+                }
             }
         }
     }
@@ -76,42 +70,42 @@ final class Version20250625041914Edithabitsandpurpose extends AbstractMigration
     {
         $sm = $this->connection->createSchemaManager();
 
+        // --- HABITS ---
         if ($sm->tablesExist(['habits'])) {
-            $this->addSql(<<<'SQL'
-            ALTER TABLE habits
-                DROP notification_date,
-                CHANGE user_id notification_id INT DEFAULT NULL
-        SQL);
+            $columns = $sm->introspectTable('habits')->getColumns();
+
+            if (isset($columns['notification_date'])) {
+                $this->addSql('ALTER TABLE habits DROP COLUMN notification_date');
+            }
+            if (isset($columns['user_id'])) {
+                $this->addSql('ALTER TABLE habits RENAME COLUMN user_id TO notification_id');
+                $this->addSql('ALTER TABLE habits ALTER COLUMN notification_id SET DEFAULT NULL');
+            }
         }
 
+        // --- PURPOSES ---
         if ($sm->tablesExist(['purposes'])) {
             $columns = $sm->introspectTable('purposes')->getColumns();
 
-            $addParts = [];
-            $dropParts = [];
 
             foreach (['cup_count', 'millimeter_count', 'minute_count', 'hour_count', 'kilometer_count', 'pages_count', 'new_count'] as $col) {
                 if (!isset($columns[$col])) {
-                    $addParts[] = 'ADD '.$col.' INT DEFAULT NULL';
+                    $this->addSql("ALTER TABLE purposes ADD COLUMN $col INTEGER DEFAULT NULL");
                 }
             }
+
 
             foreach (['habits_id', 'type', 'count'] as $col) {
                 if (isset($columns[$col])) {
-                    $dropParts[] = 'DROP '.$col;
+                    $this->addSql("ALTER TABLE purposes DROP COLUMN $col");
                 }
             }
 
-            $changeParts = [
-                'CHANGE check_manually check_manually TINYINT(1) DEFAULT NULL',
-                'CHANGE check_auto check_auto TINYINT(1) DEFAULT NULL',
-                'CHANGE check_close check_close TINYINT(1) DEFAULT NULL',
-            ];
 
-            $sqlParts = array_merge($addParts, $dropParts, $changeParts);
-
-            if (!empty($sqlParts)) {
-                $this->addSql('ALTER TABLE purposes '.implode(', ', $sqlParts));
+            foreach (['check_manually', 'check_auto', 'check_close'] as $col) {
+                if (isset($columns[$col])) {
+                    $this->addSql("ALTER TABLE purposes ALTER COLUMN $col DROP NOT NULL");
+                }
             }
         }
     }

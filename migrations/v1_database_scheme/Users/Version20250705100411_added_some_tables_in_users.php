@@ -11,32 +11,26 @@ final class Version20250705100411Addedsometablesinusers extends AbstractMigratio
 {
     public function getDescription(): string
     {
-        return 'Adds "is_new", "email_check", "user_country", and "is_lang" columns to the "Users" table, if it exists.';
+        return 'Adds "is_new", "email_check", "user_country", and "is_lang" columns to the "users" table, if it exists.';
     }
 
     public function up(Schema $schema): void
     {
         $sm = $this->connection->createSchemaManager();
+        if ($sm->tablesExist(['users'])) {
+            $table = $sm->introspectTable('users');
 
-        if ($sm->tablesExist(['Users'])) {
-            $table = $sm->introspectTable('Users');
-            $sqlParts = [];
-
-            if (! $table->hasColumn('is_new')) {
-                $sqlParts[] = 'ADD is_new TINYINT(1) NOT NULL';
+            if (!$table->hasColumn('is_new')) {
+                $this->addSql('ALTER TABLE users ADD COLUMN is_new BOOLEAN NOT NULL');
             }
-            if (! $table->hasColumn('email_check')) {
-                $sqlParts[] = 'ADD email_check INT NOT NULL';
+            if (!$table->hasColumn('email_check')) {
+                $this->addSql('ALTER TABLE users ADD COLUMN email_check INTEGER NOT NULL');
             }
-            if (! $table->hasColumn('user_country')) {
-                $sqlParts[] = 'ADD user_country VARCHAR(100) DEFAULT NULL';
+            if (!$table->hasColumn('user_country')) {
+                $this->addSql('ALTER TABLE users ADD COLUMN user_country VARCHAR(100) DEFAULT NULL');
             }
-            if (! $table->hasColumn('is_lang')) {
-                $sqlParts[] = 'ADD is_lang INT NOT NULL';
-            }
-
-            if (!empty($sqlParts)) {
-                $this->addSql('ALTER TABLE Users '.implode(', ', $sqlParts));
+            if (!$table->hasColumn('is_lang')) {
+                $this->addSql('ALTER TABLE users ADD COLUMN is_lang INTEGER NOT NULL');
             }
         }
     }
@@ -45,25 +39,20 @@ final class Version20250705100411Addedsometablesinusers extends AbstractMigratio
     {
         $sm = $this->connection->createSchemaManager();
 
-        if ($sm->tablesExist(['Users'])) {
-            $table = $sm->introspectTable('Users');
-            $sqlParts = [];
+        if ($sm->tablesExist(['users'])) {
+            $table = $sm->introspectTable('users');
 
             if ($table->hasColumn('is_new')) {
-                $sqlParts[] = 'DROP is_new';
+                $this->addSql('ALTER TABLE users DROP COLUMN is_new');
             }
             if ($table->hasColumn('email_check')) {
-                $sqlParts[] = 'DROP email_check';
+                $this->addSql('ALTER TABLE users DROP COLUMN email_check');
             }
             if ($table->hasColumn('user_country')) {
-                $sqlParts[] = 'DROP user_country';
+                $this->addSql('ALTER TABLE users DROP COLUMN user_country');
             }
             if ($table->hasColumn('is_lang')) {
-                $sqlParts[] = 'DROP is_lang';
-            }
-
-            if (!empty($sqlParts)) {
-                $this->addSql('ALTER TABLE Users '.implode(', ', $sqlParts));
+                $this->addSql('ALTER TABLE users DROP COLUMN is_lang');
             }
         }
     }

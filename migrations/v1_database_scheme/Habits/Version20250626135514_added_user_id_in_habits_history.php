@@ -11,7 +11,7 @@ final class Version20250626135514Addeduseridinhabitshistory extends AbstractMigr
 {
     public function getDescription(): string
     {
-        return 'Добавление поля user_id в таблицу habits_history (с проверкой на существование таблицы)';
+        return 'Добавление поля user_id в таблицу habits_history (с проверкой на существование таблицы, PostgreSQL версия)';
     }
 
     public function up(Schema $schema): void
@@ -22,7 +22,9 @@ final class Version20250626135514Addeduseridinhabitshistory extends AbstractMigr
             $columns = $sm->introspectTable('habits_history')->getColumns();
 
             if (!isset($columns['user_id'])) {
-                $this->addSql('ALTER TABLE habits_history ADD user_id INT NOT NULL');
+                $this->addSql(<<<'SQL'
+                    ALTER TABLE habits_history ADD COLUMN user_id INTEGER NOT NULL
+                SQL);
             }
         }
     }
@@ -35,7 +37,9 @@ final class Version20250626135514Addeduseridinhabitshistory extends AbstractMigr
             $columns = $sm->introspectTable('habits_history')->getColumns();
 
             if (isset($columns['user_id'])) {
-                $this->addSql('ALTER TABLE habits_history DROP user_id');
+                $this->addSql(<<<'SQL'
+                    ALTER TABLE habits_history DROP COLUMN user_id
+                SQL);
             }
         }
     }

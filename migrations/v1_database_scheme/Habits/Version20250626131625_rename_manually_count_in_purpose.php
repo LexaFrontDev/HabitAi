@@ -11,7 +11,7 @@ final class Version20250626131625Renamemanuallycountinpurpose extends AbstractMi
 {
     public function getDescription(): string
     {
-        return 'Переименование поля manually_count в auto_count в таблице purposes (с проверкой на существование)';
+        return 'Переименование поля manually_count в auto_count в таблице purposes (PostgreSQL)';
     }
 
     public function up(Schema $schema): void
@@ -22,7 +22,9 @@ final class Version20250626131625Renamemanuallycountinpurpose extends AbstractMi
             $columns = $sm->introspectTable('purposes')->getColumns();
 
             if (isset($columns['manually_count']) && !isset($columns['auto_count'])) {
-                $this->addSql('ALTER TABLE purposes CHANGE manually_count auto_count INT NOT NULL');
+                $this->addSql('ALTER TABLE purposes RENAME COLUMN manually_count TO auto_count');
+                $this->addSql('ALTER TABLE purposes ALTER COLUMN auto_count TYPE INTEGER USING auto_count::integer');
+                $this->addSql('ALTER TABLE purposes ALTER COLUMN auto_count SET NOT NULL');
             }
         }
     }
@@ -35,7 +37,9 @@ final class Version20250626131625Renamemanuallycountinpurpose extends AbstractMi
             $columns = $sm->introspectTable('purposes')->getColumns();
 
             if (isset($columns['auto_count']) && !isset($columns['manually_count'])) {
-                $this->addSql('ALTER TABLE purposes CHANGE auto_count manually_count INT NOT NULL');
+                $this->addSql('ALTER TABLE purposes RENAME COLUMN auto_count TO manually_count');
+                $this->addSql('ALTER TABLE purposes ALTER COLUMN manually_count TYPE INTEGER USING manually_count::integer');
+                $this->addSql('ALTER TABLE purposes ALTER COLUMN manually_count SET NOT NULL');
             }
         }
     }

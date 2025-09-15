@@ -44,10 +44,10 @@ final class Version_20250701_030209_Remove_legacy_notification extends AbstractM
             $table = $schema->getTable('tasks');
             $adds = [];
             if (!$table->hasColumn('notification_id')) {
-                $adds[] = 'ADD notification_id INT DEFAULT NULL';
+                $adds[] = 'ADD notification_id INTEGER DEFAULT NULL';
             }
             if (!$table->hasColumn('due_date')) {
-                $adds[] = 'ADD due_date DATETIME DEFAULT NULL';
+                $adds[] = 'ADD due_date TIMESTAMP DEFAULT NULL';
             }
             if (!$table->hasColumn('date')) {
                 $adds[] = 'ADD date VARCHAR(255) DEFAULT NULL';

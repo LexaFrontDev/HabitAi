@@ -11,7 +11,7 @@ final class Version20250701024108Updatestorage extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Обновление таблиц storage и tasks: удаление uid, task_type; добавление полей с датами и временем';
+        return 'Обновление таблиц storage и tasks: удаление uid, task_type; добавление полей с датами и временем (PostgreSQL совместимость)';
     }
 
     public function up(Schema $schema): void
@@ -19,42 +19,42 @@ final class Version20250701024108Updatestorage extends AbstractMigration
         $sm = $this->connection->createSchemaManager();
 
         if ($sm->tablesExist(['storage']) && $sm->introspectTable('storage')->hasColumn('uid')) {
-            $this->addSql('ALTER TABLE storage DROP uid');
+            $this->addSql('ALTER TABLE storage DROP COLUMN uid');
         }
 
         if ($sm->tablesExist(['tasks'])) {
             $columns = $sm->introspectTable('tasks')->getColumns();
 
             if (isset($columns['task_type'])) {
-                $this->addSql('ALTER TABLE tasks DROP task_type');
+                $this->addSql('ALTER TABLE tasks DROP COLUMN task_type');
             }
 
             $addColumnsSql = [];
 
             if (!isset($columns['date'])) {
-                $addColumnsSql[] = 'ADD date VARCHAR(255) DEFAULT NULL';
+                $addColumnsSql[] = 'ADD COLUMN date TEXT DEFAULT NULL';
             }
             if (!isset($columns['time'])) {
-                $addColumnsSql[] = 'ADD time VARCHAR(255) DEFAULT NULL';
+                $addColumnsSql[] = 'ADD COLUMN time TEXT DEFAULT NULL';
             }
             if (!isset($columns['start_date'])) {
-                $addColumnsSql[] = 'ADD start_date VARCHAR(255) DEFAULT NULL';
+                $addColumnsSql[] = 'ADD COLUMN start_date TEXT DEFAULT NULL';
             }
             if (!isset($columns['start_time'])) {
-                $addColumnsSql[] = 'ADD start_time VARCHAR(255) DEFAULT NULL';
+                $addColumnsSql[] = 'ADD COLUMN start_time TEXT DEFAULT NULL';
             }
             if (!isset($columns['end_date'])) {
-                $addColumnsSql[] = 'ADD end_date VARCHAR(255) DEFAULT NULL';
+                $addColumnsSql[] = 'ADD COLUMN end_date TEXT DEFAULT NULL';
             }
             if (!isset($columns['end_time'])) {
-                $addColumnsSql[] = 'ADD end_time VARCHAR(255) DEFAULT NULL';
+                $addColumnsSql[] = 'ADD COLUMN end_time TEXT DEFAULT NULL';
             }
             if (!isset($columns['repeat'])) {
-                $addColumnsSql[] = 'ADD `repeat` VARCHAR(255) DEFAULT NULL';
+                $addColumnsSql[] = 'ADD COLUMN "repeat" TEXT DEFAULT NULL';
             }
 
             if (!empty($addColumnsSql)) {
-                $this->addSql('ALTER TABLE tasks '.implode(', ', $addColumnsSql));
+                $this->addSql('ALTER TABLE tasks ' . implode(', ', $addColumnsSql));
             }
         }
     }
@@ -66,19 +66,19 @@ final class Version20250701024108Updatestorage extends AbstractMigration
         if ($sm->tablesExist(['tasks'])) {
             $this->addSql(<<<'SQL'
                 ALTER TABLE tasks
-                    ADD task_type VARCHAR(255) NOT NULL,
-                    DROP date,
-                    DROP time,
-                    DROP start_date,
-                    DROP start_time,
-                    DROP end_date,
-                    DROP end_time,
-                    DROP `repeat`
+                    ADD COLUMN task_type VARCHAR(255) NOT NULL,
+                    DROP COLUMN date,
+                    DROP COLUMN time,
+                    DROP COLUMN start_date,
+                    DROP COLUMN start_time,
+                    DROP COLUMN end_date,
+                    DROP COLUMN end_time,
+                    DROP COLUMN "repeat"
             SQL);
         }
 
         if ($sm->tablesExist(['storage']) && ! $sm->introspectTable('storage')->hasColumn('uid')) {
-            $this->addSql('ALTER TABLE storage ADD uid VARCHAR(100) NOT NULL');
+            $this->addSql('ALTER TABLE storage ADD COLUMN uid VARCHAR(100) NOT NULL');
         }
     }
 }

@@ -14,20 +14,34 @@ final class Version20250708030931Editmatriccolumn extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Add user_id column to matric_column table';
+        return 'Add user_id column to matric_column table (PostgreSQL adaptation)';
     }
 
     public function up(Schema $schema): void
     {
-        if ($schema->hasTable('matric_column') && !$schema->getTable('matric_column')->hasColumn('user_id')) {
-            $this->addSql('ALTER TABLE matric_column ADD user_id INT NOT NULL');
+        $sm = $this->connection->createSchemaManager();
+
+        if ($sm->tablesExist(['matric_column'])) {
+            $table = $sm->introspectTable('matric_column');
+            $columns = $table->getColumns();
+
+            if (!isset($columns['user_id'])) {
+                $this->addSql('ALTER TABLE matric_column ADD user_id INTEGER NOT NULL');
+            }
         }
     }
 
     public function down(Schema $schema): void
     {
-        if ($schema->hasTable('matric_column') && $schema->getTable('matric_column')->hasColumn('user_id')) {
-            $this->addSql('ALTER TABLE matric_column DROP user_id');
+        $sm = $this->connection->createSchemaManager();
+
+        if ($sm->tablesExist(['matric_column'])) {
+            $table = $sm->introspectTable('matric_column');
+            $columns = $table->getColumns();
+
+            if (isset($columns['user_id'])) {
+                $this->addSql('ALTER TABLE matric_column DROP COLUMN user_id');
+            }
         }
     }
 }

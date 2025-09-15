@@ -11,7 +11,7 @@ final class Version20250626121151Addedmanuallycountinpurpose extends AbstractMig
 {
     public function getDescription(): string
     {
-        return 'Добавление поля manually_count в таблицу purposes (с проверкой на существование таблицы)';
+        return 'Добавление поля manually_count в таблицу purposes (с проверкой на существование таблицы, PostgreSQL версия)';
     }
 
     public function up(Schema $schema): void
@@ -19,9 +19,13 @@ final class Version20250626121151Addedmanuallycountinpurpose extends AbstractMig
         $sm = $this->connection->createSchemaManager();
 
         if ($sm->tablesExist(['purposes'])) {
-            $this->addSql(<<<'SQL'
-                ALTER TABLE purposes ADD manually_count INT NOT NULL
-            SQL);
+            $columns = $sm->introspectTable('purposes')->getColumns();
+
+            if (!isset($columns['manually_count'])) {
+                $this->addSql(<<<'SQL'
+                    ALTER TABLE purposes ADD COLUMN manually_count INTEGER NOT NULL
+                SQL);
+            }
         }
     }
 
@@ -30,9 +34,13 @@ final class Version20250626121151Addedmanuallycountinpurpose extends AbstractMig
         $sm = $this->connection->createSchemaManager();
 
         if ($sm->tablesExist(['purposes'])) {
-            $this->addSql(<<<'SQL'
-                ALTER TABLE purposes DROP manually_count
-            SQL);
+            $columns = $sm->introspectTable('purposes')->getColumns();
+
+            if (isset($columns['manually_count'])) {
+                $this->addSql(<<<'SQL'
+                    ALTER TABLE purposes DROP COLUMN manually_count
+                SQL);
+            }
         }
     }
 }

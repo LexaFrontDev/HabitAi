@@ -11,7 +11,7 @@ final class Version20250627034608Addedrecordedatinhabitshistory extends Abstract
 {
     public function getDescription(): string
     {
-        return 'Добавление поля recorded_at в таблицу habits_history с защитой от падения при отсутствии таблицы';
+        return 'Добавление поля recorded_at в таблицу habits_history с защитой от падения при отсутствии таблицы (PostgreSQL версия)';
     }
 
     public function up(Schema $schema): void
@@ -22,7 +22,7 @@ final class Version20250627034608Addedrecordedatinhabitshistory extends Abstract
             $columns = $sm->introspectTable('habits_history')->getColumns();
 
             if (!isset($columns['recorded_at'])) {
-                $this->addSql('ALTER TABLE habits_history ADD recorded_at DATETIME NOT NULL');
+                $this->addSql('ALTER TABLE habits_history ADD COLUMN recorded_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL');
             }
         }
     }
@@ -35,7 +35,7 @@ final class Version20250627034608Addedrecordedatinhabitshistory extends Abstract
             $columns = $sm->introspectTable('habits_history')->getColumns();
 
             if (isset($columns['recorded_at'])) {
-                $this->addSql('ALTER TABLE habits_history DROP recorded_at');
+                $this->addSql('ALTER TABLE habits_history DROP COLUMN recorded_at');
             }
         }
     }
