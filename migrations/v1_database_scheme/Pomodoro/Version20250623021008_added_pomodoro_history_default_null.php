@@ -11,7 +11,7 @@ final class Version20250623021008_added_pomodoro_history_default_null extends Ab
 {
     public function getDescription(): string
     {
-        return 'Изменение target_id в pomodoro_history на DEFAULT NULL';
+        return 'Изменение target_id в pomodoro_history: сделать DEFAULT NULL (PostgreSQL)';
     }
 
     public function up(Schema $schema): void
@@ -22,7 +22,8 @@ final class Version20250623021008_added_pomodoro_history_default_null extends Ab
             $columns = $sm->introspectTable('pomodoro_history')->getColumns();
 
             if (isset($columns['target_id'])) {
-                $this->addSql('ALTER TABLE pomodoro_history CHANGE target_id target_id INT DEFAULT NULL');
+                $this->addSql('ALTER TABLE pomodoro_history ALTER COLUMN target_id DROP NOT NULL');
+                $this->addSql('ALTER TABLE pomodoro_history ALTER COLUMN target_id SET DEFAULT NULL');
             }
         }
     }
@@ -35,7 +36,8 @@ final class Version20250623021008_added_pomodoro_history_default_null extends Ab
             $columns = $sm->introspectTable('pomodoro_history')->getColumns();
 
             if (isset($columns['target_id'])) {
-                $this->addSql('ALTER TABLE pomodoro_history CHANGE target_id target_id INT NOT NULL');
+                $this->addSql('ALTER TABLE pomodoro_history ALTER COLUMN target_id SET NOT NULL');
+                $this->addSql('ALTER TABLE pomodoro_history ALTER COLUMN target_id DROP DEFAULT');
             }
         }
     }

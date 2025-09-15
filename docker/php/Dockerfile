@@ -63,6 +63,12 @@ RUN set -eux; \
 		chmod +x bin/console; sync; \
     fi
 
+# --- Node.js & npm ---
+RUN apk add --no-cache nodejs npm
+COPY package.json package-lock.json ./
+RUN npm install
+
+
 COPY --link docker/php/healthcheck.sh /usr/local/bin/healthcheck
 RUN chmod +x bin/phpunit; sync;
 RUN chmod +x healthcheck; sync;

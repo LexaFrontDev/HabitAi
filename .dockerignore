@@ -25,8 +25,9 @@ public/bundles/
 tests/
 var/
 vendor/
+node_modules/
 .editorconfig
-#.env.*.local
-#.env.local
-#.env.local.php
-#.env.test
+.env.*.local
+.env.local
+.env.local.php
+.env.test

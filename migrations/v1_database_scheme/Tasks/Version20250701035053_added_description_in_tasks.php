@@ -14,7 +14,7 @@ final class Version20250701035053Addeddescriptionintasks extends AbstractMigrati
 {
     public function getDescription(): string
     {
-        return 'Adds "description" column to the "tasks" table, if it exists.';
+        return 'Adds "description" column to the "tasks" table, if it exists (PostgreSQL adaptation).';
     }
 
     public function up(Schema $schema): void
@@ -25,7 +25,7 @@ final class Version20250701035053Addeddescriptionintasks extends AbstractMigrati
             $columns = $table->getColumns();
 
             if (!isset($columns['description'])) {
-                $this->addSql('ALTER TABLE tasks ADD description LONGTEXT DEFAULT NULL');
+                $this->addSql('ALTER TABLE tasks ADD description TEXT');
             }
         }
     }
@@ -38,7 +38,7 @@ final class Version20250701035053Addeddescriptionintasks extends AbstractMigrati
             $columns = $table->getColumns();
 
             if (isset($columns['description'])) {
-                $this->addSql('ALTER TABLE tasks DROP description');
+                $this->addSql('ALTER TABLE tasks DROP COLUMN description');
             }
         }
     }

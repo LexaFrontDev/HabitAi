@@ -10,6 +10,12 @@ COMPOSER = $(PHP_CONT) composer
 SYMFONY  = $(PHP) bin/console
 PHPUNIT  = $(PHP) bin/phpunit
 
+
+# Node.js / npm
+NODE = $(PHP_CONT) node
+NPM  = $(PHP_CONT) npm
+
+
 # Misc
 .DEFAULT_GOAL = help
 .PHONY        : help build up start down logs sh composer vendor sf cc
@@ -47,6 +53,15 @@ logs: ## Show live logs
 
 sh: ## Connect to the PHP FPM container
 	@$(PHP_CONT) sh
+
+node: ## Check Node.js version inside container
+	@$(NODE) -v
+
+npm: ## Check npm version inside container
+	@$(NPM) -v
+
+npm-install: ## Run npm install inside container
+	@$(NODE_CONT) npm install
 
 perms: ## Connect to the PHP FPM container
 	@$(PHP_CONT) chown www-data ./var/cache -R

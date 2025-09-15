@@ -11,7 +11,7 @@ final class Version20250627040414Addedindexeshabitshistory extends AbstractMigra
 {
     public function getDescription(): string
     {
-        return 'Создание индексов по полям user_id, recorded_at в таблице habits_history с безопасной проверкой';
+        return 'Создание индексов по полям user_id, recorded_at в таблице habits_history (PostgreSQL)';
     }
 
     public function up(Schema $schema): void
@@ -22,7 +22,7 @@ final class Version20250627040414Addedindexeshabitshistory extends AbstractMigra
             $table = $sm->introspectTable('habits_history');
             $indexes = $table->getIndexes();
 
-            $indexNames = array_map(fn ($index) => $index->getName(), $indexes);
+            $indexNames = array_map(fn ($index) => strtolower($index->getName()), $indexes);
 
             if (!in_array('idx_user', $indexNames, true)) {
                 $this->addSql('CREATE INDEX idx_user ON habits_history (user_id)');
@@ -40,24 +40,10 @@ final class Version20250627040414Addedindexeshabitshistory extends AbstractMigra
 
     public function down(Schema $schema): void
     {
-        $sm = $this->connection->createSchemaManager();
-
-        if ($sm->tablesExist(['habits_history'])) {
-            $table = $sm->introspectTable('habits_history');
-            $indexes = $table->getIndexes();
-            $indexNames = array_map(fn ($index) => $index->getName(), $indexes);
-
-            if (in_array('idx_user', $indexNames, true)) {
-                $this->addSql('DROP INDEX idx_user ON habits_history');
-            }
-
-            if (in_array('idx_recorded_at', $indexNames, true)) {
-                $this->addSql('DROP INDEX idx_recorded_at ON habits_history');
-            }
-
-            if (in_array('idx_user_date', $indexNames, true)) {
-                $this->addSql('DROP INDEX idx_user_date ON habits_history');
-            }
+        if ($this->connection->createSchemaManager()->tablesExist(['habits_history'])) {
+            $this->addSql('DROP INDEX IF EXISTS idx_user');
+            $this->addSql('DROP INDEX IF EXISTS idx_recorded_at');
+            $this->addSql('DROP INDEX IF EXISTS idx_user_date');
         }
     }
 }

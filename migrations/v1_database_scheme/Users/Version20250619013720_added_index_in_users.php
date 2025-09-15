@@ -11,23 +11,23 @@ final class Version20250619013720_added_index_in_users extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Добавление уникальных индексов на поля name и email в таблице Users, с проверкой наличия перед созданием';
+        return 'Добавление уникальных индексов на поля name и email в таблице users (PostgreSQL адаптация)';
     }
 
     public function up(Schema $schema): void
     {
         $schemaManager = $this->connection->createSchemaManager();
 
-        if ($schemaManager->tablesExist(['Users'])) {
-            $indexes = $schemaManager->listTableIndexes('Users');
+        if ($schemaManager->tablesExist(['users'])) {
+            $indexes = $schemaManager->listTableIndexes('users');
             $existingIndexNames = array_map(fn ($index) => strtolower($index->getName()), $indexes);
 
             if (!in_array('uniq_1483a5e95e237e06', $existingIndexNames, true)) {
-                $this->addSql('CREATE UNIQUE INDEX UNIQ_1483A5E95E237E06 ON Users (name)');
+                $this->addSql('CREATE UNIQUE INDEX uniq_1483a5e95e237e06 ON users (name)');
             }
 
             if (!in_array('uniq_1483a5e9e7927c74', $existingIndexNames, true)) {
-                $this->addSql('CREATE UNIQUE INDEX UNIQ_1483A5E9E7927C74 ON Users (email)');
+                $this->addSql('CREATE UNIQUE INDEX uniq_1483a5e9e7927c74 ON users (email)');
             }
         }
     }
@@ -36,16 +36,16 @@ final class Version20250619013720_added_index_in_users extends AbstractMigration
     {
         $schemaManager = $this->connection->createSchemaManager();
 
-        if ($schemaManager->tablesExist(['Users'])) {
-            $indexes = $schemaManager->listTableIndexes('Users');
+        if ($schemaManager->tablesExist(['users'])) {
+            $indexes = $schemaManager->listTableIndexes('users');
             $existingIndexNames = array_map(fn ($index) => strtolower($index->getName()), $indexes);
 
             if (in_array('uniq_1483a5e95e237e06', $existingIndexNames, true)) {
-                $this->addSql('DROP INDEX UNIQ_1483A5E95E237E06 ON Users');
+                $this->addSql('DROP INDEX uniq_1483a5e95e237e06');
             }
 
             if (in_array('uniq_1483a5e9e7927c74', $existingIndexNames, true)) {
-                $this->addSql('DROP INDEX UNIQ_1483A5E9E7927C74 ON Users');
+                $this->addSql('DROP INDEX uniq_1483a5e9e7927c74');
             }
         }
     }

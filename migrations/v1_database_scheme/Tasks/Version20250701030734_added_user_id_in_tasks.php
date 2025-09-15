@@ -14,7 +14,7 @@ final class Version20250701030734Addeduseridintasks extends AbstractMigration
 {
     public function getDescription(): string
     {
-        return 'Adds user_id column to tasks table if it exists';
+        return 'Adds user_id column to tasks table if it exists (PostgreSQL adaptation)';
     }
 
     public function up(Schema $schema): void
@@ -25,7 +25,7 @@ final class Version20250701030734Addeduseridintasks extends AbstractMigration
             $columns = $sm->introspectTable('tasks')->getColumns();
 
             if (!isset($columns['user_id'])) {
-                $this->addSql('ALTER TABLE tasks ADD user_id INT NOT NULL');
+                $this->addSql('ALTER TABLE tasks ADD COLUMN user_id INTEGER NOT NULL');
             }
         }
     }
@@ -38,7 +38,7 @@ final class Version20250701030734Addeduseridintasks extends AbstractMigration
             $columns = $sm->introspectTable('tasks')->getColumns();
 
             if (isset($columns['user_id'])) {
-                $this->addSql('ALTER TABLE tasks DROP user_id');
+                $this->addSql('ALTER TABLE tasks DROP COLUMN user_id');
             }
         }
     }

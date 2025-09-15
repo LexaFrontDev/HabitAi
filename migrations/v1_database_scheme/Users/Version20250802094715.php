@@ -9,46 +9,35 @@ use Doctrine\Migrations\AbstractMigration;
 
 final class Version20250802094715 extends AbstractMigration
 {
-    private array $columnsCache = [];
-
     public function getDescription(): string
     {
-        return 'Safe migration: modifies tasks, habits, Users and other tables with column existence checks.';
+        return 'Safe migration: modifies tasks, habits, users and other tables with column existence checks for PostgreSQL.';
     }
 
     private function hasColumn(string $table, string $column): bool
     {
-        if (!isset($this->columnsCache[$table])) {
-            $columns = $this->connection
-                ->fetchAllAssociative("SHOW COLUMNS FROM `$table`");
-
-            $this->columnsCache[$table] = array_map(
-                fn ($col) => strtolower($col['Field']),
-                $columns
-            );
+        $sm = $this->connection->createSchemaManager();
+        if (!$sm->tablesExist([$table])) {
+            return false;
         }
 
-        return in_array(strtolower($column), $this->columnsCache[$table], true);
+        $columns = $sm->listTableColumns($table);
+        return isset($columns[$column]);
     }
 
     private function hasIndex(string $table, string $indexName): bool
     {
-        $indexes = $this->connection->fetchAllAssociative("SHOW INDEX FROM `$table`");
-
-        foreach ($indexes as $index) {
-            if ($index['Key_name'] === $indexName) {
-                return true;
-            }
+        $sm = $this->connection->createSchemaManager();
+        if (!$sm->tablesExist([$table])) {
+            return false;
         }
 
-        return false;
+        $indexes = $sm->listTableIndexes($table);
+        return isset($indexes[$indexName]);
     }
 
     public function up(Schema $schema): void
     {
-        $platform = $this->connection->getDatabasePlatform()->getName();
-        $this->abortIf('mysql' !== $platform, 'Migration supports only MySQL.');
-
         $tables = [
             'habits',
             'tasks',
@@ -62,64 +51,62 @@ final class Version20250802094715 extends AbstractMigration
             'notifications',
             'purposes',
             'refresh_tokens',
-            'Users',
+            'users',
         ];
 
         foreach ($tables as $table) {
-            if (!$this->hasColumn($table, 'created_at')) {
-                $this->addSql("ALTER TABLE `$table` ADD created_at DATETIME DEFAULT NULL");
+            if ($this->hasColumn($table, 'created_at') === false) {
+                $this->addSql("ALTER TABLE $table ADD COLUMN created_at TIMESTAMP DEFAULT NULL");
             }
 
-            if (!$this->hasColumn($table, 'updated_at')) {
-                $this->addSql("ALTER TABLE `$table` ADD updated_at DATETIME DEFAULT NULL");
+            if ($this->hasColumn($table, 'updated_at') === false) {
+                $this->addSql("ALTER TABLE $table ADD COLUMN updated_at TIMESTAMP DEFAULT NULL");
             }
 
-            if (!$this->hasColumn($table, 'is_delete')) {
-                $this->addSql("ALTER TABLE `$table` ADD is_delete TINYINT(1) NOT NULL");
+            if ($this->hasColumn($table, 'is_delete') === false) {
+                $this->addSql("ALTER TABLE $table ADD COLUMN is_delete BOOLEAN NOT NULL DEFAULT FALSE");
             }
         }
 
-        if (!$this->hasColumn('matric_column', 'user_id')) {
-            $this->addSql('ALTER TABLE matric_column ADD user_id INT NOT NULL');
+        if ($this->hasColumn('matric_column', 'user_id') === false) {
+            $this->addSql('ALTER TABLE matric_column ADD COLUMN user_id INTEGER NOT NULL');
         }
 
-        if (!$this->hasColumn('tasks', 'time')) {
+        if ($this->hasColumn('tasks', 'time') === false) {
             $this->addSql('ALTER TABLE tasks
-                ADD time VARCHAR(255) DEFAULT NULL,
-                ADD start_date VARCHAR(255) DEFAULT NULL,
-                ADD start_time VARCHAR(255) DEFAULT NULL,
-                ADD end_date VARCHAR(255) DEFAULT NULL,
-                ADD end_time VARCHAR(255) DEFAULT NULL,
-                ADD repeat_mode VARCHAR(255) DEFAULT NULL
+                ADD COLUMN time VARCHAR(255) DEFAULT NULL,
+                ADD COLUMN start_date VARCHAR(255) DEFAULT NULL,
+                ADD COLUMN start_time VARCHAR(255) DEFAULT NULL,
+                ADD COLUMN end_date VARCHAR(255) DEFAULT NULL,
+                ADD COLUMN end_time VARCHAR(255) DEFAULT NULL,
+                ADD COLUMN repeat_mode VARCHAR(255) DEFAULT NULL
             ');
         }
 
         if ($this->hasColumn('tasks', 'task_type')) {
-            $this->addSql('ALTER TABLE tasks DROP task_type');
+            $this->addSql('ALTER TABLE tasks DROP COLUMN task_type');
         }
 
         if ($this->hasColumn('tasks', 'notification_id')) {
-            $this->addSql('ALTER TABLE tasks DROP notification_id');
+            $this->addSql('ALTER TABLE tasks DROP COLUMN notification_id');
         }
 
         if ($this->hasColumn('tasks', 'due_date')) {
-            $this->addSql('ALTER TABLE tasks DROP due_date');
+            $this->addSql('ALTER TABLE tasks DROP COLUMN due_date');
         }
 
-        if ($this->hasIndex('tasks_history', 'IDX_USER_ID')) {
-            $this->addSql('DROP INDEX IDX_USER_ID ON tasks_history');
+        if ($this->hasIndex('tasks_history', 'idx_user_id')) {
+            $this->addSql('DROP INDEX IF EXISTS idx_user_id');
         }
 
         if ($this->hasColumn('tasks_history', 'tasks_id')) {
-            $this->addSql("ALTER TABLE tasks_history CHANGE tasks_id tasks_id INT NOT NULL");
+            $this->addSql('ALTER TABLE tasks_history ALTER COLUMN tasks_id TYPE INTEGER');
+            $this->addSql('ALTER TABLE tasks_history ALTER COLUMN tasks_id SET NOT NULL');
         }
     }
 
     public function down(Schema $schema): void
     {
-        $platform = $this->connection->getDatabasePlatform()->getName();
-        $this->abortIf('mysql' !== $platform, 'Migration supports only MySQL.');
-
         $tables = [
             'habits',
             'tasks',
@@ -133,20 +120,20 @@ final class Version20250802094715 extends AbstractMigration
             'notifications',
             'purposes',
             'refresh_tokens',
-            'Users',
+            'users',
         ];
 
         foreach ($tables as $table) {
             if ($this->hasColumn($table, 'created_at')) {
-                $this->addSql("ALTER TABLE `$table` DROP COLUMN created_at");
+                $this->addSql("ALTER TABLE $table DROP COLUMN created_at");
             }
 
             if ($this->hasColumn($table, 'updated_at')) {
-                $this->addSql("ALTER TABLE `$table` DROP COLUMN updated_at");
+                $this->addSql("ALTER TABLE $table DROP COLUMN updated_at");
             }
 
             if ($this->hasColumn($table, 'is_delete')) {
-                $this->addSql("ALTER TABLE `$table` DROP COLUMN is_delete");
+                $this->addSql("ALTER TABLE $table DROP COLUMN is_delete");
             }
         }
 
@@ -165,24 +152,25 @@ final class Version20250802094715 extends AbstractMigration
             ');
         }
 
-        if (!$this->hasColumn('tasks', 'task_type')) {
-            $this->addSql('ALTER TABLE tasks ADD task_type VARCHAR(255) DEFAULT NULL');
+        if ($this->hasColumn('tasks', 'task_type') === false) {
+            $this->addSql('ALTER TABLE tasks ADD COLUMN task_type VARCHAR(255) DEFAULT NULL');
         }
 
-        if (!$this->hasColumn('tasks', 'notification_id')) {
-            $this->addSql('ALTER TABLE tasks ADD notification_id INT DEFAULT NULL');
+        if ($this->hasColumn('tasks', 'notification_id') === false) {
+            $this->addSql('ALTER TABLE tasks ADD COLUMN notification_id INTEGER DEFAULT NULL');
         }
 
-        if (!$this->hasColumn('tasks', 'due_date')) {
-            $this->addSql('ALTER TABLE tasks ADD due_date DATETIME DEFAULT NULL');
+        if ($this->hasColumn('tasks', 'due_date') === false) {
+            $this->addSql('ALTER TABLE tasks ADD COLUMN due_date TIMESTAMP DEFAULT NULL');
         }
 
-        if (!$this->hasIndex('tasks_history', 'IDX_USER_ID') && $this->hasColumn('tasks_history', 'user_id')) {
-            $this->addSql('CREATE INDEX IDX_USER_ID ON tasks_history (user_id)');
+        if ($this->hasIndex('tasks_history', 'idx_user_id') === false && $this->hasColumn('tasks_history', 'user_id')) {
+            $this->addSql('CREATE INDEX IF NOT EXISTS idx_user_id ON tasks_history (user_id)');
         }
 
         if ($this->hasColumn('tasks_history', 'tasks_id')) {
-            $this->addSql('ALTER TABLE tasks_history CHANGE tasks_id tasks_id INT NOT NULL');
+            $this->addSql('ALTER TABLE tasks_history ALTER COLUMN tasks_id TYPE INTEGER');
+            $this->addSql('ALTER TABLE tasks_history ALTER COLUMN tasks_id SET NOT NULL');
         }
     }
 }

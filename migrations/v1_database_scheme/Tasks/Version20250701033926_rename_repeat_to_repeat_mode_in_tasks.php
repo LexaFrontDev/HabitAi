@@ -14,7 +14,7 @@ final class Version20250701033926Renamerepeattorepeatmodeintasks extends Abstrac
 {
     public function getDescription(): string
     {
-        return 'Renames "repeat" column to "repeat_mode" in the tasks table, if it exists.';
+        return 'Renames "repeat" column to "repeat_mode" in the tasks table, if it exists (PostgreSQL adaptation).';
     }
 
     public function up(Schema $schema): void
@@ -25,7 +25,7 @@ final class Version20250701033926Renamerepeattorepeatmodeintasks extends Abstrac
             $columns = $table->getColumns();
 
             if (isset($columns['repeat']) && !isset($columns['repeat_mode'])) {
-                $this->addSql('ALTER TABLE tasks CHANGE `repeat` repeat_mode VARCHAR(255) DEFAULT NULL');
+                $this->addSql('ALTER TABLE tasks RENAME COLUMN "repeat" TO repeat_mode');
             }
         }
     }
@@ -38,7 +38,7 @@ final class Version20250701033926Renamerepeattorepeatmodeintasks extends Abstrac
             $columns = $table->getColumns();
 
             if (isset($columns['repeat_mode']) && !isset($columns['repeat'])) {
-                $this->addSql('ALTER TABLE tasks CHANGE repeat_mode `repeat` VARCHAR(255) DEFAULT NULL');
+                $this->addSql('ALTER TABLE tasks RENAME COLUMN repeat_mode TO "repeat"');
             }
         }
     }
