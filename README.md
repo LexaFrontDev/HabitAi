@@ -64,7 +64,7 @@ php bin/console app:resources:sync
 exit
 ```
 
-### 6.  frontend host
+### 6. url
 
 ```bash
 http://localhost:10001/

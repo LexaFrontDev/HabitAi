@@ -62,7 +62,7 @@ php bin/console app:resources:sync
 exit
 ```
 
-### 6. Адрес фронтенда
+### 6. Адрес 
 
 ```bash
 http://localhost:10001/
