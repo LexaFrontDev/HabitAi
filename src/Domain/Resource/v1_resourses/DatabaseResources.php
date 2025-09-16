@@ -1,29 +1,38 @@
 <?php
 
-namespace App\Infrastructure\DataFixtures\V1Fixtures;
+namespace App\Domain\Resource\v1_resourses;
 
-use App\Domain\Entity\Language\Language;
-use App\Domain\Entity\Language\LanguagePageTranslation;
-use Doctrine\Bundle\FixturesBundle\Fixture;
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Persistence\ObjectManager;
+use App\Aplication\Dto\ResourceDto\BenefitsDto;
+use App\Aplication\Dto\ResourceDto\FaqDto;
+use App\Aplication\Dto\ResourceDto\HabitsTemplatesDto;
+use App\Aplication\Dto\ResourceDto\LanguageDto;
+use App\Aplication\Dto\ResourceDto\PremiumPlansDto;
 
-class LanguagePageTranslationFixture extends Fixture implements DependentFixtureInterface
+class DatabaseResources
 {
-    public function load(ObjectManager $manager): void
+    /**
+     * @return LanguageDto[]
+     */
+    public function getLanguages(): array
     {
-        $languages = [
-            'ru' => $manager->getRepository(Language::class)->findOneBy(['prefix' => 'ru']),
-            'en' => $manager->getRepository(Language::class)->findOneBy(['prefix' => 'en']),
-            'kz' => $manager->getRepository(Language::class)->findOneBy(['prefix' => 'kz']),
-            'de' => $manager->getRepository(Language::class)->findOneBy(['prefix' => 'de']),
-            'kg' => $manager->getRepository(Language::class)->findOneBy(['prefix' => 'kg']),
-            'uz' => $manager->getRepository(Language::class)->findOneBy(['prefix' => 'uz']),
-            'ko' => $manager->getRepository(Language::class)->findOneBy(['prefix' => 'ko']),
-            'ja' => $manager->getRepository(Language::class)->findOneBy(['prefix' => 'ja']),
+        return [
+            new LanguageDto(name: 'Русский', prefix: 'ru'),
+            new LanguageDto(name: 'English', prefix: 'en'),
+            new LanguageDto(name: 'Қазақ тілі', prefix: 'kz'),
+            new LanguageDto(name: 'Deutsch', prefix: 'de'),
+            new LanguageDto(name: 'Кыргыз тили', prefix: 'kg'),
+            new LanguageDto(name: 'O‘zbek tili', prefix: 'uz'),
+            new LanguageDto(name: '한국어', prefix: 'ko'),
+            new LanguageDto(name: '日本語', prefix: 'ja'),
         ];
+    }
 
-        $v1_translate_site = [
+    /**
+     * @return array<string, array<string, array<string, string>>>
+     */
+    public function getTranslates(): array
+    {
+        return [
             'landing' => [
                 'loginButtonText' => [
                     'ru' => 'Войти', 'en' => 'Login', 'kz' => 'Кіру',
@@ -751,72 +760,140 @@ class LanguagePageTranslationFixture extends Fixture implements DependentFixture
             ],
 
         ];
-
-
-
-        $this->createTranslation('v1_translate_site', $v1_translate_site, $languages, $manager);
-        $manager->flush();
     }
 
     /**
-     * @param array<string, array<string, array<string, string>>> $translations
-     * @param array<string, Language|null> $languages
+     * @return PremiumPlansDto[]
      */
-    private function createTranslation(
-        string $pageName,
-        array $translations,
-        array $languages,
-        ObjectManager $manager,
-    ): void {
-        foreach ($languages as $prefix => $language) {
-            if (!$language) {
-                continue;
-            }
-
-            $pageTranslate = $this->extractTranslationsForLanguage($translations, $prefix);
-            $existing = $manager->getRepository(LanguagePageTranslation::class)
-                ->findOneBy(['pageName' => $pageName]);
-
-            if ($existing) {
-                continue;
-            }
-
-            $translation = new LanguagePageTranslation();
-            $translation->setPageName($pageName);
-            $translation->setPageTranslate($pageTranslate);
-            $translation->setLanguage($language);
-
-            $manager->persist($translation);
-        }
+    public function getPremiumPlans(): array
+    {
+        return [
+            new PremiumPlansDto(
+                name: 'Free',
+                desc: 'Базовые функции для старта',
+                price: '0₸ / мес',
+                features: ['20 задач в день', '5 привычек', 'Матрица Эйзенхауэра', 'Помодоро', 'Базовый Кастомный фон'],
+                highlight: true,
+            ),
+            new PremiumPlansDto(
+                name: 'Pro',
+                desc: 'Для продуктивной работы',
+                price: '999₸ / мес',
+                features: [
+                    '50 задач в день',
+                    '50 привычек',
+                    'Кастомный фон',
+                    'ИИ-помощник',
+                    'канбан',
+                    'Больше звуков для помодора',
+                    'полный Кастомный фон и возможность добавлять свой фоны',
+                ],
+                highlight: true,
+            ),
+            new PremiumPlansDto(
+                name: 'Pro Год',
+                desc: 'Экономия и приоритет',
+                price: '9 999₸ / год',
+                features: ['Всё из Pro', 'Приоритетная поддержка'],
+                highlight: true,
+            ),
+        ];
     }
 
     /**
-     * @param array<string, mixed> $translations
-     *
-     * @return array<string, string>
+     * @return HabitsTemplatesDto[]
      */
-    private function extractTranslationsForLanguage(array $translations, string $languageCode): array
+    public function getHabitsTemplates(): array
     {
-        $result = [];
-
-        foreach ($translations as $key => $value) {
-            if (is_array($value)) {
-                if (isset($value[$languageCode]) && is_string($value[$languageCode])) {
-                    $result[$key] = $value[$languageCode];
-                } else {
-                    $nested = $this->extractTranslationsForLanguage($value, $languageCode);
-                    foreach ($nested as $nestedKey => $nestedValue) {
-                        $result[$key.'.'.$nestedKey] = $nestedValue;
-                    }
-                }
-            }
-        }
-
-        return $result;
+        return [
+            new HabitsTemplatesDto(
+                title: 'Ранний подъем',
+                quote: 'Кто рано встает, тому Бог дает!',
+                notification: '06:30',
+                datesType: 'daily',
+            ),
+            new HabitsTemplatesDto(
+                title: 'Утренняя пробежка',
+                quote: 'Бег - это жизнь!',
+                notification: '10:30',
+                datesType: 'daily',
+            ),
+            new HabitsTemplatesDto(
+                title: 'Чтение книги',
+                quote: 'Книги - корабли мысли',
+                notification: '16:30',
+                datesType: 'daily',
+            ),
+            new HabitsTemplatesDto(
+                title: 'Медитация',
+                quote: 'Тишина - великий учитель',
+                notification: '14:30',
+                datesType: 'daily',
+            ),
+        ];
     }
 
-    public function getDependencies(): array
+    /**
+     * @return FaqDto[]
+     */
+    public function getFaq(): array
     {
-        return [LanguageFixture::class];
+        return [
+            new FaqDto(
+                question: 'Можно ли вернуть деньги после покупки?',
+                answer: 'Да, вы можете оформить возврат в течение 14 дней после оплаты. Просто отправьте нам запрос через раздел "Обратная связь" в приложении. Если вы оформили подписку через App Store или Google Play, отмену и возврат необходимо оформить через соответствующую платформу.',
+            ),
+            new FaqDto(
+                question: 'Что будет с моими данными, если я не продлю подписку?',
+                answer: 'Мы не удалим ваши привычки, задачи и статистику. Всё останется сохранено. Если количество привычек превышает лимит бесплатной версии, привычки с низким приоритетом будут автоматически перемещены в архив. Доступ к премиум-функциям будет временно ограничен до продления подписки.',
+            ),
+            new FaqDto(
+                question: 'Как отменить подписку?',
+                answer: 'Если вы оформили подписку через Google Play или App Store — откройте соответствующее приложение, перейдите в раздел "Подписки" и отмените TaskFlow PremiumUseCases. Если подписка оформлена напрямую, просто напишите нам через "Обратная связь".',
+            ),
+            new FaqDto(
+                question: 'Что делать, если остались вопросы?',
+                answer: 'Напишите нам в поддержку через приложение или на почту support@taskflow.app. Мы всегда готовы помочь!',
+            ),
+        ];
+    }
+
+    /**
+     * @return BenefitsDto[]
+     */
+    public function getBenefits(): array
+    {
+        return [
+            new BenefitsDto(
+                title: 'ИИ помогает достигать целей',
+                desc: 'Интеллектуальный помощник подсказывает приоритеты и экономит время',
+                icon: '/icons/ai.svg',
+            ),
+            new BenefitsDto(
+                title: '50 привычек и задач в день',
+                desc: 'Достаточно, чтобы охватить все сферы жизни',
+                icon: '/icons/checklist.svg',
+            ),
+            new BenefitsDto(
+                title: 'Кастомный календарь',
+                desc: 'Гибкий инструмент под твоё расписание и стиль',
+                icon: '/icons/calendar.svg',
+            ),
+            new BenefitsDto(
+                title: 'Система рейтингов',
+                desc: 'Соревнуйся с собой и другими',
+                icon: '/icons/rating.svg',
+            ),
+            new BenefitsDto(
+                title: 'Темы и настройка',
+                desc: 'Темная/светлая тема, фоны, звуки и многое другое',
+                icon: '/icons/theme.svg',
+            ),
+            new BenefitsDto(
+                title: 'Уведомления и напоминания',
+                desc: 'Никогда не пропусти важную задачу',
+                icon: '/icons/bell.svg',
+            ),
+        ];
     }
 }

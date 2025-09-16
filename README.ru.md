@@ -58,7 +58,7 @@ php bin/console doctrine:migrations:migrate -n
 ### 5. Загрузка фикстур
 
 ```bash
-php bin/console doctrine:fixtures:load
+php bin/console app:resources:sync
 exit
 ```
 
