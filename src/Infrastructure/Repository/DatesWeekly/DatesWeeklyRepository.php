@@ -34,7 +34,7 @@ class DatesWeeklyRepository extends ServiceEntityRepository implements DatesWeek
         $em = $this->getEntityManager();
         $weeklyEntity = $this->createQueryBuilder('w')
             ->where('w.id = :id')
-            ->andWhere('w.is_delete = 0')
+            ->andWhere('w.is_delete = false')
             ->setParameter('id', $id)
             ->getQuery()
             ->getOneOrNullResult();

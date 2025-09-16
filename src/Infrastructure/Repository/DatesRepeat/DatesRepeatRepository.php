@@ -34,7 +34,7 @@ class DatesRepeatRepository extends ServiceEntityRepository implements DatesRepe
         $em = $this->getEntityManager();
         $repeatEntity = $this->createQueryBuilder('r')
             ->where('r.id = :id')
-            ->andWhere('r.is_delete = 0')
+            ->andWhere('r.is_delete = false')
             ->setParameter('id', $id)
             ->getQuery()
             ->getOneOrNullResult();

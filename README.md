@@ -1,4 +1,4 @@
-# 🚀 HabitAi
+**# 🚀 HabitAi
 
 **HabitAi** is an application designed to boost productivity with the help of Artificial Intelligence (AI).
 
@@ -11,20 +11,20 @@ Project is currently under **active development**.
 ## 🛠️ Tech Stack
 
 * **Frontend:** Flutter, React, Vue
-* **Backend:** Symfony (PHP 8.3)
-* **Architecture:** Clean Architecture, Domain-Driven Design (DDD), Atomic Design
+  * **Backend:** Symfony (PHP 8.3)
+  * **Architecture:** Clean Architecture, Domain-Driven Design (DDD), Atomic Design
 
 ## ✨ Features
 
 * 📌 **Task Management**
-* 🧭 **Eisenhower Matrix** for prioritization
-* ⏳ **Pomodoro Timer** for focused work
-* 🌍 **Multilingual Support** (5 languages)
-* ⚡ **Frontend improvements**:
+  * 🧭 **Eisenhower Matrix** for prioritization
+  * ⏳ **Pomodoro Timer** for focused work
+  * 🌍 **Multilingual Support** (5 languages)
+  * ⚡ **Frontend improvements**:
 
-    * **Cache-Then-Network (CTN)** system for optimized data fetching
-    * **IndexedDB (IDB)** integration for offline access and reduced server load
-    * Centralized caching and efficient state management
+      * **Cache-Then-Network (CTN)** system for optimized data fetching
+      * **IndexedDB (IDB)** integration for offline access and reduced server load
+      * Centralized caching and efficient state management
 
 ---
 
@@ -64,10 +64,10 @@ php bin/console app:resources:sync
 exit
 ```
 
-### 6. Start frontend
+### 6.  frontend host
 
 ```bash
-npm run
+http://localhost:10001/
 ```
 
 ### 7. Stop and remove containers
@@ -81,5 +81,5 @@ make down
 ## 📌 Project Status
 
 🔧 Under active development.
-Stay tuned for updates and new releases!
+Stay tuned for updates and new releases!**
 

@@ -41,7 +41,7 @@ class DatesDailyRepository extends ServiceEntityRepository implements DatesDaily
         $em = $this->getEntityManager();
         $datesEntity = $this->createQueryBuilder('d')
             ->where('d.id = :id')
-            ->andWhere('d.is_delete = 0')
+            ->andWhere('d.is_delete = false')
             ->setParameter('id', $id)
             ->getQuery()
             ->getOneOrNullResult();

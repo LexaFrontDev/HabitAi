@@ -111,7 +111,7 @@ class TasksRepository extends ServiceEntityRepository implements TasksInterface
         $qb = $this->createQueryBuilder('t')
             ->leftJoin('App\Domain\Entity\Tasks\TasksHistory', 'th', 'WITH', 'th.tasks_id = t.id')
             ->where('t.userId = :userId')
-            ->andWhere('t.is_delete = 0')
+            ->andWhere('t.is_delete = false')
             ->andWhere('(
                 (t.beginDate IS NOT NULL AND t.beginDate <= :fullDate)
                 OR (
@@ -167,7 +167,7 @@ class TasksRepository extends ServiceEntityRepository implements TasksInterface
             ->select('t', 'th.id AS historyId')
             ->leftJoin('App\Domain\Entity\Tasks\TasksHistory', 'th', 'WITH', 'th.tasks_id = t.id')
             ->where('t.userId = :userId')
-            ->andWhere('t.is_delete = 0')
+            ->andWhere('t.is_delete = false')
             ->setParameter('userId', $userId);
 
         /** @var array<int, array{0: array<string, mixed>, historyId?: int|null}> $result */

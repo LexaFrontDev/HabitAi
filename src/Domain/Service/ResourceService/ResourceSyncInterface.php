@@ -18,7 +18,7 @@ interface ResourceSyncInterface
     /**
      * @param array<string, array<string, array<string, string>>> $translations
      */
-    public function setTranslation(array $translations): bool;
+    public function setTranslation(string $pageName, array $translations): bool;
 
     /**
      * @param PremiumPlansDto[] $plans

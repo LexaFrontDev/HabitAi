@@ -41,7 +41,7 @@ class PurposeRepository extends ServiceEntityRepository implements PurposeReposi
         $em = $this->getEntityManager();
         $purpose = $this->createQueryBuilder('p')
             ->where('p.habitsId = :habitsId')
-            ->andWhere('p.is_delete = 0')
+            ->andWhere('p.is_delete = false')
             ->setParameter('habitsId', $dto->getHabitsId())
             ->getQuery()
             ->getOneOrNullResult();
@@ -67,7 +67,7 @@ class PurposeRepository extends ServiceEntityRepository implements PurposeReposi
         return (int) $this->createQueryBuilder('h')
             ->select('h.count')
             ->where('h.habitsId = :habitId')
-            ->andWhere('h.is_delete = 0')
+            ->andWhere('h.is_delete = false')
             ->setParameter('habitId', $habitId)
             ->getQuery()
             ->getSingleScalarResult();
@@ -78,7 +78,7 @@ class PurposeRepository extends ServiceEntityRepository implements PurposeReposi
         $em = $this->getEntityManager();
         $purpose = $this->createQueryBuilder('p')
             ->where('p.habitsId = :habitId')
-            ->andWhere('p.is_delete = 0')
+            ->andWhere('p.is_delete = false')
             ->setParameter('habitId', $habitId)
             ->getQuery()
             ->getOneOrNullResult();

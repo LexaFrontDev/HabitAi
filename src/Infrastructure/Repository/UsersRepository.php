@@ -26,7 +26,7 @@ class UsersRepository extends ServiceEntityRepository implements UsersRepository
     {
         $user = $this->createQueryBuilder('u')
             ->where('u.email = :email')
-            ->andWhere('u.is_delete = 0')
+            ->andWhere('u.is_delete = false')
             ->setParameter('email', $email)
             ->getQuery()
             ->getOneOrNullResult();
@@ -40,7 +40,7 @@ class UsersRepository extends ServiceEntityRepository implements UsersRepository
     {
         $user = $this->createQueryBuilder('u')
             ->where('u.id = :id')
-            ->andWhere('u.is_delete = 0')
+            ->andWhere('u.is_delete = false')
             ->setParameter('id', $id)
             ->getQuery()
             ->getOneOrNullResult();

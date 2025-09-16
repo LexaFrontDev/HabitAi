@@ -25,7 +25,7 @@ class HabitsRepository extends ServiceEntityRepository implements HabitsReposito
     {
         return $this->createQueryBuilder('h')
             ->where('h.userId = :userId')
-            ->andWhere('h.is_delete = 0')
+            ->andWhere('h.is_delete = false')
             ->setParameter('userId', $userId)
             ->getQuery()
             ->getResult();
@@ -138,7 +138,7 @@ class HabitsRepository extends ServiceEntityRepository implements HabitsReposito
         )
         AND h.begin_date <= :todayDate
         AND h.user_id = :userId
-        AND h.is_delete = 0
+        AND h.is_delete = false
     ";
 
         $params = [
@@ -193,7 +193,7 @@ class HabitsRepository extends ServiceEntityRepository implements HabitsReposito
             (dd.`{$dayOfWeek}` = TRUE OR dw.count_days = :dayOfWeekNumber OR dr.day = :dayOfMonth)
             AND h.begin_date <= :today
             AND h.user_id = :userId
-            AND h.is_delete = 0
+            AND h.is_delete = false
     ";
 
         $params = [

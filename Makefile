@@ -42,6 +42,13 @@ up-prod-build: ## Start the docker hub in detached mode (no logs)
 
 start: build up ## Build and start the containers
 
+db-reset: ## reset databases
+	@echo "Stopping containers..."
+	@$(DOCKER_COMP) down
+	@echo "Removing PostgreSQL volume..."
+	@docker volume rm timer_pgdata || true
+	@echo "Done. You can now rebuild containers."
+
 stop: ## Stop the docker hub
 	@$(DOCKER_COMP) stop
 

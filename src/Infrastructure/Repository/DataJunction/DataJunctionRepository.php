@@ -30,7 +30,7 @@ class DataJunctionRepository extends ServiceEntityRepository implements DataJunc
             ->where('hdj.habitsId = :habitsId')
             ->andWhere('hdj.data_id = :dataId')
             ->andWhere('hdj.data_type = :dataType')
-            ->andWhere('hdj.is_delete = 0')
+            ->andWhere('hdj.is_delete = false')
             ->setParameter('habitsId', $data->getHabitsId())
             ->setParameter('dataId', $data->getDataId())
             ->setParameter('dataType', $data->getDataType())
@@ -57,7 +57,7 @@ class DataJunctionRepository extends ServiceEntityRepository implements DataJunc
     {
         $entity = $this->createQueryBuilder('hdj')
             ->where('hdj.habitsId = :habitsId')
-            ->andWhere('hdj.is_delete = 0')
+            ->andWhere('hdj.is_delete = false')
             ->setParameter('habitsId', $habitsId)
             ->getQuery()
             ->getOneOrNullResult();
@@ -89,7 +89,7 @@ class DataJunctionRepository extends ServiceEntityRepository implements DataJunc
     {
         $entity = $this->createQueryBuilder('hdj')
             ->where('hdj.habitsId = :habitsId')
-            ->andWhere('hdj.is_delete = 0')
+            ->andWhere('hdj.is_delete = false')
             ->setParameter('habitsId', $habitsId)
             ->getQuery()
             ->getOneOrNullResult();
@@ -110,7 +110,7 @@ class DataJunctionRepository extends ServiceEntityRepository implements DataJunc
     {
         $entity = $this->createQueryBuilder('djc')
             ->where('djc.habitsId = :habitsId')
-            ->andWhere('djc.is_delete = 0')
+            ->andWhere('djc.is_delete = false')
             ->setParameter('habitsId', $habitsId)
             ->getQuery()
             ->getOneOrNullResult();
@@ -131,7 +131,7 @@ class DataJunctionRepository extends ServiceEntityRepository implements DataJunc
     {
         $entity = $this->createQueryBuilder('djc')
             ->where('djc.habitsId = :habitsId')
-            ->andWhere('djc.is_delete = 0')
+            ->andWhere('djc.is_delete = false')
             ->setParameter('habitsId', $habitsId)
             ->getQuery()
             ->getOneOrNullResult();
@@ -155,7 +155,7 @@ class DataJunctionRepository extends ServiceEntityRepository implements DataJunc
 
         $exists = $this->createQueryBuilder('hdj')
             ->where('hdj.habitsId = :habitsId')
-            ->andWhere('hdj.is_delete = 0')
+            ->andWhere('hdj.is_delete = false')
             ->setParameter('habitsId', $habitsId)
             ->getQuery()
             ->getOneOrNullResult();

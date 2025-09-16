@@ -50,37 +50,31 @@ class ResourceSyncService implements ResourceSyncInterface
     /**
      * @param array<string, array<string, array<string, string>>> $translations
      */
-    public function setTranslation(array $translations): bool
+    public function setTranslation(string $pageName, array $translations): bool
     {
         $languages = $this->manager->getRepository(Language::class)->findAll();
-        $languagesByPrefix = [];
-        foreach ($languages as $lang) {
-            $languagesByPrefix[$lang->getPrefix()] = $lang;
-        }
-        foreach ($translations as $pageName => $pageTranslations) {
-            foreach ($languagesByPrefix as $prefix => $language) {
-                if (!$language) {
-                    continue;
-                }
 
-                $pageTranslate = $this->extractTranslationsForLanguage($pageTranslations, $prefix);
+        foreach ($languages as $language) {
+            if (!$language) {
+                continue;
+            }
 
-                $existing = $this->manager->getRepository(LanguagePageTranslation::class)
-                    ->findOneBy([
-                        'pageName' => $pageName,
-                        'language' => $language,
-                    ]);
+            $pageTranslate = $this->extractTranslationsForLanguage($translations, $language->getPrefix());
+            $existing = $this->manager->getRepository(LanguagePageTranslation::class)
+                ->findOneBy([
+                    'pageName' => $pageName,
+                    'language' => $language,
+                ]);
 
-                if ($existing) {
-                    $existing->setPageTranslate($pageTranslate);
-                } else {
-                    $translation = new LanguagePageTranslation();
-                    $translation->setPageName($pageName);
-                    $translation->setPageTranslate($pageTranslate);
-                    $translation->setLanguage($language);
+            if ($existing) {
+                $existing->setPageTranslate($pageTranslate);
+            } else {
+                $translation = new LanguagePageTranslation();
+                $translation->setPageName($pageName);
+                $translation->setPageTranslate($pageTranslate);
+                $translation->setLanguage($language);
 
-                    $this->manager->persist($translation);
-                }
+                $this->manager->persist($translation);
             }
         }
 
