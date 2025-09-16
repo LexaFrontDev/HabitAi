@@ -60,7 +60,7 @@ php bin/console doctrine:migrations:migrate -n
 ### 5. Load fixtures
 
 ```bash
-php bin/console doctrine:fixtures:load
+php bin/console app:resources:sync
 exit
 ```
 
