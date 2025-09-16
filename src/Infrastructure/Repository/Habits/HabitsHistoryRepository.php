@@ -70,7 +70,7 @@ class HabitsHistoryRepository extends ServiceEntityRepository implements HabitsH
         $results = $this->createQueryBuilder('h')
             ->where('h.userId = :userId')
             ->andWhere('h.recordedAt BETWEEN :start AND :end')
-            ->andWhere('h.is_delete = 0')
+            ->andWhere('h.is_delete = false')
             ->setParameter('userId', $userId)
             ->setParameter('start', $todayStart)
             ->setParameter('end', $todayEnd)
@@ -100,7 +100,7 @@ class HabitsHistoryRepository extends ServiceEntityRepository implements HabitsH
     {
         $qb = $this->createQueryBuilder('h')
             ->where('h.userId = :userId')
-            ->andWhere('h.is_delete = 0')
+            ->andWhere('h.is_delete = false')
             ->setParameter('userId', $userId)
             ->orderBy('h.recordedAt', 'ASC');
         $results = $qb->getQuery()->getResult();
@@ -141,7 +141,7 @@ class HabitsHistoryRepository extends ServiceEntityRepository implements HabitsH
                 INNER JOIN habits h ON h.id = hh.habits_id
                 WHERE hh.user_id = :userId
                 AND hh.is_deleted = 0
-                AND h.is_delete = 0
+                AND h.is_delete = false
                 ORDER BY hh.recorded_at ASC';
 
         $results = $this->getEntityManager()
@@ -172,7 +172,7 @@ class HabitsHistoryRepository extends ServiceEntityRepository implements HabitsH
             ->select('COUNT(h.id)')
             ->where('h.userId = :userId')
             ->andWhere('h.isDone = 1')
-            ->andWhere('h.is_delete = 0')
+            ->andWhere('h.is_delete = false')
             ->setParameter('userId', $userId)
             ->getQuery()
             ->getSingleScalarResult();

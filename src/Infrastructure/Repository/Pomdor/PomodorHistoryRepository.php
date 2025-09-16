@@ -94,7 +94,7 @@ class PomodorHistoryRepository extends ServiceEntityRepository implements Pomodo
 
         return $this->createQueryBuilder('h')
             ->andWhere('h.user_id = :userId')
-            ->andWhere('h.is_delete = 0')
+            ->andWhere('h.is_delete = false')
             ->andWhere('h.create_date BETWEEN :start AND :end')
             ->setParameter('userId', $userId)
             ->setParameter('start', $start)
@@ -114,7 +114,7 @@ class PomodorHistoryRepository extends ServiceEntityRepository implements Pomodo
 
         return $this->createQueryBuilder('h')
             ->andWhere('h.user_id = :userId')
-            ->andWhere('h.is_delete = 0')
+            ->andWhere('h.is_delete = false')
             ->andWhere('h.create_date BETWEEN :start AND :end')
             ->setParameter('userId', $userId)
             ->setParameter('start', $start)
@@ -130,7 +130,7 @@ class PomodorHistoryRepository extends ServiceEntityRepository implements Pomodo
             return (int) $this->createQueryBuilder('h')
                 ->select('COUNT(h.id)')
                 ->andWhere('h.user_id = :userId')
-                ->andWhere('h.is_delete = 0')
+                ->andWhere('h.is_delete = false')
                 ->setParameter('userId', $userId)
                 ->getQuery()
                 ->getSingleScalarResult();

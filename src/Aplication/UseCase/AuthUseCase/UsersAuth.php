@@ -53,7 +53,6 @@ class UsersAuth
         $userEntity = new Users();
         $userEntity->setEmail($users->getEmail());
         $userEntity->setName($users->getName());
-
         $hashedPassword = $this->passwordHasher->hash($users->getPassword());
         $userEntity->setPassword($hashedPassword);
         $userEntity->setRole($users->getRole() ?: 'user');

@@ -43,8 +43,8 @@ class MatricJunctionRepository extends ServiceEntityRepository implements Matric
         LEFT JOIN tasksHistory th ON th.tasks_id = t.id
         WHERE m.user_id = :userId
           AND m.tasks_number = :tasksId
-          AND m.is_delete = 0
-          AND t.is_delete = 0
+          AND m.is_delete = false
+          AND t.is_delete = false
     ';
 
         $rows = $conn->fetchAllAssociative($sql, [

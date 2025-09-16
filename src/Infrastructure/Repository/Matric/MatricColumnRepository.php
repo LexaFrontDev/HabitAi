@@ -25,7 +25,7 @@ class MatricColumnRepository extends ServiceEntityRepository implements MatricCo
 
         $existing = $this->createQueryBuilder('m')
             ->where('m.userId = :userId')
-            ->andWhere('m.is_delete = 0')
+            ->andWhere('m.is_delete = false')
             ->setParameter('userId', $dto->userId)
             ->getQuery()
             ->getOneOrNullResult();

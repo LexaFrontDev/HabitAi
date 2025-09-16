@@ -20,7 +20,7 @@ class QueryLanguageUseCases
     {
         $translate = $this->language->getPageTranslateByLangId($version, $prefixLang);
         if (empty($translate)) {
-            throw new MessageException('Перевод не получено');
+            throw new MessageException("Перевод не получено $translate");
         }
 
         return $translate;

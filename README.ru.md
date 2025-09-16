@@ -62,10 +62,10 @@ php bin/console app:resources:sync
 exit
 ```
 
-### 6. Запуск фронтенда
+### 6. Адрес фронтенда
 
 ```bash
-npm run
+http://localhost:10001/
 ```
 
 ### 7. Остановка и удаление контейнеров
