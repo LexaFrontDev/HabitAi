@@ -26,7 +26,7 @@ services:
     environment:
       XDEBUG_MODE: "${XDEBUG_MODE:-off}"
       TEST_DATABASE_URL: pgsql://TimerAppUser:user123@db:5432/TimerAppDatabase?serverVersion=13&charset=utf8
-      TEST_ELASTICSEARCH_INDEX_PREFIX: test_questionnaire_
+      TEST_ELASTICSEARCH_INDEX_PREFIX: test_timer_app_
     extra_hosts:
       - host.docker.internal:host-gateway
   db:
@@ -35,7 +35,7 @@ services:
   db_test:
     image: postgres:13
     ports:
-      - '11009:5432'
+      - '11010:5432'
     container_name: timer_app_pgsql_test
     restart: unless-stopped
     environment:

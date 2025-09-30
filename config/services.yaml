@@ -28,3 +28,10 @@ services:
     App\Infrastructure\Service\FilterCriteriaApply\FilterApplicator\ApplyFilter:
         arguments:
             $criterionAppliers: !tagged_iterator app.criterion_applier
+
+    App\Infrastructure\Service\AiService\AiIntegration:
+        arguments:
+            $apiKey: '%env(API_KEY)%'
+            $headerName: '%env(AI_MODEL)%'
+            $aiUrl: '%env(AI_URL)%'
+

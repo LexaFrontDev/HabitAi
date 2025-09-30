@@ -44,7 +44,7 @@ export const useHabitsLogic = (habitsService: HabitsService) => {
             return setHabits([]);
         }
         setIsLoading(false);
-        setHabits(result || []);
+        setHabits(result);
     };
 
     const fetchHabitsStatistic = async () => {
@@ -56,7 +56,6 @@ export const useHabitsLogic = (habitsService: HabitsService) => {
         }
 
 
-        console.log(statistic)
         setIsLoading(false);
         setHabitsStatistic(statistic || [])
     }
@@ -71,7 +70,7 @@ export const useHabitsLogic = (habitsService: HabitsService) => {
         }
 
         setIsLoading(false);
-        setTemplates(templates || [])
+        setTemplates(templates)
     }
 
     const saveHabitProgress = async (habitId: number, countProgress: number) => {

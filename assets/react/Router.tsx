@@ -41,12 +41,10 @@ const RouterDom = () => {
             try {
                 const res = await fetch('/api/auth/check');
                 const data = await res.json();
-                console.log(data);
                 const ok = res.ok;
                 setIsAuthenticated(ok);
 
                 if(ok){
-                    console.log('Зов пениса');
                     subscribePush();
                 }
 
@@ -83,7 +81,6 @@ const RouterDom = () => {
 
 
     const getPlatform = () => {
-        console.log('Дошли')
         const ua = navigator.userAgent;
 
         let os = 'Unknown OS';
@@ -100,7 +97,6 @@ const RouterDom = () => {
         else if (/Safari/.test(ua) && !/Chrome/.test(ua)) browser = 'Safari';
         else if (/Edg/.test(ua)) browser = 'Edge';
         else if (/OPR/.test(ua)) browser = 'Opera';
-        console.log('тоже')
         return `${browser}_${os}`;
     };
 
@@ -121,9 +117,7 @@ const RouterDom = () => {
                     return;
                 }
             }
-            console.log('Service Worker зарегистрирован:');
             const registration = await navigator.serviceWorker.register('/serviceWorker/ServiceWorker.js');
-            console.log('Service Worker зарегистрирован:', registration);
 
             const subscription = await registration.pushManager.subscribe({
                 userVisibleOnly: true,
@@ -136,7 +130,7 @@ const RouterDom = () => {
                 keys: subscription.toJSON().keys
             };
 
-            console.log('Отправляем данные подписки:', pushData);
+
 
             await fetch('/api/save/subscription/web', {
                 method: 'POST',

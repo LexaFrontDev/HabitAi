@@ -27,7 +27,6 @@ export class TasksService {
             '/api/list/tasks/all',
             'GET',
             undefined,
-            'result'
         );
 
         return response;

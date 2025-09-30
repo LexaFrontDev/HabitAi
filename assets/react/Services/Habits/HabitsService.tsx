@@ -44,12 +44,12 @@ export class HabitsService {
     }
 
 
-    async getHabitsAll(limit: number = 50, offset: number = 0): Promise<DataType[] | false | DataType> {
-        return await this.reqService.get<DataType>(`habits`, `/api/get/Habits/all?limit=${limit}&offset=${offset}`, 'GET');
+    async getHabitsAll(limit: number = 50, offset: number = 0): Promise<DataType[] | false> {
+        return await this.reqService.getArray<DataType>(`habits`, `/api/get/Habits/all?limit=${limit}&offset=${offset}`, 'GET');
     }
 
-    async getHabitsTemplatesAll():  Promise<HabitTemplate[] | false | HabitTemplate>{
-        return await this.reqService.get<HabitTemplate>(`habits_templates`, `/api/Habits/templates/all`, 'GET');
+    async getHabitsTemplatesAll():  Promise<HabitTemplate[] | false>{
+        return await this.reqService.getArray<HabitTemplate>(`habits_templates`, `/api/Habits/templates/all`, 'GET');
     }
 
     async getHabitsStatisticAll():  Promise<any | false>{

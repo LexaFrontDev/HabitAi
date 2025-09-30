@@ -64,8 +64,6 @@ const HabitModal: React.FC<HabitModalProps> = ({habitTemplates, onClose, onEdit,
 
     useEffect(() => {
         if (edit && editData) {
-            console.log('То что содержить edit data')
-            console.log(editData);
             const notificationRaw = editData.notification_date || '';
             const timeOnly = notificationRaw.length >= 5 ? notificationRaw.substring(0, 5) : '';
 
@@ -87,7 +85,6 @@ const HabitModal: React.FC<HabitModalProps> = ({habitTemplates, onClose, onEdit,
                 purposeCount: editData.count,
                 date: editData.date
             });
-            console.log(data);
             setStep(2);
         }
     }, [edit, editData]);
@@ -237,7 +234,6 @@ const HabitModal: React.FC<HabitModalProps> = ({habitTemplates, onClose, onEdit,
         if (!validateStep(step) || !editData?.habit_id) return;
 
         const payload: EditDataType = {
-            cacheId: data.cacheId,
             habitId: editData.habit_id,
             title: data.title,
             quote: data.quote,

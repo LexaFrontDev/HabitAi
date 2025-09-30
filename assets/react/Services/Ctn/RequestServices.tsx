@@ -24,12 +24,27 @@ export class RequestServices {
         return response.json() as Promise<R>;
     }
 
-    async get<R>(fetchUrl: string, method: string = "GET", body?: any, accessMassiveKey?: string): Promise<R[] | R | false> {
+    async get<R>(fetchUrl: string, method: string = "GET", body?: any): Promise<R | false> {
+        try {
+            const data = await this._request<R>(fetchUrl, method, method !== "GET" ? body : undefined);
+            return data;
+        } catch (e) {
+            await this.logError("Ошибка GET-запроса", { fetchUrl, error: e });
+            return false;
+        }
+    }
+
+    async getArray<R>(fetchUrl: string, method: string = "GET", body?: any, accessMassiveKey?: string): Promise<R[] | false> {
         try {
             let data = await this._request<R | R[]>(fetchUrl, method, method !== "GET" ? body : undefined);
 
             if (accessMassiveKey && typeof data === "object" && !Array.isArray(data)) {
                 data = (data as any)[accessMassiveKey];
+            }
+
+            if (!Array.isArray(data)) {
+                if (data == null) return [];
+                return [data as R];
             }
 
             return data;

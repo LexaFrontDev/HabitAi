@@ -105,7 +105,7 @@ export const usePomodoroTimer = (PomodoroUseCase: PomodoroService) => {
                 timeEnd: Math.floor(Date.now() / 1000),
                 created_date: Math.floor(Date.now() / 1000),
             };
-            console.log(pomodoroData);
+
             await PomodoroUseCase.createPomodro(pomodoroData);
         }
 

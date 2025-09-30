@@ -30,7 +30,15 @@ const langUseCase = new LangStorageUseCase(langStorage);
 
 
 const Pomodoro = () => {
-    const [dataPomodoro, setDataPomodoro] = useState<PomodoroData | null>(null);
+    const [dataPomodoro, setDataPomodoro] = useState<PomodoroData>({
+        todayPomos: 0,
+        todayFocusTime: 0,
+        totalPomodorCount: 0,
+        habitsList: [],
+        tasksList: [],
+        pomodorHistory: [],
+    });
+
     const [activeTab, setActiveTab] = useState('Pomodoro');
     const [langCode, setLangCode] = useState('en');
     const { t, i18n } = useTranslation('translation');
@@ -97,7 +105,7 @@ const Pomodoro = () => {
     };
 
 
-    if (!translationsLoaded || !dataPomodoro) return <Loading />;
+    if (!translationsLoaded) return <Loading />;
 
 
     const { todayPomos, todayFocusTime, totalPomodorCount, habitsList, tasksList, pomodorHistory } = dataPomodoro;
