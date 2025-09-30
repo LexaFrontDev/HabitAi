@@ -142,7 +142,6 @@ const TasksPage: React.FC = () => {
                 setLoading(true);
                 const allTasksResult = await tasksService.getTasksAll();
                 setAllTasks(Array.isArray(allTasksResult) ? allTasksResult : []);
-                console.log(allTasks)
             } catch (err: any) {
                 setError(err.message);
                 setAllTasks([]);

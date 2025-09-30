@@ -1,5 +1,4 @@
 export type PomodoroData = {
-    cacheId: number;
     todayPomos: number;
     todayFocusTime: number;
     totalPomodorCount: number;
