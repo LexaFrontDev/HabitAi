@@ -1,4 +1,4 @@
-**# 🚀 HabitAi
+# 🚀 HabitAi
 
 **HabitAi** is an application designed to boost productivity with the help of Artificial Intelligence (AI).
 
